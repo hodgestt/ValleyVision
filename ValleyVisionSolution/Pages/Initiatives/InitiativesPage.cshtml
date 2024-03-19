@@ -1,0 +1,55 @@
+﻿@page
+@model ValleyVisionSolution.Pages.Initiatives.InitiativesPageModel
+@{
+    ViewData["Title"] = "Initiatives";
+}
+
+<style>
+    .tile-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .tile {
+        text-decoration: none;
+        color: black;
+        width: calc(33% - 4%);
+        height: 16vw;
+        border-radius: 5px;
+        font-size: 1.2em;
+        cursor: pointer;
+        transition: transform 0.5s, box-shadow 0s;
+        border: 1px solid black;
+        outline: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 2%;
+        font-size:1.25vw;
+    }
+
+        .tile:hover {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: black;
+        }
+
+    .bootstrap-select > .dropdown-toggle {
+        height: 38px;
+    }
+
+        .bootstrap-select > .dropdown-toggle:active,
+        .bootstrap-select > .dropdown-toggle:focus {
+            outline: none !important;
+        }
+</style>
+
+@* Loops through all initiatives and displays their name in a clickable box. On click the initID is sent as route parameter *@
+<div class="tile-container">
+    @{
+        foreach (var initiative in Model.InitiativesList)
+        {
+            <a asp-page="/Dashboard/DashboardPage" asp-route-initID="@initiative.InitID" class="tile">@initiative.InitName</a>
+        }
+    }
+    @* <button type="submit" class="tile" data-bs-toggle="modal" data-bs-target="#addCollabForm">Add New +</button> *@
+</div>
