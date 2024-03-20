@@ -41,6 +41,12 @@
                             <a class="nav-link text-dark" asp-area="" asp-page="/Initiatives/InitiativesPage">Initiatives</a>
                         </li>
                     </ul>
+                    @if (Context.Session.GetString("Username") != null)
+                    {
+                        <h5 class="position-relative align-middle" style="-webkit-text-fill-color: black;">
+                            @Context.Session.GetString("Username")
+                        </h5>
+                    }
                 </div>
             </div>
         </nav>

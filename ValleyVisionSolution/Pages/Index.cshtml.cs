@@ -53,6 +53,7 @@ namespace ValleyVisionSolution.Pages
                     UserCredentials.UserID = (DBClass.HashedParameterLogin(UserCredentials));
                     HttpContext.Session.SetInt32("UserID", UserCredentials.UserID);
                     HttpContext.Session.SetString("LoggedIn", "True");
+                    HttpContext.Session.SetString("Username", UserCredentials.Username);
 
                     return RedirectToPage("/Initiatives/InitiativesPage");
                 }
