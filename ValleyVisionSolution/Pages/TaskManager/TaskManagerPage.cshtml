@@ -3,3 +3,389 @@
 @{
     ViewData["Title"] = "Task Manager";
 }
+
+<style>
+    .dashboard-grid {
+        background-color: #c3c5ca;
+        height: 100%;
+        padding: 15px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        grid-template-areas:
+            "myTasks resources messageBoard"
+            "plan plan messageBoard";
+        gap: 15px;
+    }
+
+    .dashboard-tile {
+        /*  background-color: #f2f2f2; */
+    }
+
+    #MyTasks {
+        grid-area: myTasks;
+    }
+
+    #Resources {
+        grid-area: resources;
+    }
+
+    #MessageBoard {
+        grid-area: messageBoard;
+    }
+
+    #Plan {
+        grid-area: plan;
+    }
+
+    .dashboard-tile-title {
+        background-color: #274C77;
+        color: #fff;
+        text-align: center;
+    }
+
+    .dashboard-tile-contents {
+        padding: 2.5% 6% 2.5% 6%;
+        background-color: #f2f2f2;
+    }
+
+    .taskBubbleSmall {
+        border: 1px solid black;
+        border-radius: 6px;
+        margin: 4%;
+        display: grid;
+        grid-template-columns: 1fr 0.1fr;
+        grid-template-rows: 1fr 0.5fr;
+        grid-template-areas:
+            "Name Icon"
+            "Date Icon";
+        gap: 2%;
+        padding: 1% 1% 2.5% 2.5%;
+    }
+
+    .taskBubble {
+        border: 1px solid black;
+        border-radius: 6px;
+        margin: 2%;
+        display: grid;
+        grid-template-columns: 1fr 0.1fr;
+        grid-template-rows: 1fr 0.5fr;
+        grid-template-areas:
+            "Name Icon"
+            "Date Icon";
+        gap: 2%;
+        padding: 1% 1% 2.5% 2.5%;
+    }
+
+    .taskName {
+        font-size: 1em;
+        grid-area: Name;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .taskDate {
+        font-size: x-small;
+        grid-area: Date;
+    }
+
+    .statusIconContainer {
+        grid-area: Icon;
+        display: flex;
+        align-items: center;
+    }
+
+    .statusIcon {
+        height: 1.25vw;
+        width: 1.25vw;
+    }
+
+    .toDoBubble {
+        background-color: #fff;
+    }
+
+    .inProgressBubble {
+        background-color: #fff;
+    }
+
+    .completedBubble {
+        background-color: #fff;
+    }
+
+    .plan-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 1fr;
+        grid-template-areas:
+            "ToDo InProgress Completed";
+        gap: 8%;
+    }
+
+    .toDo-area {
+        grid-area: ToDo;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 0.1fr 1fr;
+        grid-template-areas:
+            "Head"
+            "Body";
+        height: fit-content;
+    }
+
+    .inProgress-area {
+        grid-area: InProgress;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 0.1fr 1fr;
+        grid-template-areas:
+            "Head"
+            "Body";
+        height: fit-content;
+    }
+
+    .completed-area {
+        grid-area: Completed;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 0.1fr 1fr;
+        grid-template-areas:
+            "Head"
+            "Body";
+        height: fit-content;
+    }
+
+    .plan-status-section {
+        border: 1px solid black;
+    }
+
+    .plan-status-section-title-bar {
+        grid-area: Head;
+        text-align: center;
+        border-bottom: 1px solid black;
+        display: grid;
+        grid-template-columns: 1fr 0.1fr;
+        grid-template-areas:
+            "Title Add";
+        background-color: #6a95b7;
+    }
+
+    .plan-status-section-title {
+        grid-area: Title;
+        border-right: 1px solid black;
+        color: #fff;
+    }
+
+    .add-task-button-container {
+        grid-area: Add;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: none;
+        background-color: #6a95b7;
+    }
+
+        .add-task-button-container:hover {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+    .add-task-button {
+        height: 1.5vw;
+        width: 1.5vw;
+    }
+
+    .plan-status-section-contents {
+        grid-area: Body;
+        padding: 2%;
+    }
+
+    .bootstrap-select > .dropdown-toggle {
+        height: 38px;
+    }
+
+        .bootstrap-select > .dropdown-toggle:active,
+        .bootstrap-select > .dropdown-toggle:focus {
+            outline: none !important;
+        }
+
+    .filePickerContainer {
+        display: grid;
+        grid-template-columns: 85% 15%;
+        grid-template-areas:
+            "Icon Button";
+    }
+
+    .button {
+        grid-area: Button;
+        border: none;
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .filePicker {
+        grid-area: Icon;
+        display: flex;
+        justify-content: right;
+        border: 1px solid black;
+    }
+
+    .knowledge-container {
+        margin: 2%;
+    }
+
+    .knowledge-title {
+        margin-left: 10%;
+        font-size: smaller;
+    }
+
+    .receivedMessageContainer {
+        display: flex;
+        justify-content: left;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .receivedMessage {
+        border-radius: 15px;
+        padding: 5px 10px 5px 10px;
+        background-color: lightgrey;
+        display: inline-block;
+    }
+
+    .sentMessageContainer {
+        display: flex;
+        justify-content: right;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .sender {
+        padding: 5px 10px 0px 10px;
+        display: inline-block;
+        font-size: smaller;
+    }
+
+    .sentMessage {
+        border-radius: 15px;
+        padding: 5px 10px 5px 10px;
+        background-color: #5285f7;
+        display: inline-block;
+        color: white;
+    }
+
+    .messageForm {
+        position: fixed;
+        bottom: 3%;
+        margin-left: 10px;
+    }
+
+    .messageContent {
+        border-radius: 15px;
+        border: 1px solid grey;
+        padding: 5px 10px 5px 10px;
+    }
+
+    .sendMessageBtn {
+        background-color: #5285f7;
+        border-radius: 15px;
+    }
+
+</style>
+
+@*All Tasks*@
+<div id="Plan" class="dashboard-tile">
+    <div class="dashboard-tile-title">Task Manager</div>
+
+    <div class="dashboard-tile-contents">
+        <div class="plan-grid">
+
+            <div class="plan-status-section toDo-area">
+                <div class="plan-status-section-title-bar">
+                    <div class="plan-status-section-title">To Do</div>
+                    <button id="1" class="add-task-button-container" data-bs-toggle="modal" data-bs-target="#addTaskForm">
+                        @* <img class="add-task-button" src="/Images/icon_add_task.svg"  /> *@
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-plus-square-fill" viewBox="0 0 16 16">
+                            <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="plan-status-section-contents">
+                    @* Create task list in To Do *@
+                    @{
+                        foreach (var task in Model.AllTasks)
+                        {
+                            if (task.TaskStatus == "To Do")
+                            {
+                                <div class="taskBubbleSmall toDoBubble">
+                                    <div class="taskName">@task.TaskName</div>
+                                    <div class="taskDate">@task.TaskDueDateTime</div>
+                                    <div class="statusIconContainer">
+                                        <img class="statusIcon" src="/Images/icon_to-do_status.jpg" />
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+            <div class="plan-status-section inProgress-area">
+                <div class="plan-status-section-title-bar">
+                    <div class="plan-status-section-title">In Progress</div>
+                    <button id="2" class="add-task-button-container" data-bs-toggle="modal" data-bs-target="#addTaskForm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-plus-square-fill" viewBox="0 0 16 16">
+                            <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="plan-status-section-contents">
+
+                    @* Create task list in In Progress *@
+                    @{
+                        foreach (var task in Model.AllTasks)
+                        {
+                            if (task.TaskStatus == "In Progress")
+                            {
+                                <div class="taskBubbleSmall inProgressBubble">
+                                    <div class="taskName">@task.TaskName</div>
+                                    <div class="taskDate">@task.TaskDueDateTime</div>
+                                    <div class="statusIconContainer">
+                                        <img class="statusIcon" src="/Images/icon_in-progress_status.jpg">
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+            <div class="plan-status-section completed-area">
+                <div class="plan-status-section-title-bar">
+                    <div class="plan-status-section-title">Completed</div>
+                    <button id="3" class="add-task-button-container" data-bs-toggle="modal" data-bs-target="#addTaskForm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-plus-square-fill" viewBox="0 0 16 16">
+                            <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="plan-status-section-contents">
+                    @* Create task list in Completed*@
+                    @{
+                        foreach (var task in Model.AllTasks)
+                        {
+                            if (task.TaskStatus == "Completed")
+                            {
+                                <div class="taskBubbleSmall completedBubble">
+                                    <div class="taskName">@task.TaskName</div>
+                                    <div class="taskDate">@task.TaskDueDateTime</div>
+                                    <div class="statusIconContainer">
+                                        <img class="statusIcon" src="/Images/icon_completed_status.jpg" />
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
