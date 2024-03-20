@@ -112,6 +112,25 @@ namespace ValleyVisionSolution.Pages.DB
 
 
 
+        //BEGIN TASK MANAGER PAGE________________________________________________________________________________________
+        public static SqlDataReader AllTasksReader(int? initID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@InitID", initID);
+            cmd.CommandText = "SELECT DISTINCT T.taskID, T.taskName, T.taskStatus, T.taskDescription, T.taskDueDateTime, T.initID FROM Task T JOIN Initiative I ON T.initID = I.initID WHERE I.initID = @InitID;";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+        //END TASK MANAGER PAGE__________________________________________________________________________________________
+
+
+
+
 
 
 
