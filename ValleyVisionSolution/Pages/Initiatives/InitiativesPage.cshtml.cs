@@ -17,6 +17,7 @@ namespace ValleyVisionSolution.Pages.Initiatives
 
         public void loadData()
         {
+
             //get userID from session
             int? UserID = HttpContext.Session.GetInt32("UserID");
 

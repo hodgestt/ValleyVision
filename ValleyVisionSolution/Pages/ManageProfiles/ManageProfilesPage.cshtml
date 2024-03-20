@@ -1,0 +1,57 @@
+﻿@page
+@model ValleyVisionSolution.Pages.ManageProfiles.ManageProfilesPageModel
+@{
+}
+@{
+
+    <h2>Profiles</h2>
+    <br />
+    <table class="table table-bordered table-responsive table-hover">
+        <thead>
+            <tr>
+                <th>UserName</th>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>UserType</th>
+                <th>Street </th>
+                <th>Apartment</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Zip</th>
+                <th>Country</th>
+                <th> </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                foreach (var profile in Model.FullProfileList)
+                {
+                    <tr>
+                        <td>@profile.UserName</td>
+                        <td>@profile.FirstName</td>
+                        <td>@profile.LastName</td>
+                        <td>@profile.Email</td>
+                        <td>@profile.Phone</td>
+                        <td>@profile.UserType</td>
+                        <td>@profile.Street</td>
+                        <td>@profile.Apartment</td>
+                        <td>@profile.City</td>
+                        <td>@profile.State</td>
+                        <td>@profile.Zip</td>
+                        <td>@profile.Country</td>
+                        <td>
+                            @*<a asp-page="EditEmployees" class="btn" style=" background-color:rebeccapurple; -webkit-text-fill-color:white;" asp-route-employeeid="@emp.EmployeeID">Edit -></a>*@
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+
+    </table>
+    <br />
+    // <a asp-page="/Employees/AddEmployee" class="btn" style=" background-color:rebeccapurple; -webkit-text-fill-color:white;">Create User</a>
+
+}

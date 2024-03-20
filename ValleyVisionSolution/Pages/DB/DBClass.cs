@@ -129,6 +129,21 @@ namespace ValleyVisionSolution.Pages.DB
         //END TASK MANAGER PAGE__________________________________________________________________________________________
 
 
+        //BEGIN MANAGE PROFILES PAGE_________________________________________________________________________________________
+
+        public static SqlDataReader FullProfilesReader()
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.CommandText = "SELECT C.UserName, U.firstName, U.lastName, U.email, U.phone, U.userType, A.street, A.apartment, A.city, A.state_, A.zip, A.country FROM AUTH.dbo.HashedCredentials C JOIN Main.dbo.User_ U ON U.UserID = C.UserID JOIN Main.dbo.Address_ A ON A.AddressID = U.AddressID";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+        //END MANAGE PROFILES PAGE____________________________________________________________________________________________
 
 
 
