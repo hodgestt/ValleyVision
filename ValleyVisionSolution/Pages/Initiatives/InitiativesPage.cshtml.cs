@@ -37,9 +37,27 @@ namespace ValleyVisionSolution.Pages.Initiatives
 
         }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
-            loadData();
+            if (HttpContext.Session.GetString("LoggedIn") == "True")
+            {
+                loadData();
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Index");
+            }
+            
         }
+
+        public IActionResult OnPostLogoutHandler()
+        {
+            HttpContext.Session.SetInt32("UserID", -1);
+            HttpContext.Session.SetString("LoggedIn", "False");
+            return RedirectToPage("/Index");
+        }
+
+        
     }
 }

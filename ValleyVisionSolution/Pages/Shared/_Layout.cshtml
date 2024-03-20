@@ -9,6 +9,36 @@
     <link rel="stylesheet" href="~/ValleyVisionSolution.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <!-- Logout Form -->
+    <div class="modal fade" id="LogoutForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form method="post" asp-page="/Index">
+                    <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Logout</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3">
+                            @*<div class="col-md-6">*@
+                            <div>Are you sure you want to logout?</div>
+                            @*</div>*@
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-top:none">
+
+                        <button type="submit" class="btn btn-primary" asp-page-handler="LogoutHandler">Logout &rarr;</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <!-- End Logout Form -->
+
+
     <header>
         @* <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
@@ -29,7 +59,7 @@
                 </div>
             </div>
         </nav> *@
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav style="background-color: #2e4c74 !important" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -38,12 +68,29 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Initiatives/InitiativesPage">Initiatives</a>
+                            <a class="nav-link text-white" asp-area="" asp-page="/Index">Home</a>
                         </li>
+                        @if (Context.Session.GetInt32("UserID") != -1)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-page="/Initiatives/InitiativesPage">Initiatives</a>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link text-white" style="background-color: #2e4c74; border: none; color: white;" data-bs-toggle="modal" data-bs-target="#LogoutForm">
+                                    @* <img src="~/images/logout-icon.png" style="height:30px" />*@ Logout
+                                </button>
+                            </li>
+                        }
+                        @if (Context.Session.GetInt32("UserID") == -1)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-page="/Login/LoginPage">Login</a>
+                            </li>
+                        }
                     </ul>
-                    @if (Context.Session.GetString("Username") != null)
+                    @if (Context.Session.GetInt32("UserID") != -1)
                     {
-                        <h5 class="position-relative align-middle" style="-webkit-text-fill-color: black;">
+                        <h5 class="position-relative align-middle" style="-webkit-text-fill-color: white;">
                             @Context.Session.GetString("Username")
                         </h5>
                     }
