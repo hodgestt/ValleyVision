@@ -75,6 +75,14 @@
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="" asp-page="/Initiatives/InitiativesPage">Initiatives</a>
                             </li>
+                            int? UserID = Context.Session.GetInt32("UserID");
+                            String UserType = DB.DBClass.CheckUserType((int)UserID);
+                            @if (UserType == "Admin")
+                            {
+                            <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-page="/ManageProfiles/ManageProfilesPage">Manage Users</a>
+                            </li>
+                            }
                             <li class="nav-item">
                                 <button class="nav-link text-white" style="background-color: #2e4c74; border: none; color: white;" data-bs-toggle="modal" data-bs-target="#LogoutForm">
                                     @* <img src="~/images/logout-icon.png" style="height:30px" />*@ Logout
