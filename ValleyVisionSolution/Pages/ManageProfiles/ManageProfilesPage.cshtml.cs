@@ -43,25 +43,19 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
         }
 
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
+            if (HttpContext.Session.GetString("LoggedIn") == "True" && DBClass.CheckUserType((int)HttpContext.Session.GetInt32("UserID")) == "Admin")
+            {
+                loadData();
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Index");
+            }
 
         }
-
-
-        //public IActionResult OnGet()
-        //{
-        //    if (HttpContext.Session.GetString("LoggedIn") == "True" && DBClass.CheckUserType(HttpContext.Session.GetInt32("UserID") == "Admin")
-        //    {
-        //        loadData();
-        //        return Page();
-        //    }
-        //    else
-        //    {
-        //        return RedirectToPage("/Index");
-        //    }
-
-        //}
 
     }
 }

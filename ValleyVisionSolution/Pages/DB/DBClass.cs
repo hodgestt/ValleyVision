@@ -146,16 +146,26 @@ namespace ValleyVisionSolution.Pages.DB
         //END MANAGE PROFILES PAGE____________________________________________________________________________________________
 
 
+        public static String CheckUserType(int userid)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.CommandText = "SELECT U.UserType FROM Main.dbo.User_ U JOIN AUTH.dbo.HashedCredentials C ON C.UserID=U.userID WHERE U.userID = " + userid;
+            cmd.Connection.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
 
+            String returnedUserType=null;
+            while (reader.Read())
+            {
+                returnedUserType = reader["UserType"].ToString();
+            }
 
+            ValleyVisionConnection.Close();
 
+            return returnedUserType;
 
-
-
-
-
-
-
+        }
 
     }
 }
