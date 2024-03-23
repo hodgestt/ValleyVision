@@ -25,7 +25,6 @@ namespace ValleyVisionSolution.Pages.DB
 
 
         //BEGIN LOGIN PAGE____________________________________________________________________________________________________
-        
         //checks if there is a user that matches the credentials. If yes returns userID, if no return -1
         public static int HashedParameterLogin(HashedCredential UserCredentials)
         {
@@ -70,13 +69,11 @@ namespace ValleyVisionSolution.Pages.DB
             cmdLogin.Connection.Close();
             return UserID;
         }
-
         //END LOGIN PAGE_________________________________________________________________________________________________
 
 
 
         //BEGIN INITIATIVES PAGE_________________________________________________________________________________________
-
         public static SqlDataReader InitiativesReader(int userID)
         {
             SqlCommand cmd = new SqlCommand();
@@ -126,17 +123,31 @@ namespace ValleyVisionSolution.Pages.DB
 
             return tempReader;
         }
+        public static SqlDataReader MyTasksReader(int? userID, int? initID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@UserID", userID);
+            cmd.Parameters.AddWithValue("@InitID", initID);
+            cmd.CommandText = "SELECT DISTINCT T.taskID, T.taskName, T.taskStatus, T.taskDescription, T.taskDueDateTime, T.initID FROM Task T JOIN Initiative I ON T.initID = I.initID JOIN TaskUsers TU ON TU.taskID = T.taskID JOIN User_ U ON U.userID = TU.userID WHERE I.initID = @InitID AND U.userID = @UserID;";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
         //END TASK MANAGER PAGE__________________________________________________________________________________________
 
 
-        //BEGIN MANAGE PROFILES PAGE_________________________________________________________________________________________
 
+        //BEGIN MANAGE PROFILES PAGE_________________________________________________________________________________________
         public static SqlDataReader FullProfilesReader()
         {
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
-            cmd.CommandText = "SELECT C.UserName, U.firstName, U.lastName, U.email, U.phone, U.userType, A.street, A.apartment, A.city, A.state_, A.zip, A.country FROM AUTH.dbo.HashedCredentials C JOIN Main.dbo.User_ U ON U.UserID = C.UserID JOIN Main.dbo.Address_ A ON A.AddressID = U.AddressID";
+            cmd.CommandText = "SELECT C.UserName, U.firstName, U.lastName, U.email, U.phone, U.userType, A.street, A.apartment, A.city, A.state_, A.zip, A.country FROM AUTH.dbo.HashedCredentials C JOIN Main.dbo.User_ U ON U.UserID = C.UserID JOIN Main.dbo.Address_ A ON A.AddressID = U.AddressID;";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -146,26 +157,30 @@ namespace ValleyVisionSolution.Pages.DB
         //END MANAGE PROFILES PAGE____________________________________________________________________________________________
 
 
-        public static String CheckUserType(int userid)
+
+        //BEGIN NON PAGE SPECIFIC METHODS-------------------------------------------------------------------------------------
+        public static String CheckUserType(int userID)
         {
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
-            cmd.CommandText = "SELECT U.UserType FROM Main.dbo.User_ U JOIN AUTH.dbo.HashedCredentials C ON C.UserID=U.userID WHERE U.userID = " + userid;
+            cmd.Parameters.AddWithValue("@UserID", userID);
+            cmd.CommandText = "SELECT U.UserType FROM Main.dbo.User_ U JOIN AUTH.dbo.HashedCredentials C ON C.UserID=U.userID WHERE U.userID = @UserID;";
             cmd.Connection.Open();
             SqlDataReader reader = cmd.ExecuteReader();
 
-            String returnedUserType=null;
+            String userType=null;
             while (reader.Read())
             {
-                returnedUserType = reader["UserType"].ToString();
+                userType = reader["UserType"].ToString();
             }
 
             ValleyVisionConnection.Close();
 
-            return returnedUserType;
+            return userType;
 
         }
+        //END NON PAGE SPECIFIC METHODS---------------------------------------------------------------------------------------
 
     }
 }

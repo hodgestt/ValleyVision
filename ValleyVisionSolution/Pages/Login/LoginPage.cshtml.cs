@@ -24,7 +24,7 @@ namespace ValleyVisionSolution.Pages.Login
             //when user logs out they return to this page, which will show message saying logout was succesfull
             if (HttpContext.Session.GetString("LoggedIn") == "False")
             {
-                LogoutMessage = "Logout was succesfull!";
+                //LogoutMessage = "Logout was succesfull!";
             }
         }
 

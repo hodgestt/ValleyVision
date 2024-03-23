@@ -11,10 +11,12 @@ namespace ValleyVisionSolution.Pages.TaskManager;
 public class TaskManagerPageModel : PageModel
 {
     public List<Task> AllTasks { get; set; }
+    public List<Task> MyTasks { get; set; }
 
     public TaskManagerPageModel()
     {
         AllTasks = new List<Task>();
+        MyTasks = new List<Task>();
     }
     public void loadData()
     {
@@ -36,6 +38,46 @@ public class TaskManagerPageModel : PageModel
         }
         // Close your connection in DBClass
         DBClass.ValleyVisionConnection.Close();
+
+        //Populate MyTasks list
+        SqlDataReader reader2 = DBClass.MyTasksReader(HttpContext.Session.GetInt32("UserID"), HttpContext.Session.GetInt32("InitID"));
+        while (reader2.Read())
+        {
+            MyTasks.Add(new Task
+            {
+                TaskID = Int32.Parse(reader2["TaskID"].ToString()),
+                TaskName = reader2["TaskName"].ToString(),
+                TaskStatus = reader2["TaskStatus"].ToString(),
+                TaskDescription = reader2["TaskDescription"].ToString(),
+                TaskDueDateTime = Convert.ToDateTime(reader2["TaskDueDateTime"]),
+                InitID = Int32.Parse(reader2["InitID"].ToString())
+            });
+        }
+        // Close your connection in DBClass
+        DBClass.ValleyVisionConnection.Close();
+
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
     public void OnGet()
     {
