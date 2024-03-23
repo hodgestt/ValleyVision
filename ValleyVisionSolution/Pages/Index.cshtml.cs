@@ -11,10 +11,13 @@ namespace ValleyVisionSolution.Pages
 
         public void OnGet()
         {
-            if (HttpContext.Session.GetInt32("UserID") == null)
-            {
-                HttpContext.Session.SetInt32("UserID", -1);
-            }   
+             
+        }
+
+        public IActionResult OnPostLogoutHandler()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToPage("/Index");
         }
     }
 }

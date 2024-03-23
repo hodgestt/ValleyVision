@@ -54,8 +54,7 @@ namespace ValleyVisionSolution.Pages.Initiatives
 
         public IActionResult OnPostLogoutHandler()
         {
-            HttpContext.Session.SetInt32("UserID", -1);
-            HttpContext.Session.SetString("LoggedIn", "False");
+            HttpContext.Session.Clear();
             return RedirectToPage("/Index");
         }
 

@@ -35,11 +35,29 @@ namespace ValleyVisionSolution.Pages.Dashboard
 
         }
 
-        public void OnGet(int initID)
+        public IActionResult OnGet(int initID)
         {
             HttpContext.Session.SetInt32("InitID", initID);
 
-            loadData(initID);
+            if (HttpContext.Session.GetString("LoggedIn") == "True")
+            {
+                loadData(initID);
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Index");
+            }
+
+            
         }
+
+
+        public IActionResult OnPostLogoutHandler()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToPage("/Index");
+        }
+
     }
 }

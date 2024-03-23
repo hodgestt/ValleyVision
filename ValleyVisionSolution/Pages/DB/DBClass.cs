@@ -159,7 +159,7 @@ namespace ValleyVisionSolution.Pages.DB
 
 
         //BEGIN NON PAGE SPECIFIC METHODS-------------------------------------------------------------------------------------
-        public static String CheckUserType(int userID)
+        public static String CheckUserType(int? userID)
         {
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;

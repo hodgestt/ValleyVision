@@ -83,4 +83,10 @@ public class TaskManagerPageModel : PageModel
     {
         loadData();
     }
+
+    public IActionResult OnPostLogoutHandler()
+    {
+        HttpContext.Session.Clear();
+        return RedirectToPage("/Index");
+    }
 }

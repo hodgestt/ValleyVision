@@ -8,5 +8,11 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
         public void OnGet()
         {
         }
+
+        public IActionResult OnPostLogoutHandler()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToPage("/Index");
+        }
     }
 }
