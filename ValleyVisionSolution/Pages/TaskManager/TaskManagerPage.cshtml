@@ -10,7 +10,7 @@
         grid-template-columns: 3fr 1fr;
         grid-template-areas:
             "AllTasks MyTasks";
-        gap: 5vw;
+        gap: 3vw;
     }
 
     #MyTasks {
@@ -61,27 +61,28 @@
         }
 
     .dashboard-tile-contents {
-        padding: 2.5% 6% 2.5% 6%;
+        padding: 3%;
         background-color: #f2f2f2;
         height:70vh;
     }
 
     .taskBubble {
-        border: 1px solid black;
         border-radius: 6px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add shadow */
         margin: 4%;
         display: grid;
-        grid-template-columns: 1fr 0.1fr;
-        grid-template-rows: 1fr 0.5fr;
+        grid-template-columns: 1fr 0.15fr;
+        grid-template-rows: auto auto;
         grid-template-areas:
             "Name Icon"
             "Date Icon";
         gap: 2%;
-        padding: 1% 1% 2.5% 2.5%;
+        padding: 2%;
+        font-size: 0.75vw;
     }
 
     .taskName {
-        font-size: 1em;
+        /*font-size: 1em;*/
         grid-area: Name;
         overflow: hidden;
         white-space: nowrap;
@@ -89,7 +90,7 @@
     }
 
     .taskDate {
-        font-size: x-small;
+        /*font-size: x-small;*/
         grid-area: Date;
         overflow: hidden;
         white-space: nowrap;
@@ -125,14 +126,14 @@
         grid-template-rows: 1fr;
         grid-template-areas:
             "ToDo InProgress Completed";
-        gap: 8%;
+        gap: 3%;
     }
 
     .toDo-area {
         grid-area: ToDo;
         display: grid;
         grid-template-columns: 1fr;
-        grid-template-rows: 0.1fr 1fr;
+        grid-template-rows: 0.1fr auto;
         grid-template-areas:
             "Head"
             "Body";
@@ -143,7 +144,7 @@
         grid-area: InProgress;
         display: grid;
         grid-template-columns: 1fr;
-        grid-template-rows: 0.1fr 1fr;
+        grid-template-rows: 0.1fr auto;
         grid-template-areas:
             "Head"
             "Body";
@@ -154,7 +155,7 @@
         grid-area: Completed;
         display: grid;
         grid-template-columns: 1fr;
-        grid-template-rows: 0.1fr 1fr;
+        grid-template-rows: 0.1fr auto;
         grid-template-areas:
             "Head"
             "Body";
@@ -162,20 +163,20 @@
     }
 
     .plan-status-section {
-        border: 1px solid black;
-        max-height: 80vh; 
-        overflow-y: auto; 
+        /*border: 1px solid black;
+        border-radius:6px;*/
     }
 
     .plan-status-section-title-bar {
         grid-area: Head;
         text-align: center;
-        border-bottom: 1px solid black;
+        /*border-bottom: 1px solid black;*/
         background-color: #6a95b7;
         display: flex;
         align-items: center;
         justify-content: center;
         height:1.5vw;
+        border-radius: 6px;
     }
 
     .plan-status-section-title {
@@ -188,6 +189,10 @@
     .plan-status-section-contents {
         grid-area: Body;
         padding: 2%;
+        max-height: 62vh;
+        overflow-y: auto;
+        /*background-color:#fff;*/
+        border-radius: 6px;
     }
 
     .bootstrap-select > .dropdown-toggle {
@@ -449,42 +454,43 @@
             <div class="dashboard-tile-title">My Tasks</div>
         </div>
         <div class="dashboard-tile-contents">
-            @* Create task list in MyTasks *@
-            @{
-                foreach (var task in Model.MyTasks)
-                {
-                    if (task.TaskStatus == "To Do")
+            <div class="plan-status-section-contents">
+                @* Create task list in MyTasks *@
+                @{
+                    foreach (var task in Model.MyTasks)
                     {
-                        <div class="taskBubble toDoBubble">
-                            <div class="taskName">@task.TaskName</div>
-                            <div class="taskDate">@task.TaskDueDateTime</div>
-                            <div class="statusIconContainer">
-                                <img class="statusIcon" src="/Images/icon_to-do_status.jpg" />
+                        if (task.TaskStatus == "To Do")
+                        {
+                            <div class="taskBubble toDoBubble">
+                                <div class="taskName">@task.TaskName</div>
+                                <div class="taskDate">@task.TaskDueDateTime</div>
+                                <div class="statusIconContainer">
+                                    <img class="statusIcon" src="/Images/icon_to-do_status.jpg" />
+                                </div>
                             </div>
-                        </div>
-                    }
-                    if (task.TaskStatus == "In Progress")
-                    {
-                        <div class="taskBubble inProgressBubble">
-                            <div class="taskName">@task.TaskName</div>
-                            <div class="taskDate">@task.TaskDueDateTime</div>
-                            <div class="statusIconContainer">
-                                <img class="statusIcon" src="/Images/icon_in-progress_status.jpg">
+                        }
+                        if (task.TaskStatus == "In Progress")
+                        {
+                            <div class="taskBubble inProgressBubble">
+                                <div class="taskName">@task.TaskName</div>
+                                <div class="taskDate">@task.TaskDueDateTime</div>
+                                <div class="statusIconContainer">
+                                    <img class="statusIcon" src="/Images/icon_in-progress_status.jpg">
+                                </div>
                             </div>
-                        </div>
-                    }
-                    if (task.TaskStatus == "Completed")
-                    {
-                        <div class="taskBubble completedBubble">
-                            <div class="taskName">@task.TaskName</div>
-                            <div class="taskDate">@task.TaskDueDateTime</div>
-                            <div class="statusIconContainer">
-                                <img class="statusIcon" src="/Images/icon_completed_status.jpg" />
+                        }
+                        if (task.TaskStatus == "Completed")
+                        {
+                            <div class="taskBubble completedBubble">
+                                <div class="taskName">@task.TaskName</div>
+                                <div class="taskDate">@task.TaskDueDateTime</div>
+                                <div class="statusIconContainer">
+                                    <img class="statusIcon" src="/Images/icon_completed_status.jpg" />
+                                </div>
                             </div>
-                        </div>
+                        }
                     }
                 }
-            }
-
+            </div>
     </div>
 </div>
