@@ -69,6 +69,9 @@
                                     @* <img src="~/images/logout-icon.png" style="height:30px" />*@ Logout
                                 </button>
                             </li>
+                        }
+                        @if (Context.Session.GetInt32("UserID") == -1)
+                        {
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="" asp-page="/Login/LoginPage">Login</a>
                             </li>
