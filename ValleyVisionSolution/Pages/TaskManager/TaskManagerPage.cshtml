@@ -13,10 +13,6 @@
         gap: 5vw;
     }
 
-    /*.dashboard-tile {
-        /*  background-color: #f2f2f2; */
-    }*/
-
     #MyTasks {
         grid-area: MyTasks;
     }
@@ -167,8 +163,8 @@
 
     .plan-status-section {
         border: 1px solid black;
-        max-height: 80vh; /* Set a maximum height of 80% of viewport height */
-        overflow-y: auto; /* Enable vertical scrolling when content exceeds the height */
+        max-height: 80vh; 
+        overflow-y: auto; 
     }
 
     .plan-status-section-title-bar {
@@ -286,6 +282,76 @@
     }
 
 </style>
+
+<!-- Add New Task Form -->
+<div class="modal fade" id="addTaskForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form method="post" asp-page="/DashboardPage">
+                <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add Task</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Task Name:</div>
+                            @*<input type="hidden" asp-for="NewTask">
+                            <input type="hidden" asp-for="NewTask">*@
+                            <input asp-for="@Model.NewTask.TaskName" type="text" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewTask.TaskName"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Assign to:</div>
+                            <select asp-for="@Model.NewTaskUsers" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
+                                @{
+                                    foreach (var user in Model.InitUsers)
+                                    {
+                                        <option value="@user.UserID">@user.FirstName @user.LastName</option>
+                                    }
+                                }
+
+                            </select>
+
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Due Date:</div>
+                            <input asp-for="@Model.NewTask.TaskDueDateTime" type="date" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewTask.TaskDueDateTime"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Status:</div>
+                            <select asp-for="@Model.NewTask.TaskStatus" class="form-control" id="taskStatus">
+                                <option value="To Do">To Do </option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                            <span class="text-danger" asp-validation-for="@Model.NewTask.TaskStatus"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div>Description:</div>
+                            <textarea asp-for="@Model.NewTask.TaskDescription" class="form-control" id="taskDescription" rows="3" maxlength="250"></textarea>
+                            <span class="text-danger" asp-validation-for="@Model.NewTask.TaskDescription"></span>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer" style="border-top:none">
+                    <button type="reset" id="addTaskFormClearBtn" class="btn btn-secondary">Clear</button>
+                    <button type="submit" class="btn btn-primary" asp-page-handler="AddTask">Add</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-- End New Task Form -->
 
 <div class="dashboard-grid">
     @*All Tasks*@

@@ -74,6 +74,7 @@ namespace ValleyVisionSolution.Pages.DB
 
 
         //BEGIN INITIATIVES PAGE_________________________________________________________________________________________
+        //reads all the initiatives that the user is a part of
         public static SqlDataReader InitiativesReader(int userID)
         {
             SqlCommand cmd = new SqlCommand();
@@ -92,6 +93,7 @@ namespace ValleyVisionSolution.Pages.DB
 
 
         //BEGIN DASHBOARD PAGE___________________________________________________________________________________________
+        //reads all of the tiles that are activated for an initiative
         public static SqlDataReader TilesReader(int initID)
         {
             SqlCommand cmd = new SqlCommand();
@@ -110,6 +112,7 @@ namespace ValleyVisionSolution.Pages.DB
 
 
         //BEGIN TASK MANAGER PAGE________________________________________________________________________________________
+        //reads all tasks associated with a specific initiative
         public static SqlDataReader AllTasksReader(int? initID)
         {
             SqlCommand cmd = new SqlCommand();
@@ -123,6 +126,7 @@ namespace ValleyVisionSolution.Pages.DB
 
             return tempReader;
         }
+        //reads all tasks associated with a specific user in the specific initiative
         public static SqlDataReader MyTasksReader(int? userID, int? initID)
         {
             SqlCommand cmd = new SqlCommand();
@@ -137,11 +141,58 @@ namespace ValleyVisionSolution.Pages.DB
 
             return tempReader;
         }
+        //reads all users that are part of a given initiative
+        public static SqlDataReader InitiativeUsersReader(int? initID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@InitID", initID);
+            cmd.CommandText = "SELECT U.userID, U.firstName, U.lastName FROM User_ U JOIN InitiativeUsers IU ON U.userID = IU.userID WHERE IU.initID = @InitID;";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+        //adds a new task in a specific initiative and assigns it to the specified users
+        public static void AddTask(int? initID, DataClasses.Task newTask, List<int> newTaskUsers)
+        {
+            int taskID;
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@TaskName", newTask.TaskName);
+            cmd.Parameters.AddWithValue("@TaskStatus", newTask.TaskStatus);
+            cmd.Parameters.AddWithValue("@TaskDescription", newTask.TaskDescription);
+            cmd.Parameters.AddWithValue("@TaskDueDateTime", newTask.TaskDueDateTime);
+            cmd.Parameters.AddWithValue("@InitID", initID);
+            String sqlQuery = "INSERT INTO Task (taskName, taskStatus, taskDescription, taskDueDateTime, initID) VALUES (@TaskName, @TaskStatus, @TaskDescription, @TaskDueDateTime, @InitID);" + "SELECT SCOPE_IDENTITY();";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            taskID = Convert.ToInt32(cmd.ExecuteScalar());
+            cmd.Connection.Close();
+
+            foreach (var user in newTaskUsers)
+            {
+                SqlCommand cmd2 = new SqlCommand();
+                cmd2.Connection = ValleyVisionConnection;
+                cmd2.Connection.ConnectionString = MainConnString;
+                cmd2.Parameters.AddWithValue("@TaskID", taskID);
+                cmd2.Parameters.AddWithValue("@UserID", user);
+                String sqlQuery2 = "INSERT INTO TaskUsers (taskID, userID) VALUES (@TaskID, @UserID);";
+                cmd2.CommandText = sqlQuery2;
+                cmd2.Connection.Open();
+                cmd2.ExecuteNonQuery();
+                cmd2.Connection.Close();
+            }
+        }
         //END TASK MANAGER PAGE__________________________________________________________________________________________
 
 
 
         //BEGIN MANAGE PROFILES PAGE_________________________________________________________________________________________
+        //reads all user data in the system for the admin to see
         public static SqlDataReader FullProfilesReader()
         {
             SqlCommand cmd = new SqlCommand();
@@ -159,6 +210,7 @@ namespace ValleyVisionSolution.Pages.DB
 
 
         //BEGIN NON PAGE SPECIFIC METHODS-------------------------------------------------------------------------------------
+        //checks the userType value of a given user
         public static String CheckUserType(int? userID)
         {
             SqlCommand cmd = new SqlCommand();

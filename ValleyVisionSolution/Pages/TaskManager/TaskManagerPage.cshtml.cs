@@ -12,11 +12,20 @@ public class TaskManagerPageModel : PageModel
 {
     public List<Task> AllTasks { get; set; }
     public List<Task> MyTasks { get; set; }
+    public List<User> InitUsers { get; set; }
+
+    [BindProperty]
+    public Task NewTask { get; set; }
+    [BindProperty]
+    public List<int> NewTaskUsers { get; set; }
+
 
     public TaskManagerPageModel()
     {
         AllTasks = new List<Task>();
         MyTasks = new List<Task>();
+        InitUsers = new List<User>();
+        
     }
     public void loadData()
     {
@@ -56,33 +65,43 @@ public class TaskManagerPageModel : PageModel
         // Close your connection in DBClass
         DBClass.ValleyVisionConnection.Close();
 
-
-       
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        //Populate InitUsers list
+        SqlDataReader reader3 = DBClass.InitiativeUsersReader(initID);
+        while (reader3.Read())
+        {
+            InitUsers.Add(new User
+            {
+                UserID = Int32.Parse(reader3["UserID"].ToString()),
+                FirstName = reader3["FirstName"].ToString(),
+                LastName = reader3["LastName"].ToString()
+            });
+        }
+        // Close your connection in DBClass
+        DBClass.ValleyVisionConnection.Close();
     }
     public void OnGet()
     {
         loadData();
     }
+
+    public IActionResult OnPostAddTask()
+    {
+        if (!ModelState.IsValid)
+        {
+            // Model state is not valid, return the page with validation errors
+            loadData();
+            return Page();
+        }
+
+        // Model state is valid, continue with processing
+        DBClass.AddTask(HttpContext.Session.GetInt32("InitID"), NewTask, NewTaskUsers);
+        loadData();
+        ModelState.Clear();
+        NewTaskUsers = new List<int>();
+        NewTask = new Task();
+        return Page();
+    }
+
 
     public IActionResult OnPostLogoutHandler()
     {
