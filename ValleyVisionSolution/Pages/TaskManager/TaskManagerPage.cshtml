@@ -1,8 +1,13 @@
 ﻿@page
 @model ValleyVisionSolution.Pages.TaskManager.TaskManagerPageModel
+@using Task = ValleyVisionSolution.Pages.DataClasses.Task;
 @{
     ViewData["Title"] = "Task Manager";
 }
+<!-- JavaScript to Set Task ID in Modal -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/js/bootstrap.min.js"></script>
 
 <style>
     .dashboard-grid {
@@ -203,6 +208,14 @@
         border-radius: 6px;
     }
 
+    .editTaskBtn {
+        width: 100%;
+        cursor: pointer;
+        text-align: left;
+        border:none;
+        background-color:inherit;
+    }
+
     .bootstrap-select > .dropdown-toggle {
         height: 38px;
     }
@@ -293,6 +306,7 @@
         background-color: #5285f7;
         border-radius: 15px;
     }
+    
 
 </style>
 
@@ -300,7 +314,7 @@
 <div class="modal fade" id="addTaskForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <form method="post" asp-page="/DashboardPage">
+            <form method="post" asp-page="/TaskManagerPage">
                 <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Add Task</h5>
@@ -366,6 +380,90 @@
 </div>
 <!-- End New Task Form -->
 
+<!-- Edit Task Form -->
+<div class="modal fade" id="editTaskForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form method="post" asp-page="/TaskManagerPage">
+                <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Task View</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <input type="hidden" asp-for="@Model.EditedTask.TaskID" value="@Model.ViewedTask">
+                    @{
+                        Task TaskData = new Task();
+                        foreach (var task in Model.AllTasks)
+                        {
+                            if (task.TaskID == Model.ViewedTask)
+                            {
+                                TaskData = task;
+                            }
+                        }
+                    }
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Task Name:</div>
+                            <input asp-for="@Model.EditedTask.TaskName" type="text" class="form-control" value="@TaskData.TaskName">
+                            <span class="text-danger" asp-validation-for="@Model.NewTask.TaskName"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Assign to:</div>
+                            <select asp-for="@Model.NewTaskUsers" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
+                                @{
+                                    foreach (var user in Model.InitUsers)
+                                    {
+                                        <option value="@user.UserID">@user.FirstName @user.LastName</option>
+                                    }
+                                }
+
+                            </select>
+
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Due Date:</div>
+                            <input asp-for="@Model.NewTask.TaskDueDateTime" type="date" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewTask.TaskDueDateTime"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Status:</div>
+                            <select asp-for="@Model.NewTask.TaskStatus" class="form-control" id="taskStatus">
+                                <option value="To Do">To Do </option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                            <span class="text-danger" asp-validation-for="@Model.NewTask.TaskStatus"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div>Description:</div>
+                            <textarea asp-for="@Model.NewTask.TaskDescription" class="form-control" id="taskDescription" rows="3" maxlength="250"></textarea>
+                            <span class="text-danger" asp-validation-for="@Model.NewTask.TaskDescription"></span>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer" style="border-top:none">
+                    @*<button type="reset" id="addTaskFormClearBtn" class="btn btn-secondary">Clear</button>*@
+                    <button type="submit" class="btn btn-primary" asp-page-handler="AddTask">Update</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-- End Edit Task Form -->
+
+
+
+
 <div class="dashboard-grid">
     @*All Tasks*@
     <div id="Plan" class="dashboard-tile">
@@ -393,13 +491,23 @@
                                 if (task.TaskStatus == "To Do")
                                 {
                                     string formattedDate = task.TaskDueDateTime.ToString("MMM dd");
-                                    <div class="taskBubble toDoBubble">
-                                        <div class="taskName">@task.TaskName</div>
-                                        <div class="taskDate">@formattedDate</div>
-                                        <div class="statusIconContainer">
-                                            <img class="statusIcon" src="/Images/icon_to-do_status.jpg" />
-                                        </div>
-                                    </div>
+                                    //<button class="editTaskBtn" data-bs-toggle="modal" data-bs-target="#editTaskForm" data-task-id="@task.TaskID">
+                                    //    Edit
+                                    //</button>
+                                    <form method="post" asp-page="/TaskManagerPage">
+                                    <input type="hidden" asp-for="@Model.ViewedTask" value="@task.TaskID">
+                                        <button class="editTaskBtn" type="submit" asp-page-handler="UpdateViewedTask">
+                                            <div class="taskBubble toDoBubble">
+                                                <div class="taskName">@task.TaskName</div>
+                                                <div class="taskDate">@formattedDate</div>
+                                                <div class="statusIconContainer">
+                                                    <img class="statusIcon" src="/Images/icon_to-do_status.jpg" />
+                                                </div>
+                                            </div>
+                                        </button>
+                                            
+                                    </form>
+                                    
                                 }
                             }
                         }
@@ -508,3 +616,17 @@
             </div>
     </div>
 </div>
+
+
+
+@{
+    // Check the C# variable openModal
+    if (Model.OpenEditModal)
+    {
+        <script>
+            $(document).ready(function () {
+                $('#editTaskForm').modal('show');
+            });
+        </script>
+    }
+}

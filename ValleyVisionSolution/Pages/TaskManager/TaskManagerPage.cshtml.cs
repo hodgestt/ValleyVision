@@ -13,11 +13,18 @@ public class TaskManagerPageModel : PageModel
     public List<Task> AllTasks { get; set; }
     public List<Task> MyTasks { get; set; }
     public List<User> InitUsers { get; set; }
+    public bool OpenEditModal { get; set; }
+    [BindProperty]
+    public int ViewedTask { get; set; }
 
     [BindProperty]
     public Task NewTask { get; set; }
     [BindProperty]
     public List<int> NewTaskUsers { get; set; }
+    [BindProperty]
+    public Task EditedTask { get; set; }
+    [BindProperty]
+    public List<int> EditedTaskUsers { get; set; }
 
 
     public TaskManagerPageModel()
@@ -25,6 +32,8 @@ public class TaskManagerPageModel : PageModel
         AllTasks = new List<Task>();
         MyTasks = new List<Task>();
         InitUsers = new List<User>();
+
+        OpenEditModal = false;
         
     }
     public void loadData()
@@ -102,6 +111,14 @@ public class TaskManagerPageModel : PageModel
         return Page();
     }
 
+    public IActionResult OnPostUpdateViewedTask()
+    {
+        int iD = ViewedTask;
+        loadData();
+        ViewedTask = iD;
+        OpenEditModal = true;
+        return Page();
+    }
 
     public IActionResult OnPostLogoutHandler()
     {
