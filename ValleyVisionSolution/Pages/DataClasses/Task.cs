@@ -12,7 +12,7 @@ namespace ValleyVisionSolution.Pages.DataClasses
         [Required]
         public string? TaskDescription { get; set; }
         [Required]
-        public DateTime? TaskDueDateTime { get; set; }
+        public DateTime TaskDueDateTime { get; set; }
         public int? InitID { get; set; }
     }
 }

@@ -13,6 +13,10 @@
         gap: 3vw;
     }
 
+    .dashboard-tile{
+        font-size: max(1.25vw, 10px);
+    }
+
     #MyTasks {
         grid-area: MyTasks;
     }
@@ -25,7 +29,7 @@
         position: relative; 
         background-color: #274C77;
         width:100%;
-        height:2vw;
+        height:1.75em;
         display: flex;
         align-items: center;
     }
@@ -34,16 +38,16 @@
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
-        margin: 0; /* Remove default margin */
+        margin: 0;
         color:#fff;
-        font-size:1vw;
+        /*font-size:1vw;*/
     }
 
     .add-task-button-container {
         border: none;
         background-color: #274C77;
         position: absolute;
-        right: 1vw; /* Adjust as needed */
+        right: 1%; /* Adjust as needed */
         top: 50%;
         transform: translateY(-50%);
         display:flex;
@@ -52,8 +56,8 @@
     }
 
     .add-task-button {
-        height: 1vw;
-        width: 1vw;
+        height: max(1.25vw, 10px);
+        width: max(1.25vw, 10px);
     }
 
         .add-task-button:hover {
@@ -78,7 +82,7 @@
             "Date Icon";
         gap: 2%;
         padding: 2%;
-        font-size: 0.75vw;
+        font-size: max(1.25vw,10px);
     }
 
     .taskName {
@@ -87,6 +91,7 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        font-size: max(0.75em,10px);
     }
 
     .taskDate {
@@ -95,6 +100,7 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        font-size: max(0.5em,10px);
     }
 
     .statusIconContainer {
@@ -165,6 +171,7 @@
     .plan-status-section {
         /*border: 1px solid black;
         border-radius:6px;*/
+        font-size: max(1.25vw, 10px);
     }
 
     .plan-status-section-title-bar {
@@ -175,12 +182,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        height:1.5vw;
+        height:1.5em;
         border-radius: 6px;
+        font-size: max(1.25vw, 10px);
     }
 
     .plan-status-section-title {
-        font-size:0.75vw;
+        font-size:max(0.8em,10px);
         color: #fff;
     }
 
@@ -384,9 +392,10 @@
                             {
                                 if (task.TaskStatus == "To Do")
                                 {
+                                    string formattedDate = task.TaskDueDateTime.ToString("MMM dd");
                                     <div class="taskBubble toDoBubble">
                                         <div class="taskName">@task.TaskName</div>
-                                        <div class="taskDate">@task.TaskDueDateTime</div>
+                                        <div class="taskDate">@formattedDate</div>
                                         <div class="statusIconContainer">
                                             <img class="statusIcon" src="/Images/icon_to-do_status.jpg" />
                                         </div>
@@ -408,9 +417,10 @@
                             {
                                 if (task.TaskStatus == "In Progress")
                                 {
+                                    string formattedDate = task.TaskDueDateTime.ToString("MMM dd");
                                     <div class="taskBubble inProgressBubble">
                                         <div class="taskName">@task.TaskName</div>
-                                        <div class="taskDate">@task.TaskDueDateTime</div>
+                                        <div class="taskDate">@formattedDate</div>
                                         <div class="statusIconContainer">
                                             <img class="statusIcon" src="/Images/icon_in-progress_status.jpg">
                                         </div>
@@ -431,9 +441,10 @@
                             {
                                 if (task.TaskStatus == "Completed")
                                 {
+                                    string formattedDate = task.TaskDueDateTime.ToString("MMM dd");
                                     <div class="taskBubble completedBubble">
                                         <div class="taskName">@task.TaskName</div>
-                                        <div class="taskDate">@task.TaskDueDateTime</div>
+                                        <div class="taskDate">@formattedDate</div>
                                         <div class="statusIconContainer">
                                             <img class="statusIcon" src="/Images/icon_completed_status.jpg" />
                                         </div>
@@ -461,9 +472,10 @@
                     {
                         if (task.TaskStatus == "To Do")
                         {
+                            string formattedDate = task.TaskDueDateTime.ToString("MMM dd");
                             <div class="taskBubble toDoBubble">
                                 <div class="taskName">@task.TaskName</div>
-                                <div class="taskDate">@task.TaskDueDateTime</div>
+                                <div class="taskDate">@formattedDate</div>
                                 <div class="statusIconContainer">
                                     <img class="statusIcon" src="/Images/icon_to-do_status.jpg" />
                                 </div>
@@ -471,9 +483,10 @@
                         }
                         if (task.TaskStatus == "In Progress")
                         {
+                            string formattedDate = task.TaskDueDateTime.ToString("MMM dd");
                             <div class="taskBubble inProgressBubble">
                                 <div class="taskName">@task.TaskName</div>
-                                <div class="taskDate">@task.TaskDueDateTime</div>
+                                <div class="taskDate">@formattedDate</div>
                                 <div class="statusIconContainer">
                                     <img class="statusIcon" src="/Images/icon_in-progress_status.jpg">
                                 </div>
@@ -481,9 +494,10 @@
                         }
                         if (task.TaskStatus == "Completed")
                         {
+                            string formattedDate = task.TaskDueDateTime.ToString("MMM dd");
                             <div class="taskBubble completedBubble">
                                 <div class="taskName">@task.TaskName</div>
-                                <div class="taskDate">@task.TaskDueDateTime</div>
+                                <div class="taskDate">@formattedDate</div>
                                 <div class="statusIconContainer">
                                     <img class="statusIcon" src="/Images/icon_completed_status.jpg" />
                                 </div>
