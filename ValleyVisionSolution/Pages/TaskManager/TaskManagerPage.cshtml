@@ -4,10 +4,6 @@
 @{
     ViewData["Title"] = "Task Manager";
 }
-<!-- JavaScript to Set Task ID in Modal -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/js/bootstrap.min.js"></script>
 
 <style>
     .dashboard-grid {
@@ -325,8 +321,6 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div>Task Name:</div>
-                            @*<input type="hidden" asp-for="NewTask">
-                            <input type="hidden" asp-for="NewTask">*@
                             <input asp-for="@Model.NewTask.TaskName" type="text" class="form-control">
                             <span class="text-danger" asp-validation-for="@Model.NewTask.TaskName"></span>
                         </div>
@@ -339,7 +333,6 @@
                                         <option value="@user.UserID">@user.FirstName @user.LastName</option>
                                     }
                                 }
-
                             </select>
 
                         </div>
@@ -380,89 +373,6 @@
 </div>
 <!-- End New Task Form -->
 
-<!-- Edit Task Form -->
-<div class="modal fade" id="editTaskForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <form method="post" asp-page="/TaskManagerPage">
-                <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Task View</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
-                </div>
-                <div class="modal-body">
-
-                    <input type="hidden" asp-for="@Model.EditedTask.TaskID" value="@Model.ViewedTask">
-                    @{
-                        Task TaskData = new Task();
-                        foreach (var task in Model.AllTasks)
-                        {
-                            if (task.TaskID == Model.ViewedTask)
-                            {
-                                TaskData = task;
-                            }
-                        }
-                    }
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div>Task Name:</div>
-                            <input asp-for="@Model.EditedTask.TaskName" type="text" class="form-control" value="@TaskData.TaskName">
-                            <span class="text-danger" asp-validation-for="@Model.NewTask.TaskName"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <div>Assign to:</div>
-                            <select asp-for="@Model.NewTaskUsers" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
-                                @{
-                                    foreach (var user in Model.InitUsers)
-                                    {
-                                        <option value="@user.UserID">@user.FirstName @user.LastName</option>
-                                    }
-                                }
-
-                            </select>
-
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div>Due Date:</div>
-                            <input asp-for="@Model.NewTask.TaskDueDateTime" type="date" class="form-control">
-                            <span class="text-danger" asp-validation-for="@Model.NewTask.TaskDueDateTime"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <div>Status:</div>
-                            <select asp-for="@Model.NewTask.TaskStatus" class="form-control" id="taskStatus">
-                                <option value="To Do">To Do </option>
-                                <option value="In Progress">In Progress</option>
-                                <option value="Completed">Completed</option>
-                            </select>
-                            <span class="text-danger" asp-validation-for="@Model.NewTask.TaskStatus"></span>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <div>Description:</div>
-                            <textarea asp-for="@Model.NewTask.TaskDescription" class="form-control" id="taskDescription" rows="3" maxlength="250"></textarea>
-                            <span class="text-danger" asp-validation-for="@Model.NewTask.TaskDescription"></span>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="modal-footer" style="border-top:none">
-                    @*<button type="reset" id="addTaskFormClearBtn" class="btn btn-secondary">Clear</button>*@
-                    <button type="submit" class="btn btn-primary" asp-page-handler="AddTask">Update</button>
-                </div>
-            </form>
-
-        </div>
-    </div>
-</div>
-<!-- End Edit Task Form -->
-
-
-
 
 <div class="dashboard-grid">
     @*All Tasks*@
@@ -484,30 +394,20 @@
                         <div class="plan-status-section-title">To Do</div>
                     </div>
                     <div class="plan-status-section-contents">
-                        @* Create task list in To Do *@
+                        @* Create task list in In Progress *@
                         @{
                             foreach (var task in Model.AllTasks)
                             {
                                 if (task.TaskStatus == "To Do")
                                 {
                                     string formattedDate = task.TaskDueDateTime.ToString("MMM dd");
-                                    //<button class="editTaskBtn" data-bs-toggle="modal" data-bs-target="#editTaskForm" data-task-id="@task.TaskID">
-                                    //    Edit
-                                    //</button>
-                                    <form method="post" asp-page="/TaskManagerPage">
-                                    <input type="hidden" asp-for="@Model.ViewedTask" value="@task.TaskID">
-                                        <button class="editTaskBtn" type="submit" asp-page-handler="UpdateViewedTask">
-                                            <div class="taskBubble toDoBubble">
-                                                <div class="taskName">@task.TaskName</div>
-                                                <div class="taskDate">@formattedDate</div>
-                                                <div class="statusIconContainer">
-                                                    <img class="statusIcon" src="/Images/icon_to-do_status.jpg" />
-                                                </div>
-                                            </div>
-                                        </button>
-                                            
-                                    </form>
-                                    
+                                    <a class="taskBubble toDoBubble" asp-route-taskID="@task.TaskID" asp-page="/TaskManager/EditTaskPage" style="text-decoration:none; color:inherit;">
+                                        <div class="taskName">@task.TaskName</div>
+                                        <div class="taskDate">@formattedDate</div>
+                                        <div class="statusIconContainer">
+                                            <img class="statusIcon" src="/Images/icon_to-do_status.jpg">
+                                        </div>
+                                    </a>
                                 }
                             }
                         }
@@ -526,13 +426,13 @@
                                 if (task.TaskStatus == "In Progress")
                                 {
                                     string formattedDate = task.TaskDueDateTime.ToString("MMM dd");
-                                    <div class="taskBubble inProgressBubble">
+                                    <a class="taskBubble inProgressBubble" asp-route-taskID="@task.TaskID" asp-page="/TaskManager/EditTaskPage" style="text-decoration:none; color:inherit;">
                                         <div class="taskName">@task.TaskName</div>
                                         <div class="taskDate">@formattedDate</div>
                                         <div class="statusIconContainer">
                                             <img class="statusIcon" src="/Images/icon_in-progress_status.jpg">
                                         </div>
-                                    </div>
+                                    </a>
                                 }
                             }
                         }
@@ -550,13 +450,13 @@
                                 if (task.TaskStatus == "Completed")
                                 {
                                     string formattedDate = task.TaskDueDateTime.ToString("MMM dd");
-                                    <div class="taskBubble completedBubble">
+                                    <a class="taskBubble completedBubble" asp-route-taskID="@task.TaskID" asp-page="/TaskManager/EditTaskPage" style="text-decoration:none; color:inherit;">
                                         <div class="taskName">@task.TaskName</div>
                                         <div class="taskDate">@formattedDate</div>
                                         <div class="statusIconContainer">
                                             <img class="statusIcon" src="/Images/icon_completed_status.jpg" />
                                         </div>
-                                    </div>
+                                    </a>
                                 }
                             }
                         }
@@ -581,52 +481,46 @@
                         if (task.TaskStatus == "To Do")
                         {
                             string formattedDate = task.TaskDueDateTime.ToString("MMM dd");
-                            <div class="taskBubble toDoBubble">
+                            <a class="taskBubble toDoBubble" asp-route-taskID="@task.TaskID" asp-page="/TaskManager/EditTaskPage" style="text-decoration:none; color:inherit;">
                                 <div class="taskName">@task.TaskName</div>
                                 <div class="taskDate">@formattedDate</div>
                                 <div class="statusIconContainer">
                                     <img class="statusIcon" src="/Images/icon_to-do_status.jpg" />
                                 </div>
-                            </div>
+                            </a>
                         }
                         if (task.TaskStatus == "In Progress")
                         {
                             string formattedDate = task.TaskDueDateTime.ToString("MMM dd");
-                            <div class="taskBubble inProgressBubble">
+                            <a class="taskBubble inProgressBubble" asp-route-taskID="@task.TaskID" asp-page="/TaskManager/EditTaskPage" style="text-decoration:none; color:inherit;">
                                 <div class="taskName">@task.TaskName</div>
                                 <div class="taskDate">@formattedDate</div>
                                 <div class="statusIconContainer">
                                     <img class="statusIcon" src="/Images/icon_in-progress_status.jpg">
                                 </div>
-                            </div>
+                            </a>
                         }
                         if (task.TaskStatus == "Completed")
                         {
                             string formattedDate = task.TaskDueDateTime.ToString("MMM dd");
-                            <div class="taskBubble completedBubble">
+                            <a class="taskBubble completedBubble" asp-route-taskID="@task.TaskID" asp-page="/TaskManager/EditTaskPage" style="text-decoration:none; color:inherit;">
                                 <div class="taskName">@task.TaskName</div>
                                 <div class="taskDate">@formattedDate</div>
                                 <div class="statusIconContainer">
                                     <img class="statusIcon" src="/Images/icon_completed_status.jpg" />
                                 </div>
-                            </div>
+                            </a>
                         }
                     }
                 }
             </div>
     </div>
 </div>
-
-
-
-@{
-    // Check the C# variable openModal
-    if (Model.OpenEditModal)
-    {
-        <script>
-            $(document).ready(function () {
-                $('#editTaskForm').modal('show');
-            });
-        </script>
-    }
-}
+    <script>
+        // Check if AddTaskInvalid is true on page load and reopen modal if needed
+        window.addEventListener('DOMContentLoaded', (event) => {
+            if (@Model.OpenModal.ToString().ToLower()) {
+                $('#addTaskForm').modal('show');
+            }
+        });
+    </script>
