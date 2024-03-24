@@ -74,6 +74,10 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
                 OpenAddProfileModal = true;
                 return Page();
             }
+            if (NewProfile.Apartment == null)
+            {
+                NewProfile.Apartment = "";
+            }
 
             // Model state is valid, continue with processing
             DBClass.AddUser(NewProfile);

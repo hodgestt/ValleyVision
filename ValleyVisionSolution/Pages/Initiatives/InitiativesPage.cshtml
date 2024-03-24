@@ -58,8 +58,65 @@
         String UserType = DBClass.CheckUserType((int)UserID);
         @if (UserType == "Admin")
         {
-            <button type="submit" class="tile" data-bs-toggle="modal" data-bs-target="#addCollabForm">Add New +</button>
+            <button type="submit" class="tile" data-bs-toggle="modal" data-bs-target="#addInitForm">Add New +</button>
+
         }
     }
     
 </div>
+
+<!-- Add New Initiative Form -->
+<div class="modal fade" id="addInitForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form method="post" asp-page="/TaskManagerPage">
+                <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add Task</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Initiative Name:</div>
+                            <input asp-for="@Model.NewInit.InitName" type="text" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewInit.InitName"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="hidden" class="form-control" asp-for="NewInit.InitDateTime" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" required />
+                            <span class="validity" />
+                        </div>
+                        <div class="col-md-6">
+                            <div>Assign to:</div>
+                            <select asp-for="@Model.NewInitUsers" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
+                                @{
+                                    foreach (var user in Model.InitUsers)
+                                    {
+                                        <option value="@user.UserID">@user.FirstName @user.LastName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Activate Pages:</div>
+                            <select asp-for="@Model.NewTiles" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
+                                @{
+                                    foreach (var tile in Model.Tiles)
+                                    {
+                                        <option value="@tile.TileID"> @tile.TileName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-top:none">
+                        <button type="submit" class="btn btn-primary" asp-page-handler="AddNewInit">Add</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-- End New Initiative Form -->
