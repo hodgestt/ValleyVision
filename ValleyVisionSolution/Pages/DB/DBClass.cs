@@ -10,6 +10,7 @@ using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 using static BenchmarkDotNet.Engines.EngineEventSource;
+using System.Net;
 namespace ValleyVisionSolution.Pages.DB
 {
     public class DBClass
@@ -198,7 +199,7 @@ namespace ValleyVisionSolution.Pages.DB
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
-            cmd.CommandText = "SELECT C.UserName, U.firstName, U.lastName, U.email, U.phone, U.userType, A.street, A.apartment, A.city, A.state_, A.zip, A.country FROM AUTH.dbo.HashedCredentials C JOIN Main.dbo.User_ U ON U.UserID = C.UserID JOIN Main.dbo.Address_ A ON A.AddressID = U.AddressID;";
+            cmd.CommandText = "SELECT C.UserName, C.Password_, U.UserID, U.firstName, U.lastName, U.email, U.phone, U.userType, A.street, A.apartment, A.city, A.state_, A.zip, A.country FROM AUTH.dbo.HashedCredentials C JOIN Main.dbo.User_ U ON U.UserID = C.UserID JOIN Main.dbo.Address_ A ON A.AddressID = U.AddressID;";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -234,5 +235,55 @@ namespace ValleyVisionSolution.Pages.DB
         }
         //END NON PAGE SPECIFIC METHODS---------------------------------------------------------------------------------------
 
+        //BEGIN CREATE FULL PROFILE METHODS-------------------------------------------------------------------------------------
+        public static void AddUser(FullProfile newfullProfile)
+        {
+            int addressID;
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@Street", newfullProfile.Street);
+            cmd.Parameters.AddWithValue("@Apartment", newfullProfile.Apartment);
+            cmd.Parameters.AddWithValue("@City", newfullProfile.City);
+            cmd.Parameters.AddWithValue("@State", newfullProfile.State);
+            cmd.Parameters.AddWithValue("@Zip", newfullProfile.Zip);
+            cmd.Parameters.AddWithValue("@Country", newfullProfile.Country);
+            String sqlQuery = "INSERT INTO Address_ (street, apartment, city, state_, zip, country) VALUES (@Street, @Apartment, @City, @State, @Zip, @Country);" + "SELECT SCOPE_IDENTITY();";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            addressID = Convert.ToInt32(cmd.ExecuteScalar());
+            cmd.Connection.Close();
+
+
+            int userID;
+            SqlCommand cmd2 = new SqlCommand();
+            cmd2.Connection = ValleyVisionConnection;
+            cmd2.Connection.ConnectionString = MainConnString;
+            cmd2.Parameters.AddWithValue("@FirstName", newfullProfile.FirstName);
+            cmd2.Parameters.AddWithValue("@LastName", newfullProfile.LastName);
+            cmd2.Parameters.AddWithValue("@Email", newfullProfile.Email);
+            cmd2.Parameters.AddWithValue("@Phone", newfullProfile.Phone);
+            cmd2.Parameters.AddWithValue("@Phone", newfullProfile.UserType);
+            cmd2.Parameters.AddWithValue("@Address", addressID);
+            String sqlQuery2 = "INSERT INTO User_ (firstName, lastName, email, phone, userType, addressID) VALUES (@FirstName, @LastName, @Email, @Phone, 'User', @Address);" + "SELECT SCOPE_IDENTITY();";
+            cmd2.CommandText = sqlQuery2;
+            cmd2.Connection.Open();
+            userID = Convert.ToInt32(cmd2.ExecuteScalar());
+            cmd2.Connection.Close();
+
+
+            string loginQuery = "INSERT INTO HashedCredentials (UserID,UserName,Password_) VALUES (@UserID, @Username, @Password)";
+            SqlCommand cmdLogin = new SqlCommand();
+            cmdLogin.Connection = ValleyVisionConnection;
+            cmdLogin.Connection.ConnectionString = AuthConnString;
+            cmdLogin.CommandText = loginQuery;
+            cmdLogin.Parameters.AddWithValue("@UserID", userID);
+            cmdLogin.Parameters.AddWithValue("@Username", newfullProfile.UserName);
+            cmdLogin.Parameters.AddWithValue("@Password", PasswordHash.HashPassword(newfullProfile.Password));
+            cmdLogin.Connection.Open();
+            cmdLogin.ExecuteNonQuery();
+            DBClass.ValleyVisionConnection.Close();
+        }
+        //END CREATE FULL PROFILE METHODS-------------------------------------------------------------------------------------
     }
 }

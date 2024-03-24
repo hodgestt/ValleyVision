@@ -1,18 +1,17 @@
 ﻿@page
 @model ValleyVisionSolution.Pages.ManageProfiles.ManageProfilesPageModel
 @{
-    ViewData["Title"]= "Manage Profile";
+    ViewData["Title"] = "Manage Profiles";
 }
-@{
 
     <h2>Profiles</h2>
     <br />
     <table class="table table-bordered table-responsive table-hover">
         <thead>
             <tr>
-                <th>UserName</th>
-                <th>FirstName</th>
-                <th>LastName</th>
+                <th>Username</th>
+                <th>First Name</th>
+                <th>Last Name</th>
                 <th>Email</th>
                 <th>Phone</th>
                 <th>UserType</th>
@@ -44,7 +43,7 @@
                         <td>@profile.Zip</td>
                         <td>@profile.Country</td>
                         <td>
-                            @*<a asp-page="EditEmployees" class="btn" style=" background-color:rebeccapurple; -webkit-text-fill-color:white;" asp-route-employeeid="@emp.EmployeeID">Edit -></a>*@
+                            <a asp-page="EditProfilesPage" class="btn" style=" background-color:#2e4c74; -webkit-text-fill-color:white;" asp-route-employeeid="@profile.UserID">Edit</a>
                         </td>
                     </tr>
                 }
@@ -53,6 +52,112 @@
 
     </table>
     <br />
-    // <a asp-page="/Employees/AddEmployee" class="btn" style=" background-color:rebeccapurple; -webkit-text-fill-color:white;">Create User</a>
+    <button class="btn" style=" background-color:#2e4c74; -webkit-text-fill-color:white;" data-bs-toggle="modal" data-bs-target="#addProfileForm">Create Profile</button>
 
-}
+
+    <!-- Add New Profile Form -->
+    <div class="modal fade" id="addProfileForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form method="post" asp-page="/ManageProfilesPage">
+                    <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Add User</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div>Username: </div>
+                                <input asp-for="@Model.NewProfile.UserName" type="text" class="form-control">
+                                <span class="text-danger" asp-validation-for="@Model.NewProfile.UserName"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <div>Password: </div>
+                                <input asp-for="@Model.NewProfile.Password" type="text" class="form-control">
+                                <span class="text-danger" asp-validation-for="@Model.NewProfile.Password"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div>First Name: </div>
+                                <input asp-for="@Model.NewProfile.FirstName" type="text" class="form-control">
+                                <span class="text-danger" asp-validation-for="@Model.NewProfile.FirstName"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <div>Last Name: </div>
+                                <input asp-for="@Model.NewProfile.LastName" type="text" class="form-control">
+                                <span class="text-danger" asp-validation-for="@Model.NewProfile.LastName"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div>Email: </div>
+                                <input asp-for="@Model.NewProfile.Email" type="text" class="form-control">
+                                <span class="text-danger" asp-validation-for="@Model.NewProfile.Email"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <div>Phone: </div>
+                                <input asp-for="@Model.NewProfile.Phone" type="text" class="form-control">
+                                <span class="text-danger" asp-validation-for="@Model.NewProfile.Phone"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div>User Type: </div>
+                                <input asp-for="@Model.NewProfile.UserType" type="text" class="form-control">
+                                <span class="text-danger" asp-validation-for="@Model.NewProfile.UserType"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <div>Street: </div>
+                                <input asp-for="@Model.NewProfile.Street" type="text" class="form-control">
+                                <span class="text-danger" asp-validation-for="@Model.NewProfile.Street"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div>Apartment: </div>
+                                <input asp-for="@Model.NewProfile.Apartment" type="text" class="form-control">
+                                <span class="text-danger" asp-validation-for="@Model.NewProfile.Apartment"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <div>City: </div>
+                                <input asp-for="@Model.NewProfile.City" type="text" class="form-control">
+                                <span class="text-danger" asp-validation-for="@Model.NewProfile.City"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div>State: </div>
+                                <input asp-for="@Model.NewProfile.State" type="text" class="form-control">
+                                <span class="text-danger" asp-validation-for="@Model.NewProfile.State"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <div>Zip: </div>
+                                <input asp-for="@Model.NewProfile.Zip" type="text" class="form-control">
+                                <span class="text-danger" asp-validation-for="@Model.NewProfile.Zip"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div>Country: </div>
+                                <input asp-for="@Model.NewProfile.Country" type="text" class="form-control">
+                                <span class="text-danger" asp-validation-for="@Model.NewProfile.Country"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer" style="border-top:none">
+                        <button type="submit" class="btn btn-primary" asp-page-handler="NewProfile">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- End New Profile Form -->
+
+    <script>
+
+
+    </script>
