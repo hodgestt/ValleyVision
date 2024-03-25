@@ -8,5 +8,6 @@
         public decimal FeesLicensesTax { get; set; }
         public decimal StateFunding { get; set; }
         public decimal TotalRevenue { get; set; }
+
     }
 }

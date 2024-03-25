@@ -341,13 +341,18 @@ namespace ValleyVisionSolution.Pages.DB
 
         }
 
+        //END NON PAGE SPECIFIC METHODS---------------------------------------------------------------------------------------
+
+
+        //BEGIN REVENUE SPECIFIC PAGE METHODS
+
         //reads data file 2 from database
         public static SqlDataReader DataFileReader()
         {
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
-            cmd.CommandText = "SELECT * FROM DataFile_2";
+            cmd.CommandText = "SELECT * FROM DataFile_2;";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -355,10 +360,29 @@ namespace ValleyVisionSolution.Pages.DB
             return tempReader;
         }
 
-        //END NON PAGE SPECIFIC METHODS---------------------------------------------------------------------------------------
+        public static void AddRevenueData(Revenue newRevenueData)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@Year", newRevenueData.Year);
+            cmd.Parameters.AddWithValue("@RealEstateTax", newRevenueData.RealEstateTax);
+            cmd.Parameters.AddWithValue("@PersonalPropertyTax", newRevenueData.PersonalPropertyTax);
+            cmd.Parameters.AddWithValue("@FeesLicensesTax", newRevenueData.FeesLicensesTax);
+            cmd.Parameters.AddWithValue("@StateFunding", newRevenueData.StateFunding);
+            decimal TotalRevenue = (newRevenueData.RealEstateTax + newRevenueData.PersonalPropertyTax + newRevenueData.FeesLicensesTax + newRevenueData.StateFunding);
+            cmd.Parameters.AddWithValue("@TotalRevenue", TotalRevenue);
+            String sqlQuery = "INSERT INTO DataFile_2 (year_, realEstateTax, personalPropertyTax,feesLicensesTax,stateFunding,totalRevenue) VALUES (@Year, @RealEstateTax, @PersonalPropertyTax, @FeesLicensesTax, @StateFunding, @TotalRevenue);";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            DBClass.ValleyVisionConnection.Close();
+        }
+        
+        //END REVENUE SPECIFIC PAGE METHODS
 
         //BEGIN CREATE FULL PROFILE METHODS-------------------------------------------------------------------------------------
-        public static void AddUser(FullProfile newfullProfile)
+            public static void AddUser(FullProfile newfullProfile)
         {
             int addressID;
             SqlCommand cmd = new SqlCommand();
