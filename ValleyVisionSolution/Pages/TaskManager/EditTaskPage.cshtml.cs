@@ -1,5 +1,9 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftAntimalwareEngine;
+using Microsoft.VisualBasic;
+using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
 using System.IO;
 using System.Net;
@@ -13,13 +17,18 @@ namespace ValleyVisionSolution.Pages.TaskManager
     {
         public List<Task> AllTasks { get; set; }
         public List<User> InitUsers { get; set; }
-        public int ViewedTask { get; set; }  
+        public int? ViewedTask { get; set; }  
         public List<int> ViewedTaskUsers { get; set; }
+        [Required(ErrorMessage = "The description is required")]
+        [BindProperty]
+        
+        public string TempTaskDescription { get; set; } 
 
         [BindProperty]
         public Task EditedTask { get; set; }
         [BindProperty]
         public List<int> EditedTaskUsers { get; set; }
+        
 
         public EditTaskPageModel() 
         {
@@ -66,9 +75,42 @@ namespace ValleyVisionSolution.Pages.TaskManager
 
         public void OnGet(int taskID)
         {
-            ViewedTask = taskID;
-            ViewedTaskUsers = TempDBClass.ViewedTaskUsersReader(taskID);
+           
+            HttpContext.Session.SetInt32("TaskID", taskID);
+            ViewedTask = HttpContext.Session.GetInt32("TaskID");
+            ViewedTaskUsers = TempDBClass.ViewedTaskUsersReader(HttpContext.Session.GetInt32("TaskID"));
             loadData();
+            foreach(var task in AllTasks)
+            {
+                if(task.TaskID == taskID) 
+                {
+                    TempTaskDescription = task.TaskDescription;
+                }
+            }
+        }
+
+        public IActionResult OnPostUpdateTask()
+        {
+            if (!ModelState.IsValid)
+            {
+                // Model state is not valid, return the page with validation errors
+                ViewedTask = HttpContext.Session.GetInt32("TaskID");
+                ViewedTaskUsers = TempDBClass.ViewedTaskUsersReader(HttpContext.Session.GetInt32("TaskID"));
+                loadData();
+                foreach (var task in AllTasks)
+                {
+                    if (task.TaskID == HttpContext.Session.GetInt32("TaskID"))
+                    {
+                        TempTaskDescription = task.TaskDescription;
+                    }
+                }
+                return Page();
+            }
+
+            // Model state is valid, continue with processing
+            EditedTask.TaskDescription = TempTaskDescription;
+            TempDBClass.EditTask(EditedTask, EditedTaskUsers);
+            return RedirectToPage("/TaskManager/TaskManagerPage");
         }
     }
 }

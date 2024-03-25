@@ -1,7 +1,7 @@
 ﻿@page
 @model ValleyVisionSolution.Pages.ManageProfiles.ManageProfilesPageModel
 @{
-    ViewData["Title"] = "Manage Profiles";
+    ViewData["Title"] = "Profiles";
 }
 
     <h2>Profiles</h2>
@@ -9,12 +9,12 @@
     <table class="table table-bordered table-responsive table-hover">
         <thead>
             <tr>
-                <th>Username</th>
+                <th>User Name</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email</th>
                 <th>Phone</th>
-                <th>UserType</th>
+                <th>User Type</th>
                 <th>Street </th>
                 <th>Apartment</th>
                 <th>City</th>
@@ -75,7 +75,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div>Password: </div>
-                                <input asp-for="@Model.NewProfile.Password" type="text" class="form-control">
+                                <input asp-for="@Model.NewProfile.Password" type="password" class="form-control">
                                 <span class="text-danger" asp-validation-for="@Model.NewProfile.Password"></span>
                             </div>
                         </div>
@@ -157,7 +157,11 @@
     </div>
     <!-- End New Profile Form -->
 
-    <script>
-
-
-    </script>
+<script>
+    // Check if AddTaskInvalid is true on page load and reopen modal if needed
+    window.addEventListener('DOMContentLoaded', (event) => {
+        if (@Model.OpenAddProfileModal.ToString().ToLower()) {
+            $('#addTaskForm').modal('show');
+        }
+    });
+</script>

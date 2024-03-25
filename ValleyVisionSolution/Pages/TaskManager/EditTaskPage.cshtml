@@ -4,7 +4,7 @@
 @{
 }
 <!-- Edit Task Form -->
-<div class="modal fade" id="editTaskForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="editTaskForm" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <form method="post" asp-page="/TaskManagerPage">
@@ -58,15 +58,31 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div>Due Date:</div>
-                            <input asp-for="@Model.EditedTask.TaskDueDateTime" type="date" class="form-control" value="@TaskData.TaskDueDateTime.ToString("MM/dd/yyyy")">
+                            <input asp-for="@Model.EditedTask.TaskDueDateTime" type="date" class="form-control" value="@TaskData.TaskDueDateTime.ToString("yyyy-MM-dd")">
                             <span class="text-danger" asp-validation-for="@Model.EditedTask.TaskDueDateTime"></span>
                         </div>
                         <div class="col-md-6">
                             <div>Status:</div>
                             <select asp-for="@Model.EditedTask.TaskStatus" class="form-control" id="taskStatus">
-                                <option value="To Do">To Do </option>
-                                <option value="In Progress">In Progress</option>
-                                <option value="Completed">Completed</option>
+                                @if(TaskData.TaskStatus == "To Do")
+                                {
+                                    <option value="To Do" selected>To Do </option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                }
+                                @if(TaskData.TaskStatus == "In Progress")
+                                {
+                                    <option value="To Do">To Do </option>
+                                    <option value="In Progress" selected>In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                }
+                                @if (TaskData.TaskStatus == "Completed")
+                                {
+                                    <option value="To Do">To Do </option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed" selected>Completed</option>
+                                }
+                                
                             </select>
                             <span class="text-danger" asp-validation-for="@Model.EditedTask.TaskStatus"></span>
                         </div>
@@ -74,15 +90,15 @@
                     <div class="row mb-3">
                         <div class="col-12">
                             <div>Description:</div>
-                            <textarea asp-for="@Model.EditedTask.TaskDescription" class="form-control" id="taskDescription" rows="3" maxlength="250"></textarea>
-                            <span class="text-danger" asp-validation-for="@Model.EditedTask.TaskDescription"></span>
+                            <textarea asp-for="@Model.TempTaskDescription" class="form-control" id="taskDescription" rows="3" maxlength="250"></textarea>
+                            <span class="text-danger" asp-validation-for="@Model.TempTaskDescription"></span>
+                            <input type="hidden" asp-for="@Model.EditedTask.TaskDescription" value="tempDesc">
                         </div>
                     </div>
 
                 </div>
                 <div class="modal-footer" style="border-top:none">
-                    <button type="reset" id="addTaskFormClearBtn" class="btn btn-secondary">Clear</button>
-                    <button type="submit" class="btn btn-primary" asp-page-handler="AddTask">Update</button>
+                    <button type="submit" class="btn btn-primary" asp-page-handler="UpdateTask">Update</button>
                 </div>
             </form>
 

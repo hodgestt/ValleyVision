@@ -89,8 +89,83 @@ namespace ValleyVisionSolution.Pages.DB
 
             return tempReader;
         }
-        //END INITIATIVES PAGE____________________________________________________________________________________________
+        
+        //reads all users for INITIATIVE PAGE_________________________________________________________________________________________
+        public static SqlDataReader UsersReader(int? userID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@UserID", userID);
+            cmd.CommandText = "SELECT U.userID, U.firstName, U.lastName FROM User_ U WHERE U.UserID != @UserID";
+            cmd.Connection.Open(); // Open connection here, close in Model!
 
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+        //All tiles reader
+        public static SqlDataReader TilesReader()
+        {
+            SqlCommand cmd4 = new SqlCommand();
+            cmd4.Connection = ValleyVisionConnection;
+            cmd4.Connection.ConnectionString = MainConnString;
+            cmd4.CommandText = "SELECT * FROM Tile T;";
+            cmd4.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd4.ExecuteReader();
+
+            return tempReader;
+        }
+
+        //adds a new initiative with selected tiles and users with the current user as a default
+        public static void AddInit(Initiative NewInit, List<int> NewInitUsers, List<int> NewTiles, int? CurrentUserID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@InitName", NewInit.InitName);
+            cmd.Parameters.AddWithValue("@InitDateTime", NewInit.InitDateTime);
+            String sqlQuery = "INSERT INTO Initiative (InitName, InitDateTime) VALUES (@InitName, @InitDateTime);" + "SELECT SCOPE_IDENTITY();";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            NewInit.InitID = Convert.ToInt32(cmd.ExecuteScalar());
+            cmd.Connection.Close();
+
+            NewInitUsers.Add((int)CurrentUserID); //adds the admin ID into each init by default
+
+            foreach (var user in NewInitUsers)
+            {
+                SqlCommand cmd2 = new SqlCommand();
+                cmd2.Connection = ValleyVisionConnection;
+                cmd2.Connection.ConnectionString = MainConnString;
+                cmd2.Parameters.AddWithValue("@InitID", NewInit.InitID);
+                cmd2.Parameters.AddWithValue("@UserID", user);
+                String sqlQuery2 = "INSERT INTO InitiativeUsers (initID, userID) VALUES (@InitID, @UserID);";
+                cmd2.CommandText = sqlQuery2;
+                cmd2.Connection.Open();
+                cmd2.ExecuteNonQuery();
+                cmd2.Connection.Close();
+            }
+
+            foreach (var tile in NewTiles)
+            {
+                SqlCommand cmd3 = new SqlCommand();
+                cmd3.Connection = ValleyVisionConnection;
+                cmd3.Connection.ConnectionString = MainConnString;
+                cmd3.Parameters.AddWithValue("@TileID", tile);
+                cmd3.Parameters.AddWithValue("@InitID", NewInit.InitID);
+                String sqlQuery3 = "INSERT INTO InitiativeTiles (tileID, initID) VALUES (@TileID, @InitID);";
+                cmd3.CommandText = sqlQuery3;
+                cmd3.Connection.Open();
+                cmd3.ExecuteNonQuery();
+                cmd3.Connection.Close();
+            }
+            
+        }
+
+      
+        //END INITIATIVES PAGE
 
 
         //BEGIN DASHBOARD PAGE___________________________________________________________________________________________
@@ -156,6 +231,7 @@ namespace ValleyVisionSolution.Pages.DB
 
             return tempReader;
         }
+
         //adds a new task in a specific initiative and assigns it to the specified users
         public static void AddTask(int? initID, DataClasses.Task newTask, List<int> newTaskUsers)
         {
@@ -263,7 +339,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd2.Parameters.AddWithValue("@LastName", newfullProfile.LastName);
             cmd2.Parameters.AddWithValue("@Email", newfullProfile.Email);
             cmd2.Parameters.AddWithValue("@Phone", newfullProfile.Phone);
-            cmd2.Parameters.AddWithValue("@Phone", newfullProfile.UserType);
+            cmd2.Parameters.AddWithValue("@UserType", newfullProfile.UserType);
             cmd2.Parameters.AddWithValue("@Address", addressID);
             String sqlQuery2 = "INSERT INTO User_ (firstName, lastName, email, phone, userType, addressID) VALUES (@FirstName, @LastName, @Email, @Phone, 'User', @Address);" + "SELECT SCOPE_IDENTITY();";
             cmd2.CommandText = sqlQuery2;
@@ -285,5 +361,7 @@ namespace ValleyVisionSolution.Pages.DB
             DBClass.ValleyVisionConnection.Close();
         }
         //END CREATE FULL PROFILE METHODS-------------------------------------------------------------------------------------
+
+
     }
 }
