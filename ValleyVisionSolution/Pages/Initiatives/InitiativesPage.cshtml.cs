@@ -118,6 +118,9 @@ namespace ValleyVisionSolution.Pages.Initiatives
             loadData();
             ModelState.Clear();
             NewInit = new Initiative();
+            NewInitUsers = new List<int>();
+            NewTiles = new List<int>();
+
             return Page();
         }
 

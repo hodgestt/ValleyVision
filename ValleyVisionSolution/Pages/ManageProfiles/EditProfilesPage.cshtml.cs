@@ -8,13 +8,11 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
     {
 
         [BindProperty]
-        public User UserToUpdate { get; set; }
-
-       
+        public FullProfile EditedProfile { get; set; }
 
         public EditProfilesPageModel()
         {
-            UserToUpdate = new User();
+            
         }
 
         public void OnGet()

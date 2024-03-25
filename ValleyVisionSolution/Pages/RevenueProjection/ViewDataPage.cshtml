@@ -1,0 +1,32 @@
+﻿@page
+@model ValleyVisionSolution.Pages.RevenueProjection.ViewDataPageModel
+@{
+    ViewData["Title"] = "View Data";
+}
+
+<h2>Profiles</h2>
+<br />
+<table class="table table-bordered table-responsive table-hover">
+    <thead>
+        <tr>
+            <th>Year</th>
+            <th>Property Tax</th>
+            <th>PPP</th>
+            <th>Licenses & Fees</th>
+            <th>State Funds</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach (var year in Model.AnnualRevenueData)
+            {
+                <tr>
+                    <td>@year.year_</td>
+                    <td>@year.realEstateTax</td>
+                    <td>@year.personalPropertyTax</td>
+                    <td>@year.feesLicensesTax</td>
+                    <td>@year.stateFunding</td>
+                </tr>
+            }
+        }
+    </tbody>

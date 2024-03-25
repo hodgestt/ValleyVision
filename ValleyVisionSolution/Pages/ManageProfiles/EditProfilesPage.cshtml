@@ -1,5 +1,123 @@
 ﻿@page
 @model ValleyVisionSolution.Pages.ManageProfiles.EditProfilesPageModel
+@using Profile = ValleyVisionSolution.Pages.DataClasses.FullProfile;
 @{
     ViewData["Title"] = "Edit Profile";
 }
+@* 
+<!-- Edit Profile Form -->
+<div class="modal fade" id="editProfileForm" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form method="post" asp-page="/EditProfilesPage">
+                <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Profile View</h5>
+                    <button type="button" class="btn-close" id="closeButton" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <input type="hidden" asp-for="@Model.EditedTask.TaskID" value="@Model.ViewedTask">
+                    @{
+                        Task TaskData = new Task();
+                        foreach (var task in Model.AllTasks)
+                        {
+                            if (task.TaskID == Model.ViewedTask)
+                            {
+                                TaskData = task;
+                            }
+                        }
+                    }
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Task Name:</div>
+                            <input asp-for="@Model.EditedTask.TaskName" type="text" class="form-control" value="@TaskData.TaskName">
+                            <span class="text-danger" asp-validation-for="@Model.EditedTask.TaskName"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Assign to:</div>
+                            <select asp-for="@Model.EditedTaskUsers" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
+                                @{
+                                    foreach (var user in Model.InitUsers)
+                                    {
+                                        if (Model.ViewedTaskUsers.Contains(user.UserID))
+                                        {
+                                            <option value="@user.UserID" selected>@user.FirstName @user.LastName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@user.UserID">@user.FirstName @user.LastName</option>
+                                        }
+                                    }
+                                }
+
+                            </select>
+
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Due Date:</div>
+                            <input asp-for="@Model.EditedTask.TaskDueDateTime" type="date" class="form-control" value="@TaskData.TaskDueDateTime.ToString("yyyy-MM-dd")">
+                            <span class="text-danger" asp-validation-for="@Model.EditedTask.TaskDueDateTime"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Status:</div>
+                            <select asp-for="@Model.EditedTask.TaskStatus" class="form-control" id="taskStatus">
+                                @if (TaskData.TaskStatus == "To Do")
+                                {
+                                    <option value="To Do" selected>To Do </option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                }
+                                @if (TaskData.TaskStatus == "In Progress")
+                                {
+                                    <option value="To Do">To Do </option>
+                                    <option value="In Progress" selected>In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                }
+                                @if (TaskData.TaskStatus == "Completed")
+                                {
+                                    <option value="To Do">To Do </option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed" selected>Completed</option>
+                                }
+
+                            </select>
+                            <span class="text-danger" asp-validation-for="@Model.EditedTask.TaskStatus"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div>Description:</div>
+                            <textarea asp-for="@Model.TempTaskDescription" class="form-control" id="taskDescription" rows="3" maxlength="250"></textarea>
+                            <span class="text-danger" asp-validation-for="@Model.TempTaskDescription"></span>
+                            <input type="hidden" asp-for="@Model.EditedTask.TaskDescription" value="tempDesc">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer" style="border-top:none">
+                    <button type="submit" class="btn btn-primary" asp-page-handler="UpdateTask">Update</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-- End Edit Task Form -->
+<script>
+    // Check if AddTaskInvalid is true on page load and reopen modal if needed
+    window.addEventListener('DOMContentLoaded', (event) => {
+        $('#editTaskForm').modal('show');
+
+    });
+</script>
+<script>
+    document.getElementById('closeButton').addEventListener('click', function () {
+        // Redirect to the specific page
+        window.location.href = '/TaskManager/TaskManagerPage';
+    });
+</script>    *@

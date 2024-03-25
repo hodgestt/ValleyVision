@@ -340,6 +340,21 @@ namespace ValleyVisionSolution.Pages.DB
             return userType;
 
         }
+
+        //reads data file 2 from database
+        public static SqlDataReader DataFileReader()
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.CommandText = "SELECT * FROM DataFile_2";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+
         //END NON PAGE SPECIFIC METHODS---------------------------------------------------------------------------------------
 
         //BEGIN CREATE FULL PROFILE METHODS-------------------------------------------------------------------------------------
