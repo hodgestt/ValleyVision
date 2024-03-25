@@ -3,4 +3,45 @@
 @{
     ViewData["Title"] = "Revenue Projection";
 }
+<style>
+    .parameterTitle{
+    font-size:0.5vw;
+    }
+
+</style>
+
+<form method="post" asp-page="/RevenueProjectionPage">
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <div class="parameterTitle">Real Estate Tax Growth %:</div>
+            <input asp-for="@Model.RealEstateTaxGrowth" type="text" class="form-control" placeholder="%">
+        </div>
+        <div class="col-md-2">
+            <div class="parameterTitle">Personal Property Tax Growth %:</div>
+            <input asp-for="@Model.PersonalPropertyTaxGrowth" type="text" class="form-control" placeholder="%">
+        </div>
+        <div class="col-md-2">
+            <div class="parameterTitle">Fees & Licenses Tax Growth %:</div>
+            <input asp-for="@Model.FeesLicensesTaxGrowth" type="text" class="form-control" placeholder="%">
+        </div>
+        <div class="col-md-2">
+            <div class="parameterTitle">State Funding Amount:</div>
+            <input asp-for="@Model.StateFundingAmount" type="text" class="form-control" placeholder="$">
+        </div>
+        <div class="col-md-2">
+            <div class="parameterTitle">Number of Projection Years:</div>
+            <select asp-for="@Model.NumProjectionYears" class="form-control">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+
+    </div>
+   
+
+    <button type="submit" class="btn btn-primary" asp-page-handler="RunProjection">Run Projection</button>
+</form>
 

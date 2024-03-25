@@ -94,8 +94,20 @@ namespace ValleyVisionSolution.Pages.DB
         }
 
 
-        
 
+        //reads data file 2 from database
+        public static SqlDataReader LatestRevenueYearReader()
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.CommandText = "SELECT * FROM DataFile_2 WHERE year_ = (SELECT MAX(year_) FROM DataFile_2);";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
 
 
 
