@@ -45,5 +45,45 @@ namespace ValleyVisionSolution.Pages.DB
 
             return ViewedTaskUsers;
         }
+        public static void EditTask(DataClasses.Task editedTask, List<int> editedTaskUsers)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@TaskName", editedTask.TaskName);
+            cmd.Parameters.AddWithValue("@TaskStatus", editedTask.TaskStatus);
+            cmd.Parameters.AddWithValue("@TaskDescription", editedTask.TaskDescription);
+            cmd.Parameters.AddWithValue("@TaskDueDateTime", editedTask.TaskDueDateTime);
+            cmd.Parameters.AddWithValue("@TaskID", editedTask.TaskID);
+            String sqlQuery = "UPDATE Task SET taskName = @TaskName, taskStatus = @TaskStatus, taskDescription = @TaskDescription, taskDueDateTime = @TaskDueDateTime WHERE taskID = @TaskID;";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+
+            SqlCommand cmd2 = new SqlCommand();
+            cmd2.Connection = ValleyVisionConnection;
+            cmd2.Connection.ConnectionString = MainConnString;
+            cmd2.Parameters.AddWithValue("@TaskID", editedTask.TaskID);
+            String sqlQuery2 = "DELETE FROM TaskUsers WHERE taskID = @TaskID;";
+            cmd2.CommandText = sqlQuery2;
+            cmd2.Connection.Open();
+            cmd2.ExecuteNonQuery();
+            cmd2.Connection.Close();
+
+            foreach (var user in editedTaskUsers)
+            {
+                SqlCommand cmd3 = new SqlCommand();
+                cmd3.Connection = ValleyVisionConnection;
+                cmd3.Connection.ConnectionString = MainConnString;
+                cmd3.Parameters.AddWithValue("@TaskID", editedTask.TaskID);
+                cmd3.Parameters.AddWithValue("@UserID", user);
+                String sqlQuery3 = "INSERT INTO TaskUsers (taskID, userID) VALUES (@TaskID, @UserID);";
+                cmd3.CommandText = sqlQuery3;
+                cmd3.Connection.Open();
+                cmd3.ExecuteNonQuery();
+                cmd3.Connection.Close();
+            }
+        }
     }
 }
