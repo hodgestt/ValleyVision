@@ -5,8 +5,16 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
 {
     public class RevenueProjectionPageModel : PageModel
     {
+
+        public RevenueProjectionPageModel() 
+        { 
+
+        }
+
+
         public void OnGet()
         {
+
         }
 
         public IActionResult OnPostLogoutHandler()

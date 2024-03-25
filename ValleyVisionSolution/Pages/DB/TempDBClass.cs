@@ -45,6 +45,13 @@ namespace ValleyVisionSolution.Pages.DB
 
             return ViewedTaskUsers;
         }
+
+
+
+
+
+
+        //edit a task
         public static void EditTask(DataClasses.Task editedTask, List<int> editedTaskUsers)
         {
             SqlCommand cmd = new SqlCommand();
@@ -85,5 +92,15 @@ namespace ValleyVisionSolution.Pages.DB
                 cmd3.Connection.Close();
             }
         }
+
+
+        
+
+
+
+
+
+
+
     }
 }
