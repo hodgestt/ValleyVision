@@ -35,7 +35,7 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
             {
                 LatestRevenue = new Revenue
                 {
-                    Year = reader["Year_"].ToString(),
+                    Year = int.Parse(reader["Year_"].ToString()),
                     RealEstateTax = Decimal.Parse(reader["RealEstateTax"].ToString()),
                     PersonalPropertyTax = Decimal.Parse(reader["PersonalPropertyTax"].ToString()),
                     FeesLicensesTax = Decimal.Parse(reader["FeesLicensesTax"].ToString()),

@@ -2,7 +2,7 @@
 {
     public class Revenue
     {
-        public String Year { get; set; }
+        public int Year { get; set; }
         public decimal RealEstateTax { get; set; }
         public decimal PersonalPropertyTax { get; set; }
         public decimal FeesLicensesTax { get; set; }

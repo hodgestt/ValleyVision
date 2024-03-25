@@ -26,7 +26,7 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
                 while (reader.Read())
                 {
                     Revenue dataItem = new Revenue();
-                    dataItem.Year = reader["year_"].ToString();
+                    dataItem.Year = int.Parse(reader["year_"].ToString());
                     dataItem.RealEstateTax = Convert.ToInt32(reader["realEstateTax"]);
                     dataItem.PersonalPropertyTax = Convert.ToInt32(reader["personalPropertyTax"]);
                     dataItem.FeesLicensesTax = Convert.ToInt32(reader["feesLicensesTax"]);
