@@ -3,3 +3,100 @@
 @{
     ViewData["Title"] = "Discussion Board";
 }
+<style>
+    #MessageBoard {
+        grid-area: messageBoard;
+    }
+    
+    .button {
+        grid-area: Button;
+        border: none;
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .receivedMessageContainer {
+        display: flex;
+        justify-content: left;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .receivedMessage {
+        border-radius: 15px;
+        padding: 5px 10px 5px 10px;
+        background-color: lightgrey;
+        display: inline-block;
+    }
+
+    .sentMessageContainer {
+        display: flex;
+        justify-content: right;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .sender {
+        padding: 5px 10px 0px 10px;
+        display: inline-block;
+        font-size: smaller;
+    }
+
+    .sentMessage {
+        border-radius: 15px;
+        padding: 5px 10px 5px 10px;
+        background-color: #5285f7;
+        display: inline-block;
+        color: white;
+    }
+
+    .messageForm {
+        bottom: 10%;
+        justify-content: center;
+    }
+
+    .messageContent {
+        border-radius: 15px;
+        border: 1px solid grey;
+        padding: 5px 10px 5px 10px;
+    }
+
+    .sendMessageBtn {
+        background-color: #5285f7;
+        border-radius: 15px;
+    }
+
+</style>
+
+
+<div id="MessageBoard" class="dashboard-tile">
+    <div class="dashboard-tile-title">Message Board</div>
+    <div class="dashboard-tile-contents">
+        @{
+            foreach (var message in Model.Messages)
+            {
+                if (HttpContext.Session.GetInt32("UserID") == message.UserID)
+                {
+                    <div class="sentMessageContainer">
+
+                        <div class="sentMessage">@message.MessageContent</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="receivedMessageContainer">
+                        <div class="sender">@message.FirstName @message.LastName</div>
+                    </div>
+                    <div class="receivedMessageContainer">
+                        <div class="receivedMessage">@message.MessageContent</div>
+                    </div>
+                }
+            }
+        }
+    </div>
+    <form asp-page="DashboardPage" method="post" class="messageForm">
+        <input asp-for="@Model.NewMessage.MessageContent" class="messageContent" placeholder="Type message...">
+        <button asp-page-handler="SendMessage" type="submit" class="btn-primary sendMessageBtn">Send</button>
+    </form>
+
+</div>
