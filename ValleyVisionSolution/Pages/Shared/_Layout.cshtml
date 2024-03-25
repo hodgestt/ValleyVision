@@ -10,6 +10,25 @@
     <link rel="stylesheet" href="~/ValleyVisionSolution.styles.css" asp-append-version="true" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
+
+    <style>
+        header{
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            color: white;
+            background-color: #274c77;
+        }
+
+            header h2 {
+                margin: 0;
+                background-color: #D3D3D3;
+            }
+    </style>
+    
+ 
 </head>
 <body>
     <!-- Logout Form -->
@@ -41,9 +60,12 @@
     </div>
     <!-- End Logout Form -->
 
-
     <header>
-        <nav style="background-color: #2e4c74 !important" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <h1>Madison County Government</h1>
+        <h2>@ViewBag.SecondHeader</h2>
+    </header>
+    <header>
+        <nav style="background-color: lightgrey !important" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -52,25 +74,25 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link text-black" asp-area="" asp-page="/Index">Home</a>
                         </li>
                        
                         @{
                             if (Context.Session.GetInt32("UserID").HasValue)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" asp-area="" asp-page="/Initiatives/InitiativesPage">Initiatives</a>
+                                    <a class="nav-link text-black" asp-area="" asp-page="/Initiatives/InitiativesPage">Initiatives</a>
                                 </li>
                                 
                                 if (DB.DBClass.CheckUserType(Context.Session.GetInt32("UserID")) == "Admin")
                                 {
                                     <li class="nav-item">
-                                            <a class="nav-link text-white" asp-area="" asp-page="/ManageProfiles/ManageProfilesPage">Manage Users</a>
+                                            <a class="nav-link text-black" asp-area="" asp-page="/ManageProfiles/ManageProfilesPage">Manage Users</a>
                                     </li>
                                 }
 
                                 <li class="nav-item">
-                                    <button class="nav-link text-white" style="background-color: #2e4c74; border: none; color: white;" data-bs-toggle="modal" data-bs-target="#LogoutForm">
+                                    <button class="nav-link text-black" style="background-color: lightgrey; border: none; color: black;" data-bs-toggle="modal" data-bs-target="#LogoutForm">
                                         @* <img src="~/images/logout-icon.png" style="height:30px" />*@ Logout
                                     </button>
                                 </li>
@@ -78,7 +100,7 @@
                             else
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" asp-area="" asp-page="/Login/LoginPage">Login</a>
+                                    <a class="nav-link text-black" asp-area="" asp-page="/Login/LoginPage">Login</a>
                                 </li>
                             }
                         }
@@ -86,7 +108,7 @@
 
                     @if (Context.Session.GetInt32("Username").HasValue)
                     {
-                        <h5 class="position-relative align-middle" style="-webkit-text-fill-color: white;">
+                        <h5 class="position-relative align-middle" style="-webkit-text-fill-color: black;">
                             @Context.Session.GetString("Username")
                         </h5>
                     }
@@ -121,5 +143,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
+    <div id ="content">
+        @RenderBody()
+    </div>
+
 </body>
 </html>

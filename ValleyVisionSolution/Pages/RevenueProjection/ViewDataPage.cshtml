@@ -10,23 +10,94 @@
     <thead>
         <tr>
             <th>Year</th>
-            <th>Property Tax</th>
-            <th>PPP</th>
-            <th>Licenses & Fees</th>
+            <th>Real Estate Property Tax</th>
+            <th>Personal Property Tax</th>
+            <th>Fees & Licenses</th>
             <th>State Funds</th>
+            <th>Total Revenue</th>
+            <th> </th>
         </tr>
     </thead>
     <tbody>
         @{
-            foreach (var year in Model.AnnualRevenueData)
+            foreach (var year in Model.RevenueDataList)
             {
                 <tr>
-                    <td>@year.year_</td>
-                    <td>@year.realEstateTax</td>
-                    <td>@year.personalPropertyTax</td>
-                    <td>@year.feesLicensesTax</td>
-                    <td>@year.stateFunding</td>
-                </tr>
+                    <td>@year.Year</td>
+                    <td>@year.RealEstateTax</td>
+                    <td>@year.PersonalPropertyTax</td>
+                    <td>@year.FeesLicensesTax</td>
+                    <td>@year.StateFunding</td>
+                    <td>@year.TotalRevenue</td>
+                    <td>
+                        <a asp-page="EditDataPage" class="btn" style=" background-color:#2e4c74; -webkit-text-fill-color:white;" asp-route-employeeid="@year.Year">Edit</a>
+                    </td>
+               </tr>
             }
         }
     </tbody>
+</table>
+<br />
+<button class="btn" style=" background-color:#2e4c74; -webkit-text-fill-color:white;" data-bs-toggle="modal" data-bs-target="#addDataForm">Add Current Year</button>
+
+<!-- Add New Data Form -->
+<div class="modal fade" id="addDataForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form method="post" asp-page="/RevenueProjectionPage/ViewDataPage">
+                <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add Current Year</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Year: </div>
+                            <input asp-for="@Model.NewRevenueData.Year" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewRevenueData.Year"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Real Estate Property Tax: </div>
+                            <input asp-for="@Model.NewRevenueData.RealEstateTax" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewRevenueData.RealEstateTax"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Personal Property Tax: </div>
+                            <input asp-for="@Model.NewRevenueData.PersonalPropertyTax" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewRevenueData.PersonalPropertyTax"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Fees & Licenses Tax: </div>
+                            <input asp-for="@Model.NewRevenueData.FeesLicensesTax" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewRevenueData.FeesLicensesTax"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>State Funding: </div>
+                            <input asp-for="@Model.NewRevenueData.StateFunding" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewRevenueData.StateFunding"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top:none">
+                    <button type="submit" class="btn btn-primary" asp-page-handler="NewData">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- End New Data Form -->
+
+<script>
+    // Check if AddDataInvalid is true on page load and reopen modal if needed
+    window.addEventListener('DOMContentLoaded', (event) => {
+        if (@Model.OpenAddDataModal.ToString().ToLower()) {
+            $('#addDataForm').modal('show');
+        }
+    });
+</script>

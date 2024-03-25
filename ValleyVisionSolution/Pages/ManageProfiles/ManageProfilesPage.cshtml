@@ -4,6 +4,7 @@
     ViewData["Title"] = "Profiles";
 }
 
+
     <h2>Profiles</h2>
     <br />
     <table class="table table-bordered table-responsive table-hover">
@@ -161,7 +162,7 @@
     // Check if AddTaskInvalid is true on page load and reopen modal if needed
     window.addEventListener('DOMContentLoaded', (event) => {
         if (@Model.OpenAddProfileModal.ToString().ToLower()) {
-            $('#addTaskForm').modal('show');
+            $('#addProfileForm').modal('show');
         }
     });
 </script>
