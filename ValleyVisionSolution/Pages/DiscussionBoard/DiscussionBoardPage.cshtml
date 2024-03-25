@@ -19,11 +19,13 @@
     #UserBoard {
         grid-area: Users;
         overflow-x: auto;
+        background-color: #f2f2f2;
     }
 
     #MessageBoard {
         grid-area: Messages;
         overflow-x: auto;
+        background-color: #f2f2f2;
     }
     
     .button {
@@ -78,7 +80,8 @@
     .messageContent {
         border-radius: 15px;
         border: 1px solid grey;
-        width: 100%;
+        width: 95%;
+        margin: 2.5%;
         padding-top: 5px;
         padding-bottom: 32px;
         padding-right: 10px;
@@ -148,7 +151,9 @@
     <br/>
     <form asp-page="DashboardPage" method="post" class="messageForm">
         <textarea asp-for="@Model.NewMessage.MessageContent" class="messageContent" placeholder="Type message..."></textarea>
+            <div class="btnhandler" style="display:flex; justify-content:right; width:95%; margin:-2% 2.5% 1.5% 2.5%;">
         <button asp-page-handler="SendMessage" type="submit" class="btn-primary sendMessageBtn">Send</button>
+        </div>
     </form>
     </div>
 </div>
