@@ -4,8 +4,26 @@
     ViewData["Title"] = "Discussion Board";
 }
 <style>
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 4fr;
+        grid-template-areas:
+            "Users Messages";
+        gap: 3vw;
+    }
+
+    .dashboard-tile {
+        font-size: max(1.25vw, 10px);
+    }
+
+    #UserBoard {
+        grid-area: Users;
+        overflow-x: auto;
+    }
+
     #MessageBoard {
-        grid-area: messageBoard;
+        grid-area: Messages;
+        overflow-x: auto;
     }
     
     .button {
@@ -27,6 +45,7 @@
         padding: 5px 10px 5px 10px;
         background-color: lightgrey;
         display: inline-block;
+        max-width: 70%;
     }
 
     .sentMessageContainer {
@@ -48,6 +67,7 @@
         background-color: #5285f7;
         display: inline-block;
         color: white;
+        max-width: 70%;
     }
 
     .messageForm {
@@ -58,20 +78,51 @@
     .messageContent {
         border-radius: 15px;
         border: 1px solid grey;
-        padding: 5px 10px 5px 10px;
+        width: 100%;
+        padding-top: 5px;
+        padding-bottom: 32px;
+        padding-right: 10px;
+        padding-left: 10px;
     }
 
     .sendMessageBtn {
         background-color: #5285f7;
         border-radius: 15px;
+        justify-content:right;
+        justify-content:end;
+    }
+
+    .dashboard-tile-title {
+        background-color: #274C77;
+        color: #fff;
+        text-align: center;
+    }
+
+    .dashboard-tile-contents {
+        padding: 2.5% 6% 2.5% 6%;
+    }
+
+    .messageForm {
+        align-self: end;
     }
 
 </style>
-
+<div class="dashboard-grid">
+<div id="UserBoard" class="dashboard-tile">
+    <div class="dashboard-tile-title">Users</div>
+    <div class="dashboard-tile-contents" >
+        @{
+            foreach (var user in Model.Users)
+            {
+                    <div style="font-size:max-width(20px,0.5vw);">@user.FirstName @user.LastName</div>
+            }
+        }
+    </div>
+</div>
 
 <div id="MessageBoard" class="dashboard-tile">
-    <div class="dashboard-tile-title">Message Board</div>
-    <div class="dashboard-tile-contents">
+    <div class="dashboard-tile-title">Discussion Board</div>
+        <div class="dashboard-tile-contents" style="overflow-y:scroll; max-height: 50vh;">
         @{
             foreach (var message in Model.Messages)
             {
@@ -94,9 +145,10 @@
             }
         }
     </div>
+    <br/>
     <form asp-page="DashboardPage" method="post" class="messageForm">
-        <input asp-for="@Model.NewMessage.MessageContent" class="messageContent" placeholder="Type message...">
+        <textarea asp-for="@Model.NewMessage.MessageContent" class="messageContent" placeholder="Type message..."></textarea>
         <button asp-page-handler="SendMessage" type="submit" class="btn-primary sendMessageBtn">Send</button>
     </form>
-
+    </div>
 </div>

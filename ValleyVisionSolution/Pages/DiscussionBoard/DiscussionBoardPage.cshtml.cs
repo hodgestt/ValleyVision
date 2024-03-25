@@ -4,12 +4,15 @@ using static BenchmarkDotNet.Engines.EngineEventSource;
 using ValleyVisionSolution.Pages.DataClasses;
 using System.Data.SqlClient;
 using ValleyVisionSolution.Pages.DB;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ValleyVisionSolution.Pages.DiscussionBoard
 {
     public class DiscussionBoardPageModel : PageModel
     {
         public List<Message> Messages { get; set; }
+
+        public List<User> Users { get; set; }
 
         public int initID { get; set; }
 
@@ -19,17 +22,21 @@ namespace ValleyVisionSolution.Pages.DiscussionBoard
 
         [BindProperty]
         public Message NewMessage { get; set; }
-        
+
+        [BindProperty]
+        public User NewUser { get; set; }
+
         public DiscussionBoardPageModel()
         {
             Messages = new List<Message>();
             NewMessage = new Message();
             NewMessage.MessageContent = "";
+            Users = new List<User>();
         }
 
 
 
-            public void OnGet()
+        public void OnGet()
         {
             LoggedInUser = HttpContext.Session.GetInt32("UserID");
             InitiativeArea = HttpContext.Session.GetInt32("InitID");
@@ -51,9 +58,24 @@ namespace ValleyVisionSolution.Pages.DiscussionBoard
             }
             // Close your connection in DBClass
             DBClass.ValleyVisionConnection.Close();
+
+            InitiativeArea = HttpContext.Session.GetInt32("InitID");
+            initID = (int)InitiativeArea;
+            SqlDataReader userReader = DBClass.InitiativeUsersReader(initID);
+            while (userReader.Read())
+            {
+                Users.Add(new User
+                { 
+                    UserID = int.Parse(userReader["userID"].ToString()),
+                    FirstName = userReader["firstName"].ToString(),
+                    LastName = userReader["lastName"].ToString()
+                });
+            }
+            // Close your connection in DBClass
+            DBClass.ValleyVisionConnection.Close();
         }
-       
-        public IActionResult OnPostSendMessage()
+
+            public IActionResult OnPostSendMessage()
         {
             if (NewMessage.MessageContent != null)
             {
@@ -84,6 +106,19 @@ namespace ValleyVisionSolution.Pages.DiscussionBoard
                     InitID = int.Parse(reader5["initID"].ToString()),
                     FirstName = reader5["firstName"].ToString(),
                     LastName = reader5["lastName"].ToString()
+                });
+            }
+            // Close your connection in DBClass
+            DBClass.ValleyVisionConnection.Close();
+
+            SqlDataReader userReader = DBClass.InitiativeUsersReader(initID);
+            while (userReader.Read())
+            {
+                Users.Add(new User
+                {
+                    UserID = int.Parse(userReader["userID"].ToString()),
+                    FirstName = userReader["firstName"].ToString(),
+                    LastName = userReader["lastName"].ToString()
                 });
             }
             // Close your connection in DBClass

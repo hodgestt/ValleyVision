@@ -29,7 +29,7 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
             {
                 RevenueDataList.Add(new Revenue
                 {
-                    Year = Int32.Parse(reader["year_"].ToString()),
+                    Year = reader["year_"].ToString(),
                     RealEstateTax = Decimal.Parse(reader["realEstateTax"].ToString()),
                     PersonalPropertyTax = Decimal.Parse(reader["personalPropertyTax"].ToString()),
                     FeesLicensesTax = Decimal.Parse(reader["feesLicensesTax"].ToString()),
