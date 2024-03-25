@@ -264,6 +264,37 @@ namespace ValleyVisionSolution.Pages.DB
                 cmd2.Connection.Close();
             }
         }
+        //reads and loads the previous messages sent from other members in the disucssion board
+        public static SqlDataReader MessagesReader(int initID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@InitID", initID);
+
+            cmd.CommandText = "SELECT M.messageID, M.messageContent, M.messageDateTime, M.userID, M.initID, U.firstName, U.lastName FROM Message_ M JOIN User_ U ON U.userID = M.userID WHERE M.initID = @InitID ORDER BY M.messageDateTime ASC;";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+        //adds message in the discussion board
+        public static void AddMessage(Message NewMessage)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@MessageContent", NewMessage.MessageContent);
+            cmd.Parameters.AddWithValue("@MessageDateTime", NewMessage.MessageDateTime);
+            cmd.Parameters.AddWithValue("@UserID", NewMessage.UserID);
+            cmd.Parameters.AddWithValue("@InitID", NewMessage.InitID);
+            String sqlQuery = "INSERT INTO Message_ (messageContent, messageDateTime, userID, initID) VALUES (@MessageContent, @MessageDateTime, @UserID, @initID);";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+        }
         //END TASK MANAGER PAGE__________________________________________________________________________________________
 
 
