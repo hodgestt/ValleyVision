@@ -89,7 +89,34 @@ namespace ValleyVisionSolution.Pages.DB
 
             return tempReader;
         }
-        
+
+        public static List<Revenue> GetChartDataFromDatabase()
+        {
+            List<Revenue> dataList = new List<Revenue>();
+
+            using (SqlConnection connection = new SqlConnection(MainConnString))
+            {
+                string sqlQuery = "SELECT year_, realEstateTax, personalPropertyTax, feesLicensesTax, stateFunding, totalRevenue FROM DataFile_2;";
+                SqlCommand command = new SqlCommand(sqlQuery, connection);
+                connection.Open();
+
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    Revenue dataItem = new Revenue();
+                    dataItem.Year = int.Parse(reader["year_"].ToString());
+                    dataItem.RealEstateTax = Convert.ToDecimal(reader["realEstateTax"]);
+                    dataItem.PersonalPropertyTax = Convert.ToDecimal(reader["personalPropertyTax"]);
+                    dataItem.FeesLicensesTax = Convert.ToDecimal(reader["feesLicensesTax"]);
+                    dataItem.StateFunding = Convert.ToDecimal(reader["stateFunding"]);
+                    dataItem.TotalRevenue = Convert.ToDecimal(reader["totalRevenue"]);
+                    dataList.Add(dataItem);
+                }
+            }
+
+            return dataList;
+        }
+
         //reads all users for INITIATIVE PAGE_________________________________________________________________________________________
         public static SqlDataReader UsersReader(int? userID)
         {
