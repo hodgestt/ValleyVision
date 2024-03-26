@@ -185,6 +185,20 @@ namespace ValleyVisionSolution.Pages.DB
         }
         //END DASHBOARD PAGE_____________________________________________________________________________________________
 
+        //BEGIN Ressources Page
+        public static SqlDataReader ResourceReader(int initID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@InitID", initID);
+            cmd.CommandText = "SELECT DISTINCT F.fileMetaID, F.fileName_, F.filePath, F.fileType, F.uploadedDateTime, F.userID, U.firstName, U.lastName FROM FileMeta F JOIN InitiativeFiles IT ON F.fileMetaID = IT.fileMetaID JOIN User_ U ON F.userID = U.userID WHERE IT.initID = @InitID;";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
 
 
         //BEGIN TASK MANAGER PAGE________________________________________________________________________________________

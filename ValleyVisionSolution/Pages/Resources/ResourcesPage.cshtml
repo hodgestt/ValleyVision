@@ -3,3 +3,39 @@
 @{
     ViewData["Title"] = "Resources";
 }
+<div class="resource-container">
+    <div class="resource-container" style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <!-- Search form with a larger input field -->
+            <form method="get" class="search-form" style="flex-grow: 1; display: flex; margin-right: 10px;">
+                <input type="text" name="searchTerm" placeholder="Search files..." style="flex-grow: 1; margin-right: 10px; padding: 5px;" />
+                <button type="submit" style="padding: 5px 10px;">Search</button>
+            </form>
+            <!-- Upload form -->
+            <form method="post" enctype="multipart/form-data" class="upload-form">
+                <input type="file" name="file" style="display: inline-block; margin-right: 10px;" />
+                <button type="submit" style="padding: 5px 10px;">Upload File</button>
+            </form>
+        </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>File Name</th>
+                <th>File Type</th>
+                <th>Uploaded Date</th>
+                <th>Uploaded By</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var fileMeta in Model.ResourceList)
+            {
+                <tr>
+                    <td><a href="@fileMeta.FilePath" target="_blank">@fileMeta.FileName_</a></td>
+                    <td>@fileMeta.FileType</td>
+                    <td>@fileMeta.UploadedDateTime.ToString("MM/dd/yy @ hh:mm tt")</td>
+                    <td>@fileMeta.FirstName @fileMeta.LastName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
