@@ -8,28 +8,160 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ValleyVisionSolution.styles.css" asp-append-version="true" />
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        header{
-            text-align: center;
-        }
 
-        header h1 {
-            margin: 0;
-            color: white;
+        header {
+            text-align: center;
             background-color: #274c77;
         }
 
+            header h1 {
+                margin: 0 auto;
+                color: white;
+                background-color: #274c77;
+            }
+
+
             header h2 {
                 margin: 0;
-                background-color: #D3D3D3;
+                background-color: #274c77;
             }
+
+
+
+        .navbar-toggler-icon {
+            display: inline-block;
+            width: 1.5em;
+            height: 1.5em;
+            vertical-align: middle;
+            color: white;
+            background-image: var(--bs-navbar-toggler-icon-bg);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100%;
+            background-color: transparent;
+        }
+
+
+        *, ::after, ::before {
+            box-sizing: border-box;
+        }
+
+
+
+        [type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), button:not(:disabled) {
+            cursor: pointer;
+        }
+
+
+
+        .navbar-toggler {
+            padding: var(--bs-navbar-toggler-padding-y) var(--bs-navbar-toggler-padding-x);
+            font-size: var(--bs-navbar-toggler-font-size);
+            line-height: 1;
+            color: white;
+            background-color: transparent;
+            border: var(--bs-border-width) solid var(--bs-navbar-toggler-border-color);
+            border-radius: var(--bs-navbar-toggler-border-radius);
+            transition: var(--bs-navbar-toggler-transition);
+        }
+
+        .bg-body-secondary{
+            background-color: #274c77 !important;
+        }
+
+        button, select {
+            text-transform: none;
+            color: white;
+        }
+
+        button, input, optgroup, select, textarea {
+            margin: 0;
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
+            color:white;
+        }
+
+
+
+        user agent stylesheet
+
+        button {
+            font-style:;
+            font-variant-ligatures:;
+            font-variant-caps:;
+            font-variant-numeric:;
+            font-variant-east-asian:;
+            font-variant-alternates:;
+            font-variant-position:;
+            font-weight:;
+            font-stretch:;
+            font-size:;
+            font-family:;
+            font-optical-sizing:;
+            font-kerning:;
+            font-feature-settings:;
+            font-variation-settings:;
+            text-rendering: auto;
+            color: white;
+            letter-spacing: normal;
+            word-spacing: normal;
+            line-height: normal;
+            text-transform: none;
+            text-indent: 0px;
+            text-shadow: none;
+            text-align: center;
+            cursor: default;
+        }
+
+        
+        .button-26 {
+            appearance: button;
+            background-color: #274c77;
+            border: 1px solid #274c77;
+            border-radius: 4px;
+            box-sizing: border-box;
+            color: #FFFFFF;
+            cursor: pointer;
+            font-size: 25px;
+            line-height: 1.15;
+            overflow: visible;
+            padding: 12px 16px;
+            position: relative;
+            text-align: center;
+            text-transform: none;
+            transition: all 80ms ease-in-out;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            width: fit-content;
+            -webkit-text-fill-color:white;        
+        }
+
+        .button-26:disabled {
+            opacity: .5;
+        }
+
+        .button-26:focus {
+            outline: 0;
+        }
+
+        .button-26:hover {
+            background-color: #0A46E4;
+            border-color: #0A46E4;
+        }
+
+        .button-26:active {
+            background-color: #0039D7;
+            border-color: #0039D7;
+        }
     </style>
-    
- 
+
 </head>
+
 <body>
     <!-- Logout Form -->
     <div class="modal fade" id="LogoutForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -39,8 +171,7 @@
                     <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Logout</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="row mb-3">
@@ -50,103 +181,119 @@
                         </div>
                     </div>
                     <div class="modal-footer" style="border-top:none">
-
                         <button type="submit" class="btn btn-primary" asp-page-handler="LogoutHandler">Logout &rarr;</button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
     <!-- End Logout Form -->
-
     <header>
-        <h1>Madison County Government</h1>
-        <h2>@ViewBag.SecondHeader</h2>
-    </header>
-    <header>
-        <nav style="background-color: lightgrey !important" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar bg-body-secondary" style="background-color:#274c77;">
+            <div class="container-fluid">
+                <h1>Madison County Government</h1>
+                <h2>@ViewBag.SecondHeader</h2>
+                <a class="navbar-brand" href="#"></a>
+                <div class="navbar-dark">
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-black" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                       
-                        @{
-                            if (Context.Session.GetInt32("UserID").HasValue)
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-black" asp-area="" asp-page="/Initiatives/InitiativesPage">Initiatives</a>
-                                </li>
-                                
-                                if (DB.DBClass.CheckUserType(Context.Session.GetInt32("UserID")) == "Admin")
+                </div>
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                    <div class="offcanvas-header">
+                        <h3 class="offcanvas-title" id="offcanvasNavbarLabel" style="text-align:center; font-size:40px;">Menu</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body" style="justify-content:left;">
+                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                            @{
+                                if (Context.Session.GetInt32("UserID").HasValue)
                                 {
                                     <li class="nav-item">
-                                            <a class="nav-link text-black" asp-area="" asp-page="/ManageProfiles/ManageProfilesPage">Manage Users</a>
+                                        <a class="nav-link text-black" asp-area="" asp-page="/Initiatives/InitiativesPage" style="text-align:left; font-size:30px;">Initiatives</a>
+                                    </li>
+                                    if (DB.DBClass.CheckUserType(Context.Session.GetInt32("UserID")) == "Admin")
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link text-black" asp-area="" asp-page="/ManageProfiles/ManageProfilesPage" style="text-align:left; font-size:30px;">Manage Users</a>
+                                        </li>
+                                    }
+                                    <br/>
+                                    <li class="nav-item">
+                                        <div class="button-26">
+                                            <a class="nav-link" asp-area="" data-bs-toggle="modal" data-bs-target="#LogoutForm" style="text-align:left; -webkit-text-fill-color:white;">Logout</a>
+                                        </div>
                                     </li>
                                 }
-
-                                <li class="nav-item">
-                                    <button class="nav-link text-black" style="background-color: lightgrey; border: none; color: black;" data-bs-toggle="modal" data-bs-target="#LogoutForm">
-                                        @* <img src="~/images/logout-icon.png" style="height:30px" />*@ Logout
-                                    </button>
-                                </li>
+                                else
+                                {
+                                    <li class="nav-item">
+                                        <div class="button-26">
+                                            <a class="nav-link" asp-area="" asp-page="/Login/LoginPage" style="text-align:left; -webkit-text-fill-color:white;">Login</a>
+                                        </div>
+                                    </li>
+                                }
                             }
-                            else
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-black" asp-area="" asp-page="/Login/LoginPage">Login</a>
-                                </li>
-                            }
-                        }
-                    </ul>
-
-                    @if (Context.Session.GetInt32("Username").HasValue)
-                    {
-                        <h5 class="position-relative align-middle" style="-webkit-text-fill-color: black;">
-                            @Context.Session.GetString("Username")
-                        </h5>
-                    }
+                        </ul>
+                    </div>
                 </div>
             </div>
         </nav>
-        
+        @{
+
+            if (Context.Session.GetString("InitName") != null)
+
+            {
+
+                <nav style="background-color: lightgrey !important" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+
+                    <div class="container">
+
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+
+                            <span class="navbar-toggler-icon"></span>
+
+                        </button>
+
+                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
+                            <ul class="navbar-nav flex-grow-1">
+
+                                <li class="nav-item">
+
+                                    <a class="nav-link text-black" asp-area="" asp-page="/Index">Home</a>
+
+                                </li>
+
+                            </ul>
+
+                        </div>
+
+                    </div>
+
+                </nav>
+
+            }
+        }
+
     </header>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2024 - ValleyVisionSolution - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>
     </footer>
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
     <!-- Include these before your closing </body> tag -->
     <!-- jQuery, Popper.js, and Bootstrap JS (Bootstrap Select requires them) -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
-    <!-- Bootstrap Select JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
-
-    @await RenderSectionAsync("Scripts", required: false)
-
-    <div id ="content">
-        @RenderBody()
-    </div>
-
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4."></script>
 </body>
-</html>
