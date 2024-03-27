@@ -18,7 +18,7 @@
                 </div>
                 <div class="modal-body">
 
-                    <input type="hidden" asp-for="@Model.EditedProfile.UserID" value="@Model.ViewedProfile">
+                    <input type="hidden" asp-for="@Model.ProfileToUpdate.UserID">
                     @{
                         FullProfile ProfileData = new FullProfile();
                         foreach (var profile in Model.AllProfiles)
@@ -29,22 +29,75 @@
                             }
                         }
                     }
-
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div>Username:</div>
-                            <input asp-for="@Model.EditedProfile.UserName" type="text" class="form-control" value="@ProfileData.UserName">
-                            <span class="text-danger" asp-validation-for="@Model.EditedProfile.UserName"></span>
+                            <input asp-for="@Model.ProfileToUpdate.UserName" type="text" class="form-control" />
+                            <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.UserName"></span>
                         </div>
                         <div class="col-md-6">
                             <div>Password:</div>
-                            <input asp-for="@Model.EditedProfile.Password" type="Password" class="form-control" value="@ProfileData.Password">
-                            <span class="text-danger" asp-validation-for="@Model.EditedProfile.Password"></span>
+                            <input asp-for="@Model.ProfileToUpdate.Password" type="Password" class="form-control" />
+                            <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.Password"></span>
                         </div>
-                    @* Rest of form is in progress *@
+                        <div class="col-md-6">
+                            <div>First Name:</div>
+                            <input asp-for="@Model.ProfileToUpdate.FirstName" type="text" class="form-control"/>
+                            <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.FirstName"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Last Name:</div>
+                            <input asp-for="@Model.ProfileToUpdate.LastName" type="text" class="form-control" />
+                            <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.LastName"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Email:</div>
+                            <input asp-for="@Model.ProfileToUpdate.Email" type="text" class="form-control" />
+                            <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.Email"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Phone:</div>
+                            <input asp-for="@Model.ProfileToUpdate.Phone" type="text" class="form-control" />
+                            <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.Phone"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>User Type:</div>
+                            <input asp-for="@Model.ProfileToUpdate.UserType" type="text" class="form-control" />
+                            <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.UserType"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Street:</div>
+                            <input asp-for="@Model.ProfileToUpdate.Phone" type="text" class="form-control" />
+                            <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.Street"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Apartment:</div>
+                            <input asp-for="@Model.ProfileToUpdate.Apartment" type="text" class="form-control" />
+                            <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.Apartment"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>City:</div>
+                            <input asp-for="@Model.ProfileToUpdate.City" type="text" class="form-control" />
+                            <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.City"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>State:</div>
+                            <input asp-for="@Model.ProfileToUpdate.State" type="text" class="form-control" />
+                            <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.State"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Zip:</div>
+                            <input asp-for="@Model.ProfileToUpdate.Zip" type="text" class="form-control" />
+                            <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.Zip"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Country:</div>
+                            <input asp-for="@Model.ProfileToUpdate.Country" type="text" class="form-control" />
+                            <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.Country"></span>
+                        </div>
                 </div>
                 <div class="modal-footer" style="border-top:none">
-                    <button type="submit" class="btn btn-primary" asp-page-handler="UpdateTask">Update</button>
+                    <button type="submit" class="btn btn-primary" asp-page-handler="UpdateProfile">Update</button>
                 </div>
             </form>
 
