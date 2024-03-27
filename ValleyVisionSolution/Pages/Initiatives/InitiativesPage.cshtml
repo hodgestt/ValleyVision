@@ -1,6 +1,4 @@
 ﻿@page
-@using Microsoft.AspNetCore.Http
-@using ValleyVisionSolution.Pages.DB
 @model ValleyVisionSolution.Pages.Initiatives.InitiativesPageModel
 @{
     ViewData["Title"] = "Initiatives";
@@ -11,13 +9,15 @@
     .tile-container {
         display: flex;
         flex-wrap: wrap;
+        justify-content: space-around; /* Adjust as needed */
     }
 
     .tile {
         text-decoration: none;
         color: black;
-        width: calc(33% - 4%);
-        height: 16vw;
+        width: calc(33% - 20px); /* Adjust width based on desired layout */
+        max-width: 300px; /* Maximum width for each tile */
+        height: 300px; /* Fixed height for each tile */
         border-radius: 5px;
         font-size: 1.2em;
         cursor: pointer;
@@ -25,45 +25,34 @@
         border: 1px solid black;
         outline: none;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin: 2%;
-        font-size:1.25vw;
+        margin: 10px; /* Adjust margin as needed */
     }
+
+        .tile img {
+            max-width: 100%; /* Ensure the image fits inside the tile */
+            max-height: 100%; /* Ensure the image fits inside the tile */
+            object-fit: contain; /* Adjust object-fit based on image aspect ratio */
+        }
 
         .tile:hover {
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             color: black;
         }
-
-    .bootstrap-select > .dropdown-toggle {
-        height: 38px;
-    }
-
-        .bootstrap-select > .dropdown-toggle:active,
-        .bootstrap-select > .dropdown-toggle:focus {
-            outline: none !important;
-        }
 </style>
 
-@* Loops through all initiatives and displays their name in a clickable box. On click the initID is sent as route parameter *@
 <div class="tile-container">
-    @{
-        foreach (var initiative in Model.InitiativesList)
-        {
-            <a asp-page="/Dashboard/DashboardPage" asp-route-initID="@initiative.InitID" asp-route-initName="@initiative.InitName" class="tile">@initiative.InitName</a>
-        }
+    @foreach (var initiative in Model.InitiativesList)
+    {
+        <a asp-page="/Dashboard/DashboardPage" asp-route-initID="@initiative.InitID" asp-route-initName="@initiative.InitName" class="tile">
+            <div class="tile-content">
+                <img src="@initiative.FilePath" alt="Initiative Image">
+                <div class="tile-text">@initiative.InitName</div>
+            </div>
+        </a>
     }
-    @{
-        int? UserID = HttpContext.Session.GetInt32("UserID");
-        String UserType = DBClass.CheckUserType((int)UserID);
-        @if (UserType == "Admin")
-        {
-            <button type="submit" class="tile" data-bs-toggle="modal" data-bs-target="#addInitForm">Add New +</button>
-
-        }
-    }
-    
 </div>
 
 <!-- Add New Initiative Form -->
