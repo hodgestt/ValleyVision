@@ -17,12 +17,14 @@ namespace ValleyVisionSolution.Pages.Resources
     {
         public List<FileMeta> ResourceList { get; set; }
         public List<FileMeta> FileUpload {  get; set; }
+        public string CurrentInitiativeName { get; set; }
 
         public ResourcesPageModel() 
         {
             ResourceList = new List<FileMeta>();
             FileUpload = new List<FileMeta> { };
         }
+
 
         public void loadData(int initID, string searchTerm = null)
         {
@@ -56,7 +58,6 @@ namespace ValleyVisionSolution.Pages.Resources
                 ).ToList();
             }
         }
-
 
 
         public IActionResult OnGet(string searchTerm)
@@ -129,6 +130,37 @@ namespace ValleyVisionSolution.Pages.Resources
             ViewData["ErrorMessage"] = "You must select a file.";
             return Page();
         }
+
+        public async Task<IActionResult> OnPostDeleteFileAsync(int fileId, string filePath)
+        {
+            // Sanitize the filePath to prevent directory traversal attacks
+            var fileName = Path.GetFileName(filePath);
+
+            // Combine the directory path with the sanitized fileName to get the absolute path
+            var absoluteFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
+
+            if (System.IO.File.Exists(absoluteFilePath))
+            {
+                // Delete the file from the file system
+                System.IO.File.Delete(absoluteFilePath);
+            }
+
+            // Now delete the record from the database
+            DBClass.DeleteFile(fileId);
+
+            // Redirect back to the page to refresh the list of files
+            return RedirectToPage();
+        }
+
+
+ 
+
+
+        public class DeleteRequest
+        {
+            public int FileId { get; set; }
+        }
+
 
 
     }

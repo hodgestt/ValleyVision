@@ -3,85 +3,117 @@
 @{
     ViewData["Title"] = "Resources";
 }
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+
+<style>
+    .custom-margin-left {
+        margin-left: 10px;
+    }
+
+    .tableHeader {
+        background-color: #274c77;
+        color: white;
+        vertical-align: middle !important;
+    }
+
+    .bg-custom-blue {
+        background-color: #274c77;
+    }
+
+    .clear-search {
+        margin-top: 20px; /* Adjust as necessary */
+        margin-bottom: 20px;
+    }
+</style>
+
 <div class="resource-container">
-    <div class="resource-container" style="margin-bottom: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-            <!-- Search form with a larger input field -->
-            <form method="get" class="search-form" style="flex-grow: 1; display: flex; margin-right: 10px;">
-                <input type="text" name="searchTerm" placeholder="Search files..." style="flex-grow: 1; margin-right: 10px; padding: 5px;" />
-                <button type="submit" style="padding: 5px 10px;">Search</button>
-            </form>
+    <div class="mb-4 mt-3">
+        <h2 class="h4">Resource Library</h2>
+    </div>
 
-            <!-- Trigger Modal Button instead of direct form -->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadFileModal">
-                Upload File
-            </button>
-        </div>
-        @if (!string.IsNullOrEmpty(HttpContext.Request.Query["searchTerm"]))
-        {
-            <div class="mt-2">
-                <a href="@Url.Page("./ResourcesPage")" class="badge bg-secondary fs-5">
-                    @HttpContext.Request.Query["searchTerm"] <i class="bi bi-x-circle"></i>
-                </a>
-            </div>
-        }
-
-
-        <br /> <br />
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>File Name</th>
-                    <th>File Type</th>
-                    <th>Uploaded Date</th>
-                    <th>Uploaded By</th>
-                    <th>Download</th> <!-- New column for actions like download -->
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var fileMeta in Model.ResourceList)
-                {
-                    <tr>
-                        <td>@fileMeta.FileName_</td> <!-- Removed hyperlink from file name -->
-                        <td>@fileMeta.FileType</td>
-                        <td>@fileMeta.UploadedDateTime.ToString("MM/dd/yy hh:mm tt")</td>
-                        <td>@fileMeta.FirstName @fileMeta.LastName</td>
-                        <td>
-                            <!-- Download Icon/Button -->
-                            <a href="@Url.Content(fileMeta.FilePath)" download class="btn btn-outline-secondary btn-sm">
-                                <i class="bi bi-download"></i>
-                            </a>
-
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        <!-- File Upload Modal -->
-        <form method="post" enctype="multipart/form-data" asp-page-handler="Upload">
-            <div class="modal fade" id="uploadFileModal" tabindex="-1" role="dialog" aria-labelledby="uploadFileModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="uploadFileModalLabel">Upload File</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <!-- File input -->
-                            <input type="file" name="file" class="form-control" />
-                        </div>
-                        <div class="modal-footer">
-                            <!-- Close and Upload buttons -->
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Upload</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <!-- Search form -->
+        <form method="get" class="search-form" style="flex-grow: 1; display: flex; margin-right: 10px;">
+            <input type="text" name="searchTerm" placeholder="Search files..." class="form-control mr-2" style="flex-grow: 1;" />
+            <button type="submit" class="btn btn-outline-primary custom-margin-left">Search</button>
         </form>
 
+        <!-- Upload File Modal Trigger Button -->
+        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#uploadFileModal">Upload File</button>
+    </div>
 
+    @if (!string.IsNullOrEmpty(HttpContext.Request.Query["searchTerm"]))
+    {
+        <div class="clear-search">
+            <a href="@Url.Page("./ResourcesPage")" class="badge bg-custom-blue text-white fs-6 p-2">
+                Clear search: @HttpContext.Request.Query["searchTerm"] <i class="bi bi-x-circle"></i>
+            </a>
+        </div>
+
+    }
+
+    <!-- Resource Table -->
+    <table class="table table-bordered table-striped table-responsive table-hover">
+        <thead class="tableHeader">
+            <tr>
+                <th>File Name</th>
+                <th>File Type</th>
+                <th>Uploaded Date</th>
+                <th>Uploaded By</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var fileMeta in Model.ResourceList)
+            {
+                <tr>
+                    <td>@fileMeta.FileName_</td>
+                    <td>@fileMeta.FileType</td>
+                    <td>@fileMeta.UploadedDateTime.ToString("MM/dd/yy hh:mm tt")</td>
+                    <td>@fileMeta.FirstName @fileMeta.LastName</td>
+                    <td>
+                        <a href="@Url.Content(fileMeta.FilePath)" download="@fileMeta.FileName_" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-download"></i>
+                        </a>
+                        <form method="post" style="display: inline-block;"
+                              asp-page-handler="DeleteFile"
+                              asp-route-fileId="@fileMeta.FileMetaID"
+                              asp-route-filePath="@fileMeta.FilePath"
+                              onsubmit="return confirm('Are you sure you want to delete this file?');">
+                            <button type="submit" class="btn btn-danger btn-sm custom-margin-left">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
+
+<!-- File Upload Modal -->
+<form method="post" enctype="multipart/form-data" asp-page-handler="Upload">
+    <div class="modal fade" id="uploadFileModal" tabindex="-1" aria-labelledby="uploadFileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadFileModalLabel">Upload File</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="file" name="file" class="form-control" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+
+

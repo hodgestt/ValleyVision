@@ -256,7 +256,32 @@ namespace ValleyVisionSolution.Pages.DB
 
         }
 
+        public static void DeleteFile(int fileID)
+        {
+            SqlCommand cmd2 = new SqlCommand();
+            cmd2.Connection = ValleyVisionConnection;
+            cmd2.Connection.ConnectionString = MainConnString;
+            cmd2.Parameters.AddWithValue("@FileID", fileID);
+            String sqlQuery2 = "DELETE FROM InitiativeFiles WHERE FileMetaID = @FileID";
+            cmd2.CommandText = sqlQuery2;
+            cmd2.Connection.Open();
+            cmd2.ExecuteNonQuery();
+            cmd2.Connection.Close();
 
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@FileID", fileID);
+            String sqlQuery = "DELETE FROM FileMeta WHERE FileMetaID = @FileID";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+        }
+
+
+
+        // END RESOURCES PAGE
         //BEGIN TASK MANAGER PAGE________________________________________________________________________________________
         //reads all tasks associated with a specific initiative
         public static SqlDataReader AllTasksReader(int? initID)
@@ -454,6 +479,73 @@ namespace ValleyVisionSolution.Pages.DB
 
             return tempReader;
         }
+
+        public static SqlDataReader SingleProfilesReader(int userid)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@UserID", userid);
+            cmd.CommandText = "SELECT C.UserName, C.Password_, U.userID, U.firstName, U.lastName, U.email, U.phone, U.userType, A.street, A.apartment, A.city, A.state_, A.zip, A.country FROM AUTH.dbo.HashedCredentials C JOIN Main.dbo.User_ U ON U.userID = C.UserID JOIN Main.dbo.Address_ A ON A.AddressID = U.AddressID WHERE U.userID=@UserID;";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+
+        //editing profiles
+        public static void UpdateProfile(FullProfile profiletoedit)
+        {
+            int addressID;
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@Street", profiletoedit.Street);
+            cmd.Parameters.AddWithValue("@Apartment", profiletoedit.Apartment);
+            cmd.Parameters.AddWithValue("@City", profiletoedit.City);
+            cmd.Parameters.AddWithValue("@State", profiletoedit.State);
+            cmd.Parameters.AddWithValue("@Zip", profiletoedit.Zip);
+            cmd.Parameters.AddWithValue("@Country", profiletoedit.Country);
+            String sqlQuery = "UPDATE Address_ (street, apartment, city, state_, zip, country) VALUES (@Street, @Apartment, @City, @State, @Zip, @Country);";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            addressID = Convert.ToInt32(cmd.ExecuteScalar());
+            cmd.Connection.Close();
+
+
+            int userID;
+            SqlCommand cmd2 = new SqlCommand();
+            cmd2.Connection = ValleyVisionConnection;
+            cmd2.Connection.ConnectionString = MainConnString;
+            cmd2.Parameters.AddWithValue("@FirstName", profiletoedit.FirstName);
+            cmd2.Parameters.AddWithValue("@LastName", profiletoedit.LastName);
+            cmd2.Parameters.AddWithValue("@Email", profiletoedit.Email);
+            cmd2.Parameters.AddWithValue("@Phone", profiletoedit.Phone);
+            cmd2.Parameters.AddWithValue("@UserType", profiletoedit.UserType);
+            cmd2.Parameters.AddWithValue("@Address", addressID);
+            String sqlQuery2 = "INSERT INTO User_ (firstName, lastName, email, phone, userType, addressID) VALUES (@FirstName, @LastName, @Email, @Phone, 'User', @Address);" + "SELECT SCOPE_IDENTITY();";
+            cmd2.CommandText = sqlQuery2;
+            cmd2.Connection.Open();
+            userID = Convert.ToInt32(cmd2.ExecuteScalar());
+            cmd2.Connection.Close();
+
+
+            SqlCommand cmdLogin = new SqlCommand();
+            cmdLogin.Connection = ValleyVisionConnection;
+            cmdLogin.Connection.ConnectionString = AuthConnString;
+
+            cmdLogin.Parameters.AddWithValue("@UserID", userID);
+            cmdLogin.Parameters.AddWithValue("@Username", profiletoedit.UserName);
+            cmdLogin.Parameters.AddWithValue("@Password", PasswordHash.HashPassword(profiletoedit.Password));
+            string loginQuery = "INSERT INTO HashedCredentials (UserID,UserName,Password_) VALUES (@UserID, @Username, @Password)";
+            cmdLogin.CommandText = loginQuery;
+            cmdLogin.Connection.Open();
+            cmdLogin.ExecuteNonQuery();
+            DBClass.ValleyVisionConnection.Close();
+        }
+
+
         //END MANAGE PROFILES PAGE____________________________________________________________________________________________
 
 
@@ -587,6 +679,21 @@ namespace ValleyVisionSolution.Pages.DB
         }
         //END CREATE FULL PROFILE METHODS-------------------------------------------------------------------------------------
 
+        public static SqlDataReader SingleProfilesReader(int userid)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@UserID", userid);
+            cmd.CommandText = "SELECT C.UserName, C.Password_, U.userID, U.firstName, U.lastName, U.email, U.phone, U.userType, A.street, A.apartment, A.city, A.state_, A.zip, A.country FROM AUTH.dbo.HashedCredentials C JOIN Main.dbo.User_ U ON U.userID = C.UserID JOIN Main.dbo.Address_ A ON A.AddressID = U.AddressID WHERE U.userID=@UserID;";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+
+        //editing profiles
 
     }
 }
