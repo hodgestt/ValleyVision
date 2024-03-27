@@ -53,6 +53,7 @@ namespace ValleyVisionSolution.Pages.Initiatives
                 {
                     InitID = int.Parse(reader["InitID"].ToString()),
                     InitName = reader["InitName"].ToString(),
+                    FilePath = reader["FilePath"].ToString(),
                     InitDateTime = Convert.ToDateTime(reader["InitDateTime"])
                 });
             }
