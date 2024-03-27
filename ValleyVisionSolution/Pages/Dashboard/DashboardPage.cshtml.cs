@@ -35,9 +35,10 @@ namespace ValleyVisionSolution.Pages.Dashboard
 
         }
 
-        public IActionResult OnGet(int initID)
+        public IActionResult OnGet(int initID, string initName)
         {
             HttpContext.Session.SetInt32("InitID", initID);
+            HttpContext.Session.SetString("InitName", initName);
 
             if (HttpContext.Session.GetString("LoggedIn") == "True")
             {
