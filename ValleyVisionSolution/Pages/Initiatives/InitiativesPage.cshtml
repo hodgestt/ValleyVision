@@ -4,6 +4,7 @@
 @model ValleyVisionSolution.Pages.Initiatives.InitiativesPageModel
 @{
     ViewData["Title"] = "Initiatives";
+    ViewData["HeaderTitle"] = "Initiatives";
 }
 
 <style>
@@ -50,7 +51,7 @@
     @{
         foreach (var initiative in Model.InitiativesList)
         {
-            <a asp-page="/Dashboard/DashboardPage" asp-route-initID="@initiative.InitID" class="tile">@initiative.InitName</a>
+            <a asp-page="/Dashboard/DashboardPage" asp-route-initID="@initiative.InitID" asp-route-initName="@initiative.InitName" class="tile">@initiative.InitName</a>
         }
     }
     @{

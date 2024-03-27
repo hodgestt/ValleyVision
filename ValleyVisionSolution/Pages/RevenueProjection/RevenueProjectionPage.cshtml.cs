@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Text.Json;
 using System;
 using System.Data.SqlClient;
 using ValleyVisionSolution.Pages.DataClasses;
@@ -10,6 +11,8 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
     public class RevenueProjectionPageModel : PageModel
     {
         public Revenue LatestRevenue { get; set; }
+        public Revenue[] ProjectedRevenues { get; set; }
+        public bool DefaultLoad { get; set; }
         
 
 
@@ -27,6 +30,7 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
         public RevenueProjectionPageModel() 
         { 
             LatestRevenue = new Revenue();
+            DefaultLoad = true;
         }
 
         public void loadData()
@@ -64,31 +68,52 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
 
         public IActionResult OnPostRunProjection()
         {
+            loadData();
+
             // Generate a random number between 0.95 and 1
             Random random = new Random();
             double randomNum = 0.95 + (random.NextDouble() * 0.05);
             decimal randomNumber = (decimal)randomNum;
 
             //list of the projected revenues
-            Revenue[] ProjectedRevenues = new Revenue[NumProjectionYears];
+            ProjectedRevenues = new Revenue[NumProjectionYears + 1];
 
-            for (int i = 0; i < NumProjectionYears; i++)
+            ProjectedRevenues[0] = new Revenue
+            {
+                RealEstateTax = LatestRevenue.RealEstateTax,
+                PersonalPropertyTax = LatestRevenue.PersonalPropertyTax,
+                FeesLicensesTax = LatestRevenue.FeesLicensesTax,
+                StateFunding = LatestRevenue.StateFunding,
+                TotalRevenue = LatestRevenue.TotalRevenue,
+                Year = LatestRevenue.Year
+            };
+
+            // Calculate projections for subsequent years
+            for (int i = 1; i <= NumProjectionYears; i++)
             {
                 ProjectedRevenues[i] = new Revenue
                 {
-                    RealEstateTax = LatestRevenue.RealEstateTax * (1 + (RealEstateTaxGrowth / 100)) * randomNumber,
-                    PersonalPropertyTax = LatestRevenue.PersonalPropertyTax * (1 + (PersonalPropertyTaxGrowth / 100)) * randomNumber,
-                    FeesLicensesTax = LatestRevenue.FeesLicensesTax * (1 + (FeesLicensesTaxGrowth / 100)) * randomNumber,
-                    StateFunding = StateFundingAmount
+                    RealEstateTax = Math.Round(ProjectedRevenues[i - 1].RealEstateTax * (1 + (RealEstateTaxGrowth / 100)) * randomNumber, 2),
+                    PersonalPropertyTax = Math.Round(ProjectedRevenues[i - 1].PersonalPropertyTax * (1 + (PersonalPropertyTaxGrowth / 100)) * randomNumber, 2),
+                    FeesLicensesTax = Math.Round(ProjectedRevenues[i - 1].FeesLicensesTax * (1 + (FeesLicensesTaxGrowth / 100)) * randomNumber, 2),
+                    StateFunding = Math.Round(StateFundingAmount, 2),
+                    Year = ProjectedRevenues[i - 1].Year + 1
                 };
-                ProjectedRevenues[i].TotalRevenue = ProjectedRevenues[i].RealEstateTax +
-                                                    ProjectedRevenues[i].PersonalPropertyTax +
-                                                    ProjectedRevenues[i].FeesLicensesTax +
-                                                    ProjectedRevenues[i].StateFunding;
+
+                ProjectedRevenues[i].TotalRevenue = Math.Round(
+                    ProjectedRevenues[i].RealEstateTax +
+                    ProjectedRevenues[i].PersonalPropertyTax +
+                    ProjectedRevenues[i].FeesLicensesTax +
+                    ProjectedRevenues[i].StateFunding, 2);
             }
 
-            loadData();
+            DefaultLoad = false;
+
             return Page();
+        }
+        public string GetChartDataAsJson()
+        {
+            return JsonSerializer.Serialize(ProjectedRevenues);
         }
 
         public IActionResult OnPostLogoutHandler()
