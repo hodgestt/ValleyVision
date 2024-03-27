@@ -212,7 +212,7 @@ namespace ValleyVisionSolution.Pages.DB
         }
         //END DASHBOARD PAGE_____________________________________________________________________________________________
 
-        //BEGIN Ressources Page
+        //BEGIN Resources Page
         public static SqlDataReader ResourceReader(int initID)
         {
             SqlCommand cmd = new SqlCommand();
@@ -225,6 +225,35 @@ namespace ValleyVisionSolution.Pages.DB
             SqlDataReader tempReader = cmd.ExecuteReader();
 
             return tempReader;
+        }
+        public static void UploadFile(int? initID, FileMeta fileMeta)
+        {
+            int fileID;
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@FileName", fileMeta.FileName_);
+            cmd.Parameters.AddWithValue("@FilePath", fileMeta.FilePath);
+            cmd.Parameters.AddWithValue("@FileType", fileMeta.FileType);
+            cmd.Parameters.AddWithValue("@Date", fileMeta.UploadedDateTime);
+            cmd.Parameters.AddWithValue("@UserID", fileMeta.userID);
+            String sqlQuery = "INSERT INTO FileMeta (fileName_, filePath, fileType, uploadedDateTime, userID) VALUES (@FileName, @FilePath, @FileType, @Date, @UserID)" + "SELECT SCOPE_IDENTITY();";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            fileID = Convert.ToInt32(cmd.ExecuteScalar());
+            cmd.Connection.Close();
+
+            SqlCommand cmd2 = new SqlCommand();
+            cmd2.Connection = ValleyVisionConnection;
+            cmd2.Connection.ConnectionString = MainConnString;
+            cmd2.Parameters.AddWithValue("@initID", initID);
+            cmd2.Parameters.AddWithValue("@fileID", fileID);
+            String sqlQuery2 = "INSERT INTO InitiativeFiles (fileMetaID, initID) VALUES (@fileID, @initID)";
+            cmd2.CommandText = sqlQuery2;
+            cmd.Connection.Open();
+            cmd2.ExecuteNonQuery();
+            cmd2.Connection.Close();
+
         }
 
 
@@ -305,6 +334,77 @@ namespace ValleyVisionSolution.Pages.DB
                 cmd2.Connection.Close();
             }
         }
+        //reads all users that have been assigned a given task
+        public static List<int> ViewedTaskUsersReader(int? taskID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@TaskID", taskID);
+            cmd.CommandText = "SELECT U.userID FROM User_ U JOIN TaskUsers TU ON U.userID = TU.userID WHERE TU.taskID = @TaskID;";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            List<int> ViewedTaskUsers = new List<int>();
+
+            while (tempReader.Read())
+            {
+                ViewedTaskUsers.Add(Int32.Parse(tempReader["UserID"].ToString()));
+            }
+
+            cmd.Connection.Close();
+
+            return ViewedTaskUsers;
+        }
+        //edit a task
+        public static void EditTask(DataClasses.Task editedTask, List<int> editedTaskUsers)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@TaskName", editedTask.TaskName);
+            cmd.Parameters.AddWithValue("@TaskStatus", editedTask.TaskStatus);
+            cmd.Parameters.AddWithValue("@TaskDescription", editedTask.TaskDescription);
+            cmd.Parameters.AddWithValue("@TaskDueDateTime", editedTask.TaskDueDateTime);
+            cmd.Parameters.AddWithValue("@TaskID", editedTask.TaskID);
+            String sqlQuery = "UPDATE Task SET taskName = @TaskName, taskStatus = @TaskStatus, taskDescription = @TaskDescription, taskDueDateTime = @TaskDueDateTime WHERE taskID = @TaskID;";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+
+            SqlCommand cmd2 = new SqlCommand();
+            cmd2.Connection = ValleyVisionConnection;
+            cmd2.Connection.ConnectionString = MainConnString;
+            cmd2.Parameters.AddWithValue("@TaskID", editedTask.TaskID);
+            String sqlQuery2 = "DELETE FROM TaskUsers WHERE taskID = @TaskID;";
+            cmd2.CommandText = sqlQuery2;
+            cmd2.Connection.Open();
+            cmd2.ExecuteNonQuery();
+            cmd2.Connection.Close();
+
+            foreach (var user in editedTaskUsers)
+            {
+                SqlCommand cmd3 = new SqlCommand();
+                cmd3.Connection = ValleyVisionConnection;
+                cmd3.Connection.ConnectionString = MainConnString;
+                cmd3.Parameters.AddWithValue("@TaskID", editedTask.TaskID);
+                cmd3.Parameters.AddWithValue("@UserID", user);
+                String sqlQuery3 = "INSERT INTO TaskUsers (taskID, userID) VALUES (@TaskID, @UserID);";
+                cmd3.CommandText = sqlQuery3;
+                cmd3.Connection.Open();
+                cmd3.ExecuteNonQuery();
+                cmd3.Connection.Close();
+            }
+        }
+
+
+
+
+
+
+
         //reads and loads the previous messages sent from other members in the disucssion board
         public static SqlDataReader MessagesReader(int initID)
         {
@@ -386,6 +486,20 @@ namespace ValleyVisionSolution.Pages.DB
 
 
         //BEGIN REVENUE SPECIFIC PAGE METHODS
+
+        //reads data file 2 latest year revenue
+        public static SqlDataReader LatestRevenueYearReader()
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.CommandText = "SELECT * FROM DataFile_2 WHERE year_ = (SELECT MAX(year_) FROM DataFile_2);";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
 
         //reads data file 2 from database
         public static SqlDataReader DataFileReader()
