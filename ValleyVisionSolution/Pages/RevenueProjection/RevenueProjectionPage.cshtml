@@ -1,8 +1,13 @@
 ﻿@page
 @model ValleyVisionSolution.Pages.RevenueProjection.RevenueProjectionPageModel
+@using Newtonsoft.Json
 @{
     ViewData["Title"] = "Revenue Projection";
+    var jsonData = JsonConvert.SerializeObject(Model.ProjectedRevenues);
 }
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
     .parameterTitle{
     font-size:0.9vw;
@@ -11,11 +16,11 @@
     .chart-grid{
         display:grid;
         grid-template-columns:1fr 1fr;
-        grid-template-rows:1fr 1fr;
+        grid-template-rows:auto auto;
         grid-template-areas: 
         "ChartA ChartB"
         "ChartC ChartC";
-        gap:10px;
+        gap:2vw;
     }
     #chartA{
         grid-area:ChartA;
@@ -63,19 +68,19 @@
     <div class="row mb-3">
         <div class="col-md-2">
             <div class="parameterTitle">Real Estate Tax Growth %:</div>
-            <input asp-for="@Model.RealEstateTaxGrowth" type="text" class="form-control" value="">
+            <input asp-for="@Model.RealEstateTaxGrowth" type="text" class="form-control">
         </div>
         <div class="col-md-2">
             <div class="parameterTitle">Personal Property Tax Growth %:</div>
-            <input asp-for="@Model.PersonalPropertyTaxGrowth" type="text" class="form-control" value="">
+            <input asp-for="@Model.PersonalPropertyTaxGrowth" type="text" class="form-control">
         </div>
         <div class="col-md-2">
             <div class="parameterTitle">Fees & Licenses Tax Growth %:</div>
-            <input asp-for="@Model.FeesLicensesTaxGrowth" type="text" class="form-control" value="">
+            <input asp-for="@Model.FeesLicensesTaxGrowth" type="text" class="form-control">
         </div>
         <div class="col-md-2">
             <div class="parameterTitle">State Funding Amount:</div>
-            <input asp-for="@Model.StateFundingAmount" type="text" class="form-control" value="">
+            <input asp-for="@Model.StateFundingAmount" type="text" class="form-control">
         </div>
         <div class="col-md-2">
             <div class="parameterTitle">Number of Projection Years:</div>
@@ -87,31 +92,154 @@
                 <option value="5">5</option>
             </select>
         </div>
-        @* <div class="col-md-2" style="padding-top:10px;">
-        <button type="submit" class="btn btn-primary" asp-page-handler="RunProjection">Run Projection</button>
-        </div> *@
         <div class="col-md-2 d-flex flex-column justify-content-end" style="padding-top:10px; height: 100%;">
-            <button type="submit" class="btn btn-primary" asp-page-handler="RunProjection">Run Projection</button>
+            <button type="submit" class="btn btn-primary" id="runProjectionBtn" asp-page-handler="RunProjection">Run Projection</button>
         </div>
     </div>
 </form>
 <div class="chart-grid">
     <div class="dashboard-tile" id="chartA">
         <div class="dashboard-tile-title-bar">
-            <div class="dashboard-tile-title">Chart A</div>
+            <div class="dashboard-tile-title">Total Revenue Projection</div>
         </div>
-        <div class="dashboard-tile-contents">This is where the chart will go</div>
+        <div class="dashboard-tile-contents">
+            <canvas id="revenueChartA"></canvas>
+        </div>
     </div>
     <div class="dashboard-tile" id="chartB">
         <div class="dashboard-tile-title-bar">
-            <div class="dashboard-tile-title">Chart B</div>
+            <div class="dashboard-tile-title">Tax Category Projection</div>
         </div>
-        <div class="dashboard-tile-contents">This is where the chart will go</div>
+        <div class="dashboard-tile-contents">
+            <canvas id="revenueChartB"></canvas>
+            </div>
     </div>
     <div class="dashboard-tile" id="chartC">
         <div class="dashboard-tile-title-bar">
-            <div class="dashboard-tile-title">Chart C</div>
+            <div class="dashboard-tile-title">Total Revenue and Tax Category Projection </div>
         </div>
-        <div class="dashboard-tile-contents">This is where the chart will go</div>
+        <div class="dashboard-tile-contents">
+            <canvas id="revenueChartC"></canvas>
+        </div>
     </div>
 </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var rawData = @Html.Raw(Model.GetChartDataAsJson());
+        var allLabels = ['Real Estate Tax', 'Personal Property Tax', 'Fees Licenses Tax', 'State Funding', 'Total Revenue'];
+        var colors = [
+            'rgba(16, 41, 80, 1)',
+            'rgba(39, 76, 119, 1)',
+            'rgba(175, 184, 202, 1)',
+            'rgba(183, 191, 174, 1)',
+            'rgba(146, 157, 133, 1)'
+        ];
+
+        function createChart(chartId, type, labels) {
+            var datasets = labels.map((label, index) => {
+                return {
+                    label: label,
+                    data: rawData.map(item => item[label.replace(/\s+/g, '')]),
+                    backgroundColor: colors[index],
+                    borderColor: colors[index],
+                    borderWidth: 2,
+                    fill: type !== 'line'
+                };
+            });
+
+            var ctx = document.getElementById(chartId).getContext('2d');
+            return new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: rawData.map(item => item.Year.toString()),
+                    datasets: datasets
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        createChart('revenueChartA', 'bar', ['Total Revenue']);
+        createChart('revenueChartB', 'bar', allLabels.slice(0, -1)); // Exclude 'Total Revenue'
+        createChart('revenueChartC', 'line', allLabels);
+    });
+    createChart('revenueChartA', 'bar', ['Total Revenue']); // Total Revenue Bar Chart
+
+    createChart('revenueChartB', 'bar', ['Real Estate Tax', 'Personal Property Tax', 'Fees Licenses Tax', 'State Funding']); // Revenues Split Bar Chart
+
+    createChart('revenueChartC', 'line', ['Real Estate Tax', 'Personal Property Tax', 'Fees Licenses Tax', 'State Funding', 'Total Revenue']); // Revenues Split Line Chart with Total
+</script>
+<script>
+    @if (Model.DefaultLoad)
+    {
+        @:document.getElementById('runProjectionBtn').click();
+    }
+</script>
+
+
+@* <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var rawData = @Html.Raw(Model.GetChartDataAsJson());
+        var labels = ['Real Estate Tax', 'Personal Property Tax', 'Fees Licenses Tax', 'State Funding', 'Total Revenue'];
+        var datasets = [];
+        var colors = [
+            'rgba(16, 41, 80, 1)',
+            'rgba(39, 76, 119, 1)',
+            'rgba(175, 184, 202, 1)',
+            'rgba(183, 191, 174, 1)',
+            'rgba(146, 157, 133, 1)'
+        ];
+
+        labels.forEach(function (label, index) {
+            var dataset = {
+                label: label,
+                data: [],
+                backgroundColor: colors[index],
+                borderColor: colors[index].replace('0.5', '1'),
+                borderWidth: 1
+            };
+            rawData.forEach(function (item) {
+                dataset.data.push(item[label.replace(/\s+/g, '')]);
+            });
+            datasets.push(dataset);
+        });
+
+        var ctx = document.getElementById('revenueChartA').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: rawData.map(item => item.Year.toString()),
+                datasets: datasets
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    });
+</script> *@
