@@ -30,8 +30,8 @@
                 var dataset = {
                     label: label,
                     data: [],
-                    backgroundColor: colors[index], // Assign color based on index
-                    borderColor: colors[index].replace('0.5', '1'), // Darker shade for border
+                    backgroundColor: colors[index],
+                    borderColor: colors[index].replace('0.5', '1'),
                     borderWidth: 1
                 };
                 rawData.forEach(function (item) {
@@ -55,7 +55,7 @@
                     },
                     plugins: {
                         legend: {
-                            position: 'bottom' // Move legend to the bottom
+                            position: 'bottom'
                         }
                     }
                 }
