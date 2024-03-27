@@ -1,4 +1,5 @@
 ﻿@page
+@using ValleyVisionSolution.Pages.DB
 @model ValleyVisionSolution.Pages.Initiatives.InitiativesPageModel
 @{
     ViewData["Title"] = "Initiatives";
@@ -52,6 +53,23 @@
                 <div class="tile-text">@initiative.InitName</div>
             </div>
         </a>
+    }
+    @{
+
+        int? UserID = HttpContext.Session.GetInt32("UserID");
+
+        String UserType = DBClass.CheckUserType((int)UserID);
+
+        @if (UserType == "Admin")
+
+        {
+
+            <button type="submit" class="tile" data-bs-toggle="modal" data-bs-target="#addInitForm">Add New +</button>
+
+
+
+        }
+
     }
 </div>
 
