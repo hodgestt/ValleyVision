@@ -78,7 +78,7 @@ namespace ValleyVisionSolution.Pages.TaskManager
            
             HttpContext.Session.SetInt32("TaskID", taskID);
             ViewedTask = HttpContext.Session.GetInt32("TaskID");
-            ViewedTaskUsers = TempDBClass.ViewedTaskUsersReader(HttpContext.Session.GetInt32("TaskID"));
+            ViewedTaskUsers = DBClass.ViewedTaskUsersReader(HttpContext.Session.GetInt32("TaskID"));
             loadData();
             foreach(var task in AllTasks)
             {
@@ -95,7 +95,7 @@ namespace ValleyVisionSolution.Pages.TaskManager
             {
                 // Model state is not valid, return the page with validation errors
                 ViewedTask = HttpContext.Session.GetInt32("TaskID");
-                ViewedTaskUsers = TempDBClass.ViewedTaskUsersReader(HttpContext.Session.GetInt32("TaskID"));
+                ViewedTaskUsers = DBClass.ViewedTaskUsersReader(HttpContext.Session.GetInt32("TaskID"));
                 loadData();
                 foreach (var task in AllTasks)
                 {
@@ -109,7 +109,7 @@ namespace ValleyVisionSolution.Pages.TaskManager
 
             // Model state is valid, continue with processing
             EditedTask.TaskDescription = TempTaskDescription;
-            TempDBClass.EditTask(EditedTask, EditedTaskUsers);
+            DBClass.EditTask(EditedTask, EditedTaskUsers);
             return RedirectToPage("/TaskManager/TaskManagerPage");
         }
     }
