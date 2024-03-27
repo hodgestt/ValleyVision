@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ValleyVisionSolution.Pages.DataClasses;
 using ValleyVisionSolution.Pages.DB;
+using System.Text.Json;
 
 namespace ValleyVisionSolution.Pages.RevenueProjection
 {
@@ -29,7 +31,13 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
             DataList = DBClass.GetChartDataFromDatabase();
         }
 
-        public string GetChartDataAsArray()
+        public string GetChartDataAsJson()
+        {
+         return JsonSerializer.Serialize(DataList);
+        }
+
+
+    public string GetChartDataAsArray()
         {
             var dataArray = new List<string>();
             foreach (var item in DataList)
