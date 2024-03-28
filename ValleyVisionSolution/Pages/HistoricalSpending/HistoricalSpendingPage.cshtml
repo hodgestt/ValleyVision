@@ -70,7 +70,7 @@
             <div class="dashboard-tile-title">Total Historic Expenditure</div>
         </div>
         <div class="dashboard-tile-contents">
-            <canvas id="revenueChartA"></canvas>
+            <canvas id="expenditureChartA"></canvas>
         </div>
     </div>
     <div class="dashboard-tile" id="chartB">
@@ -78,7 +78,7 @@
             <div class="dashboard-tile-title">Historic Expenditure by Category</div>
         </div>
         <div class="dashboard-tile-contents">
-            <canvas id="revenueChartB"></canvas>
+            <canvas id="expenditureChartB"></canvas>
         </div>
     </div>
     <div class="dashboard-tile" id="chartC">
@@ -86,7 +86,101 @@
             <div class="dashboard-tile-title">Total Expenditure and Tax Category Projection </div>
         </div>
         <div class="dashboard-tile-contents">
-            <canvas id="revenueChartC"></canvas>
+            <canvas id="expenditureChartC"></canvas>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var rawData = @Html.Raw(Model.GetChartDataAsJson());
+        var expenditureLabels = ['PublicSafety', 'School', 'Anomoly', 'Other'];
+        var colors = ['rgba(16, 41, 80, 1)', 'rgba(39, 76, 119, 1)', 'rgba(175, 184, 202, 1)', 'rgba(183, 191, 174, 1)', 'rgba(146, 157, 133, 1)', 'rgba(199, 157, 133, 1)'];
+
+        function createChart(chartId, type, labels, yAxisSettings) {
+            var datasets = labels.map((label, index) => {
+                var yAxisID = label === 'InflationRate' || label === 'InterestRate' ? 'y1' : 'y';
+                return {
+                    label: label,
+                    data: rawData.map(item => item[label]),
+                    backgroundColor: colors[index % colors.length],
+                    borderColor: colors[index % colors.length],
+                    borderWidth: 2,
+                    fill: type !== 'line',
+                    yAxisID: yAxisID
+                };
+            });
+
+            var ctx = document.getElementById(chartId).getContext('2d');
+            return new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: rawData.map(item => item.Year.toString()),
+                    datasets: datasets
+                },
+                options: {
+                    scales: yAxisSettings,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        var yAxisExpenditureSettings = {
+            y: { beginAtZero: true, title: { display: true, text: 'Expenditure ($)' } },
+            y1: {
+                beginAtZero: true,
+                position: 'right',
+                title: { display: true, text: 'Rate (%)' },
+                grid: { drawOnChartArea: false }
+            }
+        };
+
+        createChart('expenditureChartA', 'bar', ['TotalExpenditure'], { y: { beginAtZero: true, title: { display: true, text: 'Total Expenditure ($)' } } });
+        createChart('expenditureChartB', 'bar', expenditureLabels, { y: { beginAtZero: true, title: { display: true, text: 'Category Expenditure ($)' } } });
+        createChart('expenditureChartC', 'line', [...expenditureLabels, 'InflationRate', 'InterestRate'], yAxisExpenditureSettings);
+    });
+</script>
+@*<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var rawData = @Html.Raw(Model.GetChartDataAsJson());
+        var expenditureLabels = ['Public Safety', 'School', 'Anomoly', 'Other'];
+        var colors = ['rgba(16, 41, 80, 1)', 'rgba(39, 76, 119, 1)', 'rgba(175, 184, 202, 1)', 'rgba(183, 191, 174, 1)'];
+
+        function createChart(chartId, type, labels) {
+            var datasets = labels.map((label, index) => {
+                return {
+                    label: label,
+                    data: rawData.map(item => item[label]),
+                    backgroundColor: colors[index],
+                    borderColor: colors[index],
+                    borderWidth: 2,
+                    fill: type !== 'line'
+                };
+            });
+
+            var ctx = document.getElementById(chartId).getContext('2d');
+            return new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: rawData.map(item => item.Year.toString()),
+                    datasets: datasets
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true }
+                    },
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+
+        createChart('expenditureChartA', 'bar', ['TotalExpenditure']);
+        createChart('expenditureChartB', 'bar', expenditureLabels);
+        createChart('expenditureChartC', 'line', [...expenditureLabels, 'InflationRate', 'InterestRate']);
+    });
+</script>*@
+

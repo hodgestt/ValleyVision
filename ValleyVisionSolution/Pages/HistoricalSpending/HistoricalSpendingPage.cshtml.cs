@@ -13,7 +13,7 @@ namespace ValleyVisionSolution.Pages.HistoricalSpending
 
         public HistoricalSpendingPageModel() 
         {
-
+            HistoricalExpenditures = new List<Expenditure>();
         }
 
         public void loadData()
