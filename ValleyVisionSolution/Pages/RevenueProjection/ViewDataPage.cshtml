@@ -38,15 +38,17 @@
                     <td>@year.StateFunding</td>
                     <td>@year.TotalRevenue</td>
                     <td>
-                        <a asp-page="EditDataPage" class="btn" style=" background-color:#2e4c74; -webkit-text-fill-color:white;" asp-route-employeeid="@year.Year">Edit</a>
+                        <a asp-page="EditDataPage" class="btn btn-secondary" asp-route-employeeid="@year.Year">Edit</a>
                     </td>
                </tr>
             }
         }
     </tbody>
 </table>
-<br />
-<button class="btn" style=" background-color:#2e4c74; -webkit-text-fill-color:white;" data-bs-toggle="modal" data-bs-target="#addDataForm">Add Current Year</button>
+<div style="display:flex; justify-content:right;">
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDataForm">Add Current Year</button>
+</div>
+
 
 <!-- Add New Data Form -->
 <div class="modal fade" id="addDataForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
