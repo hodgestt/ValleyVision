@@ -99,7 +99,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var rawData = @Html.Raw(Model.GetChartDataAsJson());
-        var expenditureLabels = ['PublicSafety', 'School', 'Anomoly', 'Other'];
+        var expenditureLabels = ['PublicSafety', 'School', 'Anomaly', 'Other'];
         var colors = ['rgba(16, 41, 80, 1)', 'rgba(39, 76, 119, 1)', 'rgba(175, 184, 202, 1)', 'rgba(183, 191, 174, 1)', 'rgba(146, 157, 133, 1)', 'rgba(199, 157, 133, 1)'];
 
         function createChart(chartId, type, labels, yAxisSettings) {
