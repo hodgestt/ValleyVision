@@ -496,6 +496,94 @@ namespace ValleyVisionSolution.Pages.DB
             return tempReader;
         }
 
+        public static void DeleteUser(int? userid)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = AuthConnString;
+            cmd.Parameters.AddWithValue("@UserID", userid);
+            String sqlQuery = "DELETE FROM HashedCredentials WHERE UserID = @UserID;";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+
+            //SqlCommand cmd3 = new SqlCommand();
+            //cmd3.Connection = ValleyVisionConnection;
+            //cmd3.Connection.ConnectionString = MainConnString;
+            //cmd3.Parameters.AddWithValue("@UserID", userid);
+            //String sqlQuery3 = "DELETE FROM Message_ WHERE userID = @UserID;";
+            //cmd3.CommandText = sqlQuery3;
+            //cmd3.Connection.Open();
+            //cmd3.ExecuteNonQuery();
+            //cmd3.Connection.Close();
+
+            //SqlCommand cmd4 = new SqlCommand();
+            //cmd4.Connection = ValleyVisionConnection;
+            //cmd4.Connection.ConnectionString = MainConnString;
+            //cmd4.Parameters.AddWithValue("@UserID", userid);
+            //String sqlQuery4 = "DELETE FROM InitiativeUsers WHERE userID = @UserID;";
+            //cmd4.CommandText = sqlQuery4;
+            //cmd4.Connection.Open();
+            //cmd4.ExecuteNonQuery();
+            //cmd4.Connection.Close();
+
+            //SqlCommand cmd5 = new SqlCommand();
+            //cmd5.Connection = ValleyVisionConnection;
+            //cmd5.Connection.ConnectionString = MainConnString;
+            //cmd5.Parameters.AddWithValue("@UserID", userid);
+            //String sqlQuery5 = "DELETE FROM TaskUsers WHERE userID = @UserID;";
+            //cmd5.CommandText = sqlQuery5;
+            //cmd5.Connection.Open();
+            //cmd5.ExecuteNonQuery();
+            //cmd5.Connection.Close();
+
+            //SqlCommand cmd6 = new SqlCommand();
+            //cmd6.Connection = ValleyVisionConnection;
+            //cmd6.Connection.ConnectionString = MainConnString;
+            //cmd5.Parameters.AddWithValue("@UserID", userid);
+            //String sqlQuery6 = "SELECT fileMetaID FROM FileMeta WHERE userID = @UserID;";
+            //cmd6.CommandText = sqlQuery6;
+            //cmd6.Connection.Open();
+            //SqlDataReader tempReader2 = cmd.ExecuteReader();
+            //cmd6.Connection.Close();
+
+            //int filemeta;
+            //while (tempReader2.Read())
+            //{
+            //    filemeta = Int32.Parse(tempReader2["fileMetaID"].ToString());
+            //}
+
+            //SqlCommand cmd7 = new SqlCommand();
+            //cmd7.Connection = ValleyVisionConnection;
+            //cmd7.Connection.ConnectionString = MainConnString;
+            //String sqlQuery7 = "DELETE FROM Initiatives WHERE fileMetaID = " + @filemeta + ";";
+            //cmd7.CommandText = sqlQuery6;
+            //cmd7.Connection.Open();
+            //cmd7.ExecuteNonQuery();
+            //cmd7.Connection.Close();
+
+            //SqlCommand cmd8 = new SqlCommand();
+            //cmd8.Connection = ValleyVisionConnection;
+            //cmd8.Connection.ConnectionString = MainConnString;
+            //cmd8.Parameters.AddWithValue("@UserID", userid);
+            //String sqlQuery8 = "DELETE FROM FileMeta WHERE userID = @UserID;";
+            //cmd8.CommandText = sqlQuery8;
+            //cmd8.Connection.Open();
+            //cmd8.ExecuteNonQuery();
+            //cmd8.Connection.Close();
+
+            //SqlCommand cmd9 = new SqlCommand();
+            //cmd9.Connection = ValleyVisionConnection;
+            //cmd9.Connection.ConnectionString = MainConnString;
+            //cmd9.Parameters.AddWithValue("@UserID", userid);
+            //String sqlQuery9 = "DELETE FROM User_ WHERE userID = @UserID;";
+            //cmd9.CommandText = sqlQuery9;
+            //cmd9.Connection.Open();
+            //cmd9.ExecuteNonQuery();
+            //cmd9.Connection.Close();
+        }
+
         //editing profiles
         public static void UpdateProfile(FullProfile profiletoedit)
         {
