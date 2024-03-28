@@ -92,6 +92,7 @@ namespace ValleyVisionSolution.Pages.Initiatives
 
         public IActionResult OnGet()
         {
+            HttpContext.Session.Remove("InitName");
             if (HttpContext.Session.GetString("LoggedIn") == "True")
             {
                 loadData();
