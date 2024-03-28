@@ -10,37 +10,40 @@
     .tile-container {
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-around; /* Adjust as needed */
+
     }
 
     .tile {
         text-decoration: none;
-        color: black;
-        width: calc(33% - 20px); /* Adjust width based on desired layout */
-        max-width: 300px; /* Maximum width for each tile */
-        height: 300px; /* Fixed height for each tile */
+        color: #274c77;
+        width: 25vw;
+        height: 30vh;
         border-radius: 5px;
         font-size: 1.2em;
         cursor: pointer;
         transition: transform 0.5s, box-shadow 0s;
-        border: 1px solid black;
+        border: 1px solid #274c77;
         outline: none;
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin: 10px; /* Adjust margin as needed */
+        margin: 2%;
+        font-size:1.5vw;
+        overflow:hidden;
     }
 
         .tile img {
-            max-width: 100%; /* Ensure the image fits inside the tile */
-            max-height: 100%; /* Ensure the image fits inside the tile */
-            object-fit: contain; /* Adjust object-fit based on image aspect ratio */
+            width: 24.9vw;
+            height: 22vh;
+            border-top-right-radius: 5px;
+            border-top-left-radius: 5px;
+            vertical-align: middle;
+            display: inherit;
+            text-align: center;
         }
 
         .tile:hover {
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            color: black;
+            color: #274c77;
         }
 </style>
 
@@ -49,8 +52,8 @@
     {
         <a asp-page="/Dashboard/DashboardPage" asp-route-initID="@initiative.InitID" asp-route-initName="@initiative.InitName" class="tile">
             <div class="tile-content">
-                <img src="@initiative.FilePath" alt="Initiative Image">
-                <div class="tile-text">@initiative.InitName</div>
+                <img src="@initiative.FilePath" alt="Insert Image" style="font-size:small;">
+                <div class="tile-text" style="text-align:center;">@initiative.InitName</div>
             </div>
         </a>
     }
@@ -64,7 +67,7 @@
 
         {
 
-            <button type="submit" class="tile" data-bs-toggle="modal" data-bs-target="#addInitForm">Add New +</button>
+            <button type="submit" class="tile" data-bs-toggle="modal" data-bs-target="#addInitForm" style="align-items: center;justify-content: center;">Add New +</button>
 
 
 
