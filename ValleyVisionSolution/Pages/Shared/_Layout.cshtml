@@ -217,6 +217,9 @@
                                 if (Context.Session.GetInt32("UserID").HasValue)
                                 {
                                     <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-page="/Index" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">Home</a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a class="nav-link" asp-area="" asp-page="/Initiatives/InitiativesPage" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">Initiatives</a>
                                     </li>
                                     if (DB.DBClass.CheckUserType(Context.Session.GetInt32("UserID")) == "Admin")
