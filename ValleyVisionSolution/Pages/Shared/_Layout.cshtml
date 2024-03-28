@@ -197,8 +197,13 @@
                     </button>
                 </div>
                 <h1>Madison County Government</h1>
-                <h4 style="-webkit-text-fill-color:white;">@(DB.DBClass.CheckUserType(Context.Session.GetInt32("UserID")))</h4>
-                <h2>@ViewBag.SecondHeader</h2>
+                @{
+                    if (Context.Session.GetInt32("UserID").HasValue)
+                    {
+                        <h4 style="-webkit-text-fill-color:white;">@(DB.DBClass.CheckUserType(Context.Session.GetInt32("UserID")))</h4>
+                    }
+                    }
+                    <h2>@ViewBag.SecondHeader</h2>
                 <a class="navbar-brand" href="#"></a>
                 
                 <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel" style="width: 20vw;">
