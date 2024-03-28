@@ -690,7 +690,7 @@ namespace ValleyVisionSolution.Pages.DB
         //END REVENUE SPECIFIC PAGE METHODS
 
         //BEGIN CREATE FULL PROFILE METHODS-------------------------------------------------------------------------------------
-            public static void AddUser(FullProfile newfullProfile)
+        public static void AddUser(FullProfile newfullProfile)
         {
             int addressID;
             SqlCommand cmd = new SqlCommand();
@@ -740,6 +740,32 @@ namespace ValleyVisionSolution.Pages.DB
             cmdLogin.Connection.Close();
         }
         //END CREATE FULL PROFILE METHODS-------------------------------------------------------------------------------------
+
+        //BEGIN HISTORICAL SPENDING PAGE-------------------------------------------------------------------------------------
+        //reads data file 3 from database
+        public static SqlDataReader HistoricalExpendituresReader()
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.CommandText = "SELECT * FROM DataFile_3;";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+
+
+
+        //END HISTORICAL SPENDING PAGE-------------------------------------------------------------------------------------
+
+
+
+
+
+
+
 
     }
 }

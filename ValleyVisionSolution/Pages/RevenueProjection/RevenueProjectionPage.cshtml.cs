@@ -70,9 +70,9 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
         {
             loadData();
 
-            // Generate a random number between 0.95 and 1
+            // Generate a random number between 0.975 and 1.025
             Random random = new Random();
-            double randomNum = 0.95 + (random.NextDouble() * 0.05);
+            double randomNum = 0.975 + (random.NextDouble() * 0.05);
             decimal randomNumber = (decimal)randomNum;
 
             //list of the projected revenues
