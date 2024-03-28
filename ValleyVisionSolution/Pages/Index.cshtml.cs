@@ -11,7 +11,7 @@ namespace ValleyVisionSolution.Pages
 
         public void OnGet()
         {
-             
+            HttpContext.Session.Remove("InitName");
         }
 
         public IActionResult OnPostLogoutHandler()

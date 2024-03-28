@@ -126,10 +126,10 @@
             box-sizing: border-box;
             color: #FFFFFF;
             cursor: pointer;
-            font-size: 25px;
+            font-size: 15px;
             line-height: 1.15;
             overflow: visible;
-            padding: 12px 16px;
+            padding: 4px 8px;
             position: relative;
             text-align: center;
             text-transform: none;
@@ -163,7 +163,7 @@
 </head>
 
 <body>
-    <!-- Logout Form -->
+    @* <!-- Logout Form --> *@
     <div class="modal fade" id="LogoutForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -187,7 +187,7 @@
             </div>
         </div>
     </div>
-    <!-- End Logout Form -->
+    @* <!-- End Logout Form --> *@
     <header>
         <nav class="navbar bg-body-secondary" style="background-color:#274c77;">
             <div class="container-fluid">
@@ -197,26 +197,35 @@
                     </button>
                 </div>
                 <h1>Madison County Government</h1>
-                <h2>@ViewBag.SecondHeader</h2>
+                @{
+                    if (Context.Session.GetInt32("UserID").HasValue)
+                    {
+                        <h4 style="-webkit-text-fill-color:white;">@(DB.DBClass.CheckUserType(Context.Session.GetInt32("UserID")))</h4>
+                    }
+                    }
+                    <h2>@ViewBag.SecondHeader</h2>
                 <a class="navbar-brand" href="#"></a>
                 
-                <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel" style="width: 20vw;">
                     <div class="offcanvas-header">
-                        <h3 class="offcanvas-title" id="offcanvasNavbarLabel" style="text-align:center; font-size:40px;">Menu</h3>
+                        <h3 class="offcanvas-title" id="offcanvasNavbarLabel" style="text-align:center; font-size:35px; -webkit-text-fill-color:#274c77">Menu</h3>
                         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
                     <div class="offcanvas-body" style="justify-content:left;">
-                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-4">
                             @{
                                 if (Context.Session.GetInt32("UserID").HasValue)
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link text-black" asp-area="" asp-page="/Initiatives/InitiativesPage" style="text-align:left; font-size:30px;">Initiatives</a>
+                                        <a class="nav-link" asp-area="" asp-page="/Index" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">Home</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-page="/Initiatives/InitiativesPage" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">Initiatives</a>
                                     </li>
                                     if (DB.DBClass.CheckUserType(Context.Session.GetInt32("UserID")) == "Admin")
                                     {
                                         <li class="nav-item">
-                                            <a class="nav-link text-black" asp-area="" asp-page="/ManageProfiles/ManageProfilesPage" style="text-align:left; font-size:30px;">Manage Users</a>
+                                            <a class="nav-link" asp-area="" asp-page="/ManageProfiles/ManageProfilesPage" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">Manage Users</a>
                                         </li>
                                     }
                                     <br/>
@@ -292,8 +301,8 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <!-- Include these before your closing </body> tag -->
-    <!-- jQuery, Popper.js, and Bootstrap JS (Bootstrap Select requires them) -->
+@*     <!-- Include these before your closing </body> tag -->
+    <!-- jQuery, Popper.js, and Bootstrap JS (Bootstrap Select requires them) --> *@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4."></script>
@@ -302,15 +311,15 @@
 <script src="~/js/site.js" asp-append-version="true"></script>
 
 
-
+@* 
 <!-- Include these before your closing </body> tag -->
-<!-- jQuery, Popper.js, and Bootstrap JS (Bootstrap Select requires them) -->
+<!-- jQuery, Popper.js, and Bootstrap JS (Bootstrap Select requires them) --> *@
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
-<!-- Bootstrap Select JavaScript -->
+@* <!-- Bootstrap Select JavaScript --> *@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 @await RenderSectionAsync("Scripts", required: false)

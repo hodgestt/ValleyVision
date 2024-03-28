@@ -53,6 +53,7 @@ namespace ValleyVisionSolution.Pages.Initiatives
                 {
                     InitID = int.Parse(reader["InitID"].ToString()),
                     InitName = reader["InitName"].ToString(),
+                    FilePath = reader["FilePath"].ToString(),
                     InitDateTime = Convert.ToDateTime(reader["InitDateTime"])
                 });
             }
@@ -91,6 +92,7 @@ namespace ValleyVisionSolution.Pages.Initiatives
 
         public IActionResult OnGet()
         {
+            HttpContext.Session.Remove("InitName");
             if (HttpContext.Session.GetString("LoggedIn") == "True")
             {
                 loadData();

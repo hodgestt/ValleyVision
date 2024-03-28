@@ -82,13 +82,15 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@UserID", userID);
-            cmd.CommandText = "SELECT DISTINCT I.initID, I.initName, I.initDateTime FROM Initiative I JOIN InitiativeUsers IU ON IU.initID = I.initID WHERE IU.userID = @UserID;";
-            cmd.Connection.Open(); // Open connection here, close in Model!
+            cmd.CommandText = "SELECT DISTINCT I.initID, I.initName, I.filePath, I.initDateTime FROM Initiative I JOIN InitiativeUsers IU ON IU.initID = I.initID WHERE IU.userID = @UserID;";
+            cmd.Connection.Open(); // Open connection here, close in Model! 
 
             SqlDataReader tempReader = cmd.ExecuteReader();
 
             return tempReader;
         }
+
+
 
         public static List<Revenue> GetChartDataFromDatabase()
         {
