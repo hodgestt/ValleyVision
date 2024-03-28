@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Data.SqlClient;
 using ValleyVisionSolution.Pages.DataClasses;
 using ValleyVisionSolution.Pages.DB;
+using System.Text.Json;
 
 namespace ValleyVisionSolution.Pages.HistoricalSpending
 {
@@ -50,6 +51,10 @@ namespace ValleyVisionSolution.Pages.HistoricalSpending
             }
         }
 
+        public string GetChartDataAsJson()
+        {
+            return JsonSerializer.Serialize(HistoricalExpenditures);
+        }
 
 
         public IActionResult OnPostLogoutHandler()
