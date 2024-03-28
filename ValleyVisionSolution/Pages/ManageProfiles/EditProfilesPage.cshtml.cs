@@ -10,8 +10,8 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
 {
     public class EditProfilesPageModel : PageModel
     {
-        public List<FullProfile> AllProfiles { get; set; }
-        public int? ViewedProfile { get; set; }
+        
+        
 
         [BindProperty]
         public FullProfile ProfileToUpdate { get; set; }
@@ -19,49 +19,48 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
         public EditProfilesPageModel()
         {
             ProfileToUpdate = new FullProfile();
-            AllProfiles = new List<FullProfile>();
+           
         }
 
+        public void loadData()
+        {
+
+            SqlDataReader singleUser = DBClass.SingleProfilesReader(HttpContext.Session.GetInt32("EditedUserID"));
+            while (singleUser.Read())
+            {
+                ProfileToUpdate.UserID = Int32.Parse(singleUser["UserID"].ToString());
+                ProfileToUpdate.UserName = singleUser["UserName"].ToString();
+                ProfileToUpdate.Password = singleUser["Password_"].ToString();
+                ProfileToUpdate.FirstName = singleUser["FirstName"].ToString();
+                ProfileToUpdate.LastName = singleUser["LastName"].ToString();
+                ProfileToUpdate.Email = singleUser["Email"].ToString();
+                ProfileToUpdate.Phone = singleUser["Phone"].ToString();
+                ProfileToUpdate.UserType = singleUser["UserType"].ToString();
+                ProfileToUpdate.Street = singleUser["Street"].ToString();
+                ProfileToUpdate.Apartment = singleUser["Apartment"].ToString();
+                ProfileToUpdate.City = singleUser["City"].ToString();
+                ProfileToUpdate.State = singleUser["State_"].ToString();
+                ProfileToUpdate.Zip = Int32.Parse(singleUser["Zip"].ToString());
+                ProfileToUpdate.Country = singleUser["Country"].ToString();
+            }
+            DBClass.ValleyVisionConnection.Close();
+        }
         public void OnGet (int userid)
         {
-            HttpContext.Session.SetInt32("UserID", userid);
-            ViewedProfile = HttpContext.Session.GetInt32("UserID"); 
-
-
-            SqlDataReader singleUser= DBClass.SingleProfilesReader(userid);
-                while (singleUser.Read())
-                {
-                    ProfileToUpdate.UserID = userid;
-                    ProfileToUpdate.UserName = singleUser["UserName"].ToString();
-                    ProfileToUpdate.Password = singleUser["Password"].ToString();
-                    ProfileToUpdate.FirstName = singleUser["FirstName"].ToString();
-                    ProfileToUpdate.LastName = singleUser["LastName"].ToString();
-                    ProfileToUpdate.Email = singleUser["Email"].ToString();
-                    ProfileToUpdate.Phone = singleUser["Phone"].ToString();
-                    ProfileToUpdate.Street = singleUser["Street"].ToString();
-                    ProfileToUpdate.Apartment = singleUser["Apartment"].ToString();
-                    ProfileToUpdate.City = singleUser["City"].ToString();
-                    ProfileToUpdate.State = singleUser["State"].ToString();
-                    ProfileToUpdate.Zip = Int32.Parse(singleUser["Zip"].ToString());
-                    ProfileToUpdate.Country = singleUser["UserName"].ToString();
-                }
-                DBClass.ValleyVisionConnection.Close();
-
-            //foreach (var profile in AllProfiles)
-            //{
-            //    if (profile.UserID == ViewedProfile)
-            //    {
-            //        UserName = profile.UserName;
-            //    }
-            //}
+            HttpContext.Session.SetInt32("EditedUserID", userid);
+            
+            loadData();
         }
 
-       
-        public IActionResult OnPost()
+        public IActionResult OnPostUpdateProfile()
         {
+            if (ProfileToUpdate.Apartment == null)
+            {
+                ProfileToUpdate.Apartment = "";
+            }
             DBClass.UpdateProfile(ProfileToUpdate);
             DBClass.ValleyVisionConnection.Close();
-            return RedirectToPage("Index");
+            return RedirectToPage("/ManageProfiles/ManageProfilesPage");
         }
     }
 }

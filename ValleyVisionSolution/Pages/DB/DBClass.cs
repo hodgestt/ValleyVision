@@ -480,7 +480,7 @@ namespace ValleyVisionSolution.Pages.DB
             return tempReader;
         }
 
-        public static SqlDataReader SingleProfilesReader(int userid)
+        public static SqlDataReader SingleProfilesReader(int? userid)
         {
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
@@ -497,48 +497,63 @@ namespace ValleyVisionSolution.Pages.DB
         //editing profiles
         public static void UpdateProfile(FullProfile profiletoedit)
         {
-            int addressID;
+            int addressID = 0;
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
-            cmd.Parameters.AddWithValue("@Street", profiletoedit.Street);
-            cmd.Parameters.AddWithValue("@Apartment", profiletoedit.Apartment);
-            cmd.Parameters.AddWithValue("@City", profiletoedit.City);
-            cmd.Parameters.AddWithValue("@State", profiletoedit.State);
-            cmd.Parameters.AddWithValue("@Zip", profiletoedit.Zip);
-            cmd.Parameters.AddWithValue("@Country", profiletoedit.Country);
-            String sqlQuery = "UPDATE Address_ (street, apartment, city, state_, zip, country) VALUES (@Street, @Apartment, @City, @State, @Zip, @Country);";
+            cmd.Parameters.AddWithValue("@UserID", profiletoedit.UserID);
+            String sqlQuery = "SELECT U.addressID FROM User_ U WHERE U.userID = @UserID;";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
-            addressID = Convert.ToInt32(cmd.ExecuteScalar());
+            SqlDataReader tempReader = cmd.ExecuteReader();
+            if(tempReader.Read())
+            {
+                addressID = Int32.Parse(tempReader["AddressID"].ToString());
+            }
             cmd.Connection.Close();
 
-
-            int userID;
             SqlCommand cmd2 = new SqlCommand();
             cmd2.Connection = ValleyVisionConnection;
             cmd2.Connection.ConnectionString = MainConnString;
-            cmd2.Parameters.AddWithValue("@FirstName", profiletoedit.FirstName);
-            cmd2.Parameters.AddWithValue("@LastName", profiletoedit.LastName);
-            cmd2.Parameters.AddWithValue("@Email", profiletoedit.Email);
-            cmd2.Parameters.AddWithValue("@Phone", profiletoedit.Phone);
-            cmd2.Parameters.AddWithValue("@UserType", profiletoedit.UserType);
-            cmd2.Parameters.AddWithValue("@Address", addressID);
-            String sqlQuery2 = "INSERT INTO User_ (firstName, lastName, email, phone, userType, addressID) VALUES (@FirstName, @LastName, @Email, @Phone, 'User', @Address);" + "SELECT SCOPE_IDENTITY();";
+            cmd2.Parameters.AddWithValue("@AddressID", addressID);
+            cmd2.Parameters.AddWithValue("@Street", profiletoedit.Street);
+            cmd2.Parameters.AddWithValue("@Apartment", profiletoedit.Apartment);
+            cmd2.Parameters.AddWithValue("@City", profiletoedit.City);
+            cmd2.Parameters.AddWithValue("@State", profiletoedit.State);
+            cmd2.Parameters.AddWithValue("@Zip", profiletoedit.Zip);
+            cmd2.Parameters.AddWithValue("@Country", profiletoedit.Country);
+            String sqlQuery2 = "UPDATE Address_ SET street = @Street, apartment = @Apartment, city = @City, state_ = @State, zip = @Zip, country = @Country WHERE addressID = @AddressID;";
             cmd2.CommandText = sqlQuery2;
             cmd2.Connection.Open();
-            userID = Convert.ToInt32(cmd2.ExecuteScalar());
+            cmd2.ExecuteNonQuery();
             cmd2.Connection.Close();
+
+
+           
+            SqlCommand cmd3 = new SqlCommand();
+            cmd3.Connection = ValleyVisionConnection;
+            cmd3.Connection.ConnectionString = MainConnString;
+            cmd3.Parameters.AddWithValue("@UserID", profiletoedit.UserID);
+            cmd3.Parameters.AddWithValue("@FirstName", profiletoedit.FirstName);
+            cmd3.Parameters.AddWithValue("@LastName", profiletoedit.LastName);
+            cmd3.Parameters.AddWithValue("@Email", profiletoedit.Email);
+            cmd3.Parameters.AddWithValue("@Phone", profiletoedit.Phone);
+            cmd3.Parameters.AddWithValue("@UserType", profiletoedit.UserType);
+            cmd3.Parameters.AddWithValue("@AddressID", addressID);
+            String sqlQuery3 = "UPDATE User_ SET firstName=@FirstName, lastName=@LastName, email=@Email, phone=@Phone, userType=@UserType, addressID=@AddressID WHERE userID=@UserID;";
+            cmd3.CommandText = sqlQuery3;
+            cmd3.Connection.Open();
+            cmd3.ExecuteNonQuery();
+            cmd3.Connection.Close();
 
 
             SqlCommand cmdLogin = new SqlCommand();
             cmdLogin.Connection = ValleyVisionConnection;
             cmdLogin.Connection.ConnectionString = AuthConnString;
 
-            cmdLogin.Parameters.AddWithValue("@UserID", userID);
+            cmdLogin.Parameters.AddWithValue("@UserID", profiletoedit.UserID);
             cmdLogin.Parameters.AddWithValue("@Username", profiletoedit.UserName);
-            cmdLogin.Parameters.AddWithValue("@Password", PasswordHash.HashPassword(profiletoedit.Password));
-            string loginQuery = "INSERT INTO HashedCredentials (UserID,UserName,Password_) VALUES (@UserID, @Username, @Password)";
+            string loginQuery = "UPDATE HashedCredentials SET UserID=@UserID, UserName=@Username WHERE UserID=@UserID;";
             cmdLogin.CommandText = loginQuery;
             cmdLogin.Connection.Open();
             cmdLogin.ExecuteNonQuery();

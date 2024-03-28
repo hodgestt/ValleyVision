@@ -19,30 +19,21 @@
                 <div class="modal-body">
 
                     <input type="hidden" asp-for="@Model.ProfileToUpdate.UserID">
-                    @{
-                        FullProfile ProfileData = new FullProfile();
-                        foreach (var profile in Model.AllProfiles)
-                        {
-                            if (profile.UserID == Model.ViewedProfile)
-                            {
-                                ProfileData = profile;
-                            }
-                        }
-                    }
+                   
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div>Username:</div>
                             <input asp-for="@Model.ProfileToUpdate.UserName" type="text" class="form-control" />
                             <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.UserName"></span>
                         </div>
-                        <div class="col-md-6">
+                        @* <div class="col-md-6">
                             <div>Password:</div>
-                            <input asp-for="@Model.ProfileToUpdate.Password" type="Password" class="form-control" />
+                            <input asp-for="@Model.ProfileToUpdate.Password" type="text" class="form-control" />
                             <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.Password"></span>
-                        </div>
+                        </div> *@
                         <div class="col-md-6">
                             <div>First Name:</div>
-                            <input asp-for="@Model.ProfileToUpdate.FirstName" type="text" class="form-control"/>
+                            <input asp-for="@Model.ProfileToUpdate.FirstName" type="text" class="form-control" /> 
                             <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.FirstName"></span>
                         </div>
                         <div class="col-md-6">
@@ -67,7 +58,7 @@
                         </div>
                         <div class="col-md-6">
                             <div>Street:</div>
-                            <input asp-for="@Model.ProfileToUpdate.Phone" type="text" class="form-control" />
+                            <input asp-for="@Model.ProfileToUpdate.Street" type="text" class="form-control" />
                             <span class="text-danger" asp-validation-for="@Model.ProfileToUpdate.Street"></span>
                         </div>
                         <div class="col-md-6">
@@ -116,6 +107,6 @@
 <script>
     document.getElementById('closeButton').addEventListener('click', function () {
         // Redirect to the specific page
-        window.location.href = '/ManageProfiles/EditProfilesPage';
+        window.location.href = '/ManageProfiles/ManageProfilesPage';
     });
 </script>    
