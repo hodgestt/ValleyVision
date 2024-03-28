@@ -28,19 +28,27 @@ namespace ValleyVisionSolution.Pages.Login
             }
         }
 
-        public IActionResult OnPostPopulateHandler()
+        public IActionResult OnPostPopulateHandler(string option)
         {
+            ModelState.Clear();
+            // Populate the username and password fields based on the selected option
+            switch (option)
+            {
+                case "option1":
+                    UserCredentials.Username = "Ryan";
+                    UserCredentials.Password = "Pass";
+                    break;
+                case "option2":
+                    UserCredentials.Username = "Tiffany";
+                    UserCredentials.Password = "Pass";
+                    break;
+                default:
+                    break;
+            }
 
-            //if (!ModelState.IsValid)
-            //{
-                ModelState.Clear(); //Causes model validation to be skipped and reset for the next entry
+            DBClass.ValleyVisionConnection.Close();
 
-                //Populate the username and password fields
-                UserCredentials.Username = "admin";
-                UserCredentials.Password = "password";
-            //}
-
-            //Return to page
+            // Return to page
             return Page();
         }
 

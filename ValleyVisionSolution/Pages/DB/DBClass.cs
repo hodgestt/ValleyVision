@@ -760,6 +760,21 @@ namespace ValleyVisionSolution.Pages.DB
 
         //END HISTORICAL SPENDING PAGE-------------------------------------------------------------------------------------
 
+        //BEGIN SPENDING PROJECTION PAGE-------------------------------------------------------------------------------------
+        //reads data file 2 latest year revenue
+        public static SqlDataReader LatestHistoricalExpenditureReader()
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.CommandText = "SELECT * FROM DataFile_3 WHERE year_ = (SELECT MAX(year_) FROM DataFile_3);";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+        //END SPENDING PROJECTION PAGE-------------------------------------------------------------------------------------
 
 
 

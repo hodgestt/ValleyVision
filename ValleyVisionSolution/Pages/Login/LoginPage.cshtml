@@ -73,6 +73,15 @@
             box-sizing: border-box;
         }
 
+        input[type="password"], .buttons button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px; /* Adjusts spacing */
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            box-sizing: border-box;
+        }
+
         .buttons {
             display: flex;
             justify-content: space-between; /* Adjust buttons to sit next to each other */
@@ -160,6 +169,11 @@
 
             <div class="buttons">
                 <button type="submit" class="loginbtn" asp-page-handler="LoginHandler" formnovalidate>Login &rarr;</button>
+                <select name="option" style="border: 1px solid #ccc; border-radius: 2px;">
+                    <option value="">Select User</option>
+                    <option value="option1">Ryan Thompson</option>
+                    <option value="option2">Tiffany Grayson</option>
+                </select>
                 <button type="submit" class="populatebtn" asp-page="/Login/LoginPage" asp-page-handler="PopulateHandler" formnovalidate>Populate</button>
             </div>
 
