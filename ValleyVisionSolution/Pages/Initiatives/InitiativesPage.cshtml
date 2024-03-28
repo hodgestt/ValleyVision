@@ -19,13 +19,13 @@
     .tile {
         text-decoration: none;
         color: #274c77;
-        width: 25vw;
-        height: 30vh;
+        width: calc(33% - 4%);
+        height: 16vw;
         border-radius: 5px;
         font-size: 1.2em;
         cursor: pointer;
         transition: transform 0.5s, box-shadow 0s;
-        border: 1px solid #274c77;
+        border: 1px solid lightgrey;
         outline: none;
         display: flex;
         flex-direction: column;
@@ -35,8 +35,8 @@
     }
 
         .tile img {
-            width: 24.9vw;
-            height: 22vh;
+            width: 100%;
+            height: 12vw;
             border-top-right-radius: 5px;
             border-top-left-radius: 5px;
             vertical-align: middle;
@@ -48,6 +48,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             color: #274c77;
         }
+
 </style>
 
 <div class="tile-container">
@@ -65,7 +66,7 @@
                     <!-- Use the FilePath provided by the initiative -->
                     <img src="@initiative.FilePath" alt="Custom Image" style="font-size:small;">
                 }
-                <div class="tile-text" style="text-align:center;">@initiative.InitName</div>
+                <div class="tile-text" style=" display:flex; align-items:center; justify-content:center; height:4vw; background-color:#274C77; color:white;">@initiative.InitName</div>
             </div>
         </a>
     }
@@ -79,7 +80,7 @@
 
         {
 
-            <button type="submit" class="tile" data-bs-toggle="modal" data-bs-target="#addInitForm" style="align-items: center;justify-content: center;">Add New +</button>
+            <button type="submit" class="tile" data-bs-toggle="modal" data-bs-target="#addInitForm" style="color:black; align-items: center;justify-content: center;">Add New +</button>
 
 
 
@@ -87,6 +88,8 @@
 
     }
 </div>
+
+
 
 <!-- Add New Initiative Form -->
 <div class="modal fade" id="addInitForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
