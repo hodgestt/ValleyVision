@@ -32,7 +32,7 @@
                 <th>Zip</th>
                 <th>Country</th>
                 <th> </th>
-
+                <th> </th>
             </tr>
         </thead>
         <tbody>
@@ -53,7 +53,12 @@
                         <td>@profile.Zip</td>
                         <td>@profile.Country</td>
                         <td>
-                            <a asp-page="EditProfilesPage" class="btn" style=" background-color:#2e4c74; -webkit-text-fill-color:white;" asp-route-userid="@profile.UserID">Edit</a>
+                            <a asp-page="EditProfilesPage" class="btn" style="background-color:#2e4c74; -webkit-text-fill-color:white;" asp-route-userid="@profile.UserID">Edit</a>
+                        </td>
+                        <td>
+                        <form method="post" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                        <button type="submit" class="btn" style="background-color:#2e4c74; -webkit-text-fill-color:white;" asp-route-userid="@profile.UserID" asp-page-handler="DeleteProfile">Delete</button>
+                        </form>
                         </td>
                     </tr>
                 }

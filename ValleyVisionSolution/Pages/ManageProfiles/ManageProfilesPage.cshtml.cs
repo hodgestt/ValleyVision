@@ -74,17 +74,18 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
                 OpenAddProfileModal = true;
                 return Page();
             }
-            if (NewProfile.Apartment == null)
-            {
-                NewProfile.Apartment = "";
-            }
 
-            // Model state is valid, continue with processing
             DBClass.AddUser(NewProfile);
             loadData();
             ModelState.Clear();
-            NewProfile = new FullProfile();
+            
             return Page();
+        }
+
+        public IActionResult OnPostDeleteProfile(int userid)
+        {
+            DBClass.DeleteUser(userid);
+            return RedirectToPage("/ManageProfiles/ManageProfilesPage");
         }
 
         public IActionResult OnPostLogoutHandler()
