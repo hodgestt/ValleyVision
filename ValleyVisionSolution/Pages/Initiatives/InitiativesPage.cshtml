@@ -5,6 +5,9 @@
     ViewData["Title"] = "Initiatives";
     ViewData["HeaderTitle"] = "Initiatives";
 }
+@{
+    string defaultImagePath = "/images/default.png";
+}
 
 <style>
     .tile-container {
@@ -52,7 +55,16 @@
     {
         <a asp-page="/Dashboard/DashboardPage" asp-route-initID="@initiative.InitID" asp-route-initName="@initiative.InitName" class="tile">
             <div class="tile-content">
-                <img src="@initiative.FilePath" alt="Insert Image" style="font-size:small;">
+                @if (string.IsNullOrEmpty(initiative.FilePath))
+                {
+                    <!-- Use default image path as src for the image tag -->
+                    <img src="@defaultImagePath" alt="Default Image" style="font-size:small;">
+                }
+                else
+                {
+                    <!-- Use the FilePath provided by the initiative -->
+                    <img src="@initiative.FilePath" alt="Custom Image" style="font-size:small;">
+                }
                 <div class="tile-text" style="text-align:center;">@initiative.InitName</div>
             </div>
         </a>
@@ -94,6 +106,13 @@
                             <input asp-for="@Model.NewInit.InitName" type="text" class="form-control">
                             <span class="text-danger" asp-validation-for="@Model.NewInit.InitName"></span>
                         </div>
+                        <div class="col-md-6">
+                            <div>Upload Image:</div>
+                            <input type="file" class="form-control" id="imageUploadInput">
+                        </div>
+                        <br />
+                        <br />
+                        <br />
                         <div class="form-group">
                             <input type="hidden" class="form-control" asp-for="NewInit.InitDateTime" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" required />
                             <span class="validity" />
