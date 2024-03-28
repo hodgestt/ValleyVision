@@ -46,7 +46,7 @@ namespace ValleyVisionSolution.Pages.Dashboard
 
             if (HttpContext.Session.GetString("LoggedIn") == "True")
             {
-                loadData((int)HttpContext.Session.GetInt32("UserID"));
+                loadData((int)HttpContext.Session.GetInt32("InitID"));
                 return Page();
             }
             else
