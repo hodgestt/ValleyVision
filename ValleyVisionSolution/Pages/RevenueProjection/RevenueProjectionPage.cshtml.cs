@@ -5,6 +5,7 @@ using System;
 using System.Data.SqlClient;
 using ValleyVisionSolution.Pages.DataClasses;
 using ValleyVisionSolution.Pages.DB;
+using ClosedXML.Excel;
 
 namespace ValleyVisionSolution.Pages.RevenueProjection
 {
@@ -106,7 +107,7 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
                     ProjectedRevenues[i].FeesLicensesTax +
                     ProjectedRevenues[i].StateFunding, 2);
             }
-
+            HttpContext.Session.SetString("ProjectedRevenues", JsonSerializer.Serialize(ProjectedRevenues));
             DefaultLoad = false;
 
             return Page();
@@ -115,6 +116,57 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
         {
             return JsonSerializer.Serialize(ProjectedRevenues);
         }
+
+        public IActionResult OnPostDownloadExcel()
+        {
+            if (HttpContext.Session.GetString("ProjectedRevenues") != null)
+            {
+                ProjectedRevenues = JsonSerializer.Deserialize<Revenue[]>(HttpContext.Session.GetString("ProjectedRevenues"));
+
+                using (var workbook = new XLWorkbook())
+                {
+                    var worksheet = workbook.Worksheets.Add("Revenue Projections");
+                    var currentRow = 1;
+
+                    // Header
+                    worksheet.Cell(currentRow, 1).Value = "Year";
+                    worksheet.Cell(currentRow, 2).Value = "Real Estate Tax";
+                    worksheet.Cell(currentRow, 3).Value = "Personal Property Tax";
+                    worksheet.Cell(currentRow, 4).Value = "Fees Licenses Tax";
+                    worksheet.Cell(currentRow, 5).Value = "State Funding";
+                    worksheet.Cell(currentRow, 6).Value = "Total Revenue";
+
+                    // Data
+                    foreach (var revenue in ProjectedRevenues)
+                    {
+                        currentRow++;
+                        worksheet.Cell(currentRow, 1).Value = revenue.Year;
+                        worksheet.Cell(currentRow, 2).Value = revenue.RealEstateTax;
+                        worksheet.Cell(currentRow, 3).Value = revenue.PersonalPropertyTax;
+                        worksheet.Cell(currentRow, 4).Value = revenue.FeesLicensesTax;
+                        worksheet.Cell(currentRow, 5).Value = revenue.StateFunding;
+                        worksheet.Cell(currentRow, 6).Value = revenue.TotalRevenue;
+                    }
+
+                    using (var stream = new MemoryStream())
+                    {
+                        workbook.SaveAs(stream);
+                        var content = stream.ToArray();
+
+                        return File(
+                            content,
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            "RevenueProjections.xlsx");
+                    }
+                }
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Please run the projection before downloading the report.";
+                return RedirectToPage("/RevenueProjection");
+            }
+        }
+
 
         public IActionResult OnPostLogoutHandler()
         {
