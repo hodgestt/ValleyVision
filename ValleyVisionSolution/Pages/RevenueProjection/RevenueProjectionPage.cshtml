@@ -124,12 +124,13 @@
     </div>
 </div>
 <br />
-<div style="display:flex; justify-content:right;">
-    <a href="/RevenueProjection/ViewDataPage" class="btn btn-primary">Add Annual Revenue</a>
+<div style="display:flex; justify-content:flex-end; gap: 10px;">
+    <a href="/RevenueProjection/ViewDataPage" class="btn btn-primary" style="margin-right: 10px;">Add Annual Revenue</a>
     <form method="post" asp-page-handler="DownloadExcel">
-        <button type="submit" class="btn btn-primary">Print Excel Report</button>
+        <button type="submit" class="btn btn-secondary">Print Report</button>
     </form>
 </div>
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
