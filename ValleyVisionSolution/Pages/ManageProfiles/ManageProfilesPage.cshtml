@@ -116,7 +116,10 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div>User Type: </div>
-                                <input asp-for="@Model.NewProfile.UserType" type="text" class="form-control">
+                            <select asp-for="@Model.NewProfile.UserType" class="form-control">
+                                <option value="User">User</option>
+                                <option value="Admin">Admin</option>
+                            </select>
                                 <span class="text-danger" asp-validation-for="@Model.NewProfile.UserType"></span>
                             </div>
                             <div class="col-md-6">

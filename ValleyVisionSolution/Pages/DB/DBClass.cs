@@ -640,7 +640,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
-            DBClass.ValleyVisionConnection.Close();
+            cmd.Connection.Close();
         }
         
         //END REVENUE SPECIFIC PAGE METHODS
@@ -682,17 +682,18 @@ namespace ValleyVisionSolution.Pages.DB
             cmd2.Connection.Close();
 
 
-            string loginQuery = "INSERT INTO HashedCredentials (UserID,UserName,Password_) VALUES (@UserID, @Username, @Password)";
+            
             SqlCommand cmdLogin = new SqlCommand();
             cmdLogin.Connection = ValleyVisionConnection;
             cmdLogin.Connection.ConnectionString = AuthConnString;
-            cmdLogin.CommandText = loginQuery;
             cmdLogin.Parameters.AddWithValue("@UserID", userID);
             cmdLogin.Parameters.AddWithValue("@Username", newfullProfile.UserName);
             cmdLogin.Parameters.AddWithValue("@Password", PasswordHash.HashPassword(newfullProfile.Password));
+            string loginQuery = "INSERT INTO HashedCredentials (UserID,UserName,Password_) VALUES (@UserID, @Username, @Password)";
+            cmdLogin.CommandText = loginQuery;
             cmdLogin.Connection.Open();
             cmdLogin.ExecuteNonQuery();
-            DBClass.ValleyVisionConnection.Close();
+            cmdLogin.Connection.Close();
         }
         //END CREATE FULL PROFILE METHODS-------------------------------------------------------------------------------------
 
