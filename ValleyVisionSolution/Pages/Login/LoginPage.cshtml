@@ -164,11 +164,16 @@
             <span asp-validation-for="@Model.UserCredentials.Username" class="text-danger"></span>
 
             <h5>Password</h5>
-            <input type="password" asp-for="@Model.UserCredentials.Password" placeholder="Enter your password" />
+            <input type="text" asp-for="@Model.UserCredentials.Password" placeholder="Enter your password" />
             <span asp-validation-for="@Model.UserCredentials.Password" class="text-danger"></span>
 
             <div class="buttons">
                 <button type="submit" class="loginbtn" asp-page-handler="LoginHandler" formnovalidate>Login &rarr;</button>
+                <select name="option" style="border: 1px solid #ccc; border-radius: 2px;">
+                    <option value="">Select User</option>
+                    <option value="option1">Ryan Thompson</option>
+                    <option value="option2">Tiffany Grayson</option>
+                </select>
                 <button type="submit" class="populatebtn" asp-page="/Login/LoginPage" asp-page-handler="PopulateHandler" formnovalidate>Populate</button>
             </div>
 
