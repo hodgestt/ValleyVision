@@ -1,0 +1,92 @@
+﻿@using ValleyVisionSolution.Pages.DataClasses 
+@model List<Tile>
+
+
+<style>
+    .active-nav-link {
+        text-decoration: underline;
+    }
+
+    .initiative-name {
+        font-weight: bold;
+        font-size: 1.2em; /* Adjust font size as needed */
+        margin-right: 20px; /* Adds space to the right of the initiative name */
+        text-decoration: none;
+        color: black;
+    }
+    /* Ensure all items align properly */
+    .navbar-nav .nav-item .nav-link, .navbar-nav .nav-item .navbar-text {
+        align-items: center;
+        display: flex;
+    }
+</style>
+
+<ul class="navbar-nav d-flex align-items-center"> <!-- This ensures all nav items are in line -->
+    @{
+        var initPath = "/Initiatives/InitiativesPage";
+    }
+
+    @if (Context.Session.GetString("InitName") != null)
+    {
+        <li class="nav-item">
+            <a class="initiative-name" href="@initPath">@Context.Session.GetString("InitName")</a>
+        </li>
+    }
+    @{
+        var dashboardPath = "/Dashboard/DashboardPage"; // Ensure this path is correct
+        var isDashboardActive = Context.Request.Path.StartsWithSegments(new PathString(dashboardPath), StringComparison.OrdinalIgnoreCase) ? "active-nav-link" : "";
+    }
+    <li class="nav-item">
+        <a class="nav-link @isDashboardActive" href="@dashboardPath">Dashboard</a>
+    </li>
+
+    @foreach (var tile in Model)
+    {
+        var isActive = Context.Request.Path.Value.Equals(tile.PageLink, StringComparison.OrdinalIgnoreCase) ? "active-nav-link" : "";
+        <li class="nav-item">
+            <a class="nav-link @isActive" href="@tile.PageLink">@tile.TileName</a>
+        </li>
+    }
+</ul>
+
+@* <style>
+    .active-nav-link {
+        text-decoration: underline;
+    }
+
+    .initiative-name {
+        font-weight: bold;
+        font-size: larger; /* Makes the font larger. Adjust as needed or use specific px/em values */
+        margin-right: 20px; /* Adds space to the right of the initiative name */
+    }
+</style>
+
+<ul class="navbar-nav">
+
+    @{
+        var initPath = "/Initiatives/InitiativesPage";
+    }
+
+    @if (Context.Session.GetString("InitName") != null)
+    {
+        <li class="nav-item">
+            <span class="navbar-text initiative-name" href="@initPath">@Context.Session.GetString("InitName")</span>
+        </li>
+    }
+    @{
+        var dashboardPath = "/Dashboard/DashboardPage"; // Adjust the path as necessary
+        var isDashboardActive = Context.Request.Path.StartsWithSegments(new PathString(dashboardPath), StringComparison.OrdinalIgnoreCase) ? "active-nav-link" : "";
+    }
+    <li class="nav-item">
+        <a class="nav-link @isDashboardActive" href="@dashboardPath">Dashboard</a>
+    </li>
+
+    @foreach (var tile in Model)
+    {
+        var isActive = Context.Request.Path.Value.Equals(tile.PageLink, StringComparison.OrdinalIgnoreCase) ? "active-nav-link" : "";
+        <li class="nav-item">
+            <a class="nav-link @isActive" href="@tile.PageLink">@tile.TileName</a>
+        </li>
+    }
+</ul>
+ *@

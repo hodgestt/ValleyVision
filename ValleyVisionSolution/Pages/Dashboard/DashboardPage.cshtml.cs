@@ -37,12 +37,16 @@ namespace ValleyVisionSolution.Pages.Dashboard
 
         public IActionResult OnGet(int initID, string initName)
         {
-            HttpContext.Session.SetInt32("InitID", initID);
-            HttpContext.Session.SetString("InitName", initName);
+            if(initID != null && initName != null)
+            {
+                HttpContext.Session.SetInt32("InitID", initID);
+                HttpContext.Session.SetString("InitName", initName);
+            }
+            
 
             if (HttpContext.Session.GetString("LoggedIn") == "True")
             {
-                loadData(initID);
+                loadData((int)HttpContext.Session.GetInt32("InitID"));
                 return Page();
             }
             else
