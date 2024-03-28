@@ -31,6 +31,10 @@
 
 
 
+        .inline-link {
+            display: inline-block;
+            margin-right: 10px; /* Adjust spacing between links as needed */
+        }
         .navbar-toggler-icon {
             display: inline-block;
             width: 1.5em;
@@ -271,8 +275,12 @@
                             <ul class="navbar-nav flex-grow-1">
 
                                 <li class="nav-item">
-
-                                    <a class="nav-link text-black" asp-area="" asp-page="/Index">Home</a>
+                                    <a class="nav-link text-black inline-link" asp-area="" asp-page="/HistoricalSpending/HistoricalSpendingPage">Historical Spending</a>
+                                    <a class="nav-link text-black inline-link" asp-area="" asp-page="/SpendingProjection/SpendingProjectionPage">Spending Projection</a>
+                                    <a class="nav-link text-black inline-link" asp-area="" asp-page="/RevenueProjection/RevenueProjectionPage">Revenue Projection</a>
+                                    <a class="nav-link text-black inline-link" asp-area="" asp-page="/Resources/ResourcesPage">Resources</a>
+                                    <a class="nav-link text-black inline-link" asp-area="" asp-page="/TaskManager/TaskManagerPage">Task Manager</a>
+                                    <a class="nav-link text-black inline-link" asp-area="" asp-page="/DiscussionBoard/DiscussionBoardPage">Discussion Board</a>
 
                                 </li>
 
