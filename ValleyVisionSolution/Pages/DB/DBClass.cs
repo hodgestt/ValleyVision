@@ -591,6 +591,50 @@ namespace ValleyVisionSolution.Pages.DB
 
         }
 
+        public static String? CheckUserName(int? userid)
+
+        {
+
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.Connection = ValleyVisionConnection;
+
+            cmd.Connection.ConnectionString = MainConnString;
+
+            cmd.Parameters.AddWithValue("@UserID", userid);
+
+            cmd.CommandText = "SELECT C.UserName FROM AUTH.dbo.HashedCredentials C JOIN Main.dbo.User_ U ON U.userID = C.UserID WHERE U.userID=@UserID;";
+
+            cmd.Connection.Open(); // Open connection here, close in Model! 
+
+            SqlDataReader UserReader = cmd.ExecuteReader();
+
+
+
+            String? username = null;
+
+            while (UserReader.Read())
+
+            {
+
+                username = UserReader["UserName"].ToString();
+
+            }
+
+
+
+            ValleyVisionConnection.Close();
+
+
+
+            return username;
+
+        }
+
+
+
+
+
         //END NON PAGE SPECIFIC METHODS---------------------------------------------------------------------------------------
 
 
