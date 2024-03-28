@@ -90,11 +90,16 @@
         </div>
     </div>
 </div>
+<div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+    <form method="post" asp-page-handler="DownloadExcel">
+        <button type="submit" class="btn btn-secondary">Download Report</button>
+    </form>
+</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var rawData = @Html.Raw(Model.GetChartDataAsJson());
-        var expenditureLabels = ['PublicSafety', 'School', 'Anomoly', 'Other'];
+        var expenditureLabels = ['PublicSafety', 'School', 'Anomaly', 'Other'];
         var colors = ['rgba(16, 41, 80, 1)', 'rgba(39, 76, 119, 1)', 'rgba(175, 184, 202, 1)', 'rgba(183, 191, 174, 1)', 'rgba(146, 157, 133, 1)', 'rgba(199, 157, 133, 1)'];
 
         function createChart(chartId, type, labels, yAxisSettings) {
@@ -144,43 +149,4 @@
         createChart('expenditureChartC', 'line', [...expenditureLabels, 'InflationRate', 'InterestRate'], yAxisExpenditureSettings);
     });
 </script>
-@*<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var rawData = @Html.Raw(Model.GetChartDataAsJson());
-        var expenditureLabels = ['Public Safety', 'School', 'Anomoly', 'Other'];
-        var colors = ['rgba(16, 41, 80, 1)', 'rgba(39, 76, 119, 1)', 'rgba(175, 184, 202, 1)', 'rgba(183, 191, 174, 1)'];
-
-        function createChart(chartId, type, labels) {
-            var datasets = labels.map((label, index) => {
-                return {
-                    label: label,
-                    data: rawData.map(item => item[label]),
-                    backgroundColor: colors[index],
-                    borderColor: colors[index],
-                    borderWidth: 2,
-                    fill: type !== 'line'
-                };
-            });
-
-            var ctx = document.getElementById(chartId).getContext('2d');
-            return new Chart(ctx, {
-                type: type,
-                data: {
-                    labels: rawData.map(item => item.Year.toString()),
-                    datasets: datasets
-                },
-                options: {
-                    scales: {
-                        y: { beginAtZero: true }
-                    },
-                    plugins: { legend: { position: 'bottom' } }
-                }
-            });
-        }
-
-        createChart('expenditureChartA', 'bar', ['TotalExpenditure']);
-        createChart('expenditureChartB', 'bar', expenditureLabels);
-        createChart('expenditureChartC', 'line', [...expenditureLabels, 'InflationRate', 'InterestRate']);
-    });
-</script>*@
 
