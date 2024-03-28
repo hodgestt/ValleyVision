@@ -73,6 +73,15 @@
             box-sizing: border-box;
         }
 
+        input[type="password"], .buttons button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px; /* Adjusts spacing */
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            box-sizing: border-box;
+        }
+
         .buttons {
             display: flex;
             justify-content: space-between; /* Adjust buttons to sit next to each other */
@@ -155,7 +164,7 @@
             <span asp-validation-for="@Model.UserCredentials.Username" class="text-danger"></span>
 
             <h5>Password</h5>
-            <input type="text" asp-for="@Model.UserCredentials.Password" placeholder="Enter your password" />
+            <input type="password" asp-for="@Model.UserCredentials.Password" placeholder="Enter your password" />
             <span asp-validation-for="@Model.UserCredentials.Password" class="text-danger"></span>
 
             <div class="buttons">
