@@ -1,5 +1,92 @@
 ﻿@page
 @model ValleyVisionSolution.Pages.HistoricalSpending.HistoricalSpendingPageModel
+@using Newtonsoft.Json
 @{
     ViewData["Title"] = "Historical Spending";
+    var jsonData = JsonConvert.SerializeObject(Model.HistoricalExpenditures);
 }
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    .parameterTitle {
+        font-size: 0.8vw;
+    }
+
+    .chart-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+        grid-template-areas:
+            "ChartA ChartB"
+            "ChartC ChartC";
+        gap: 2vw;
+    }
+
+    #chartA {
+        grid-area: ChartA;
+    }
+
+    #chartB {
+        grid-area: ChartB;
+    }
+
+    #chartC {
+        grid-area: ChartC;
+    }
+
+    .dashboard-tile {
+        font-size: max(1.25vw, 10px);
+    }
+
+    .dashboard-tile-title-bar {
+        position: relative;
+        background-color: #274C77;
+        width: 100%;
+        height: 1.75em;
+        display: flex;
+        align-items: center;
+    }
+
+    .dashboard-tile-title {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0;
+        color: #fff;
+        /*font-size:1vw;*/
+    }
+
+    .dashboard-tile-contents {
+        padding: 3%;
+        background-color: #f2f2f2;
+    }
+
+</style>
+
+<div class="chart-grid">
+    <div class="dashboard-tile" id="chartA">
+        <div class="dashboard-tile-title-bar">
+            <div class="dashboard-tile-title">Total Historic Expenditure</div>
+        </div>
+        <div class="dashboard-tile-contents">
+            <canvas id="revenueChartA"></canvas>
+        </div>
+    </div>
+    <div class="dashboard-tile" id="chartB">
+        <div class="dashboard-tile-title-bar">
+            <div class="dashboard-tile-title">Historic Expenditure by Category</div>
+        </div>
+        <div class="dashboard-tile-contents">
+            <canvas id="revenueChartB"></canvas>
+        </div>
+    </div>
+    <div class="dashboard-tile" id="chartC">
+        <div class="dashboard-tile-title-bar">
+            <div class="dashboard-tile-title">Total Expenditure and Tax Category Projection </div>
+        </div>
+        <div class="dashboard-tile-contents">
+            <canvas id="revenueChartC"></canvas>
+        </div>
+    </div>
+</div>
