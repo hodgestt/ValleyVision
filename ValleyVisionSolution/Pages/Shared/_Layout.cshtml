@@ -287,12 +287,18 @@
                             <ul class="navbar-nav flex-grow-1">
 
                                 <li class="nav-item">
+
+                                @await Component.InvokeAsync("Navbar", new { initID = Context.Session.GetInt32("InitID") ?? 0 })
+
+
+                                @*
                                     <a class="nav-link text-black inline-link" asp-area="" asp-page="/HistoricalSpending/HistoricalSpendingPage">Historical Spending</a>
                                     <a class="nav-link text-black inline-link" asp-area="" asp-page="/SpendingProjection/SpendingProjectionPage">Spending Projection</a>
                                     <a class="nav-link text-black inline-link" asp-area="" asp-page="/RevenueProjection/RevenueProjectionPage">Revenue Projection</a>
                                     <a class="nav-link text-black inline-link" asp-area="" asp-page="/Resources/ResourcesPage">Resources</a>
                                     <a class="nav-link text-black inline-link" asp-area="" asp-page="/TaskManager/TaskManagerPage">Task Manager</a>
                                     <a class="nav-link text-black inline-link" asp-area="" asp-page="/DiscussionBoard/DiscussionBoardPage">Discussion Board</a>
+                                    *@
 
                                 </li>
 

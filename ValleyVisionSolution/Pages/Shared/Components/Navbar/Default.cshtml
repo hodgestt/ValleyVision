@@ -1,0 +1,30 @@
+﻿@using ValleyVisionSolution.Pages.DataClasses 
+@model List<Tile>
+
+    <style>
+
+    .active-nav-link {
+        text-decoration: underline;
+    }
+
+    </style>
+
+<ul class="navbar-nav">
+    @foreach (var tile in Model)
+    {
+        var isActive = Context.Request.Path == tile.PageLink ? "active-nav-link" : "";
+        <li class="nav-item">
+            <a class="nav-link @isActive" href="@tile.PageLink">@tile.TileName</a>
+        </li>
+    }
+</ul>
+
+@* <ul class="navbar-nav">
+    @foreach (var tile in Model)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@tile.PageLink">@tile.TileName</a>
+        </li>
+    }
+</ul> *@
+
