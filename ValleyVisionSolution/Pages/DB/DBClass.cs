@@ -228,6 +228,20 @@ namespace ValleyVisionSolution.Pages.DB
 
             return tempReader;
         }
+
+        public static void PublishFile(int fileID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@fileID", fileID);
+            String sqlQuery = "UPDATE FileMeta SET published = 'yes' WHERE FileMetaID = @fileID";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+        }
+
         public static void UploadFile(int? initID, FileMeta fileMeta)
         {
             int fileID;
