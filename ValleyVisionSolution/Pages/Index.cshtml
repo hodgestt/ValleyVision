@@ -6,3 +6,39 @@
 }
 
 <div class="bannerObject external fixedBanner" id="bannerDivbanner1" style="min-height: 549px; top: 0px; left: -537.499px; right: 0px; position: absolute; overflow: hidden; z-index: -999999; padding: 0px;" data-image-scale="true"><img class="bannerObject" width="1257px" style="position: absolute; left: 0px; margin: 0px; width: 100%;" src="/images/MadCoHomePagePic.jpeg" data-is-delayed="false" alt=""></div>
+@* <div class="container mt-5">
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="searchTerm" class="form-control" placeholder="Search published files...">
+            <button class="btn btn-outline-secondary" type="submit">Search</button>
+        </div>
+    </form>
+
+    <h2>Published Resources</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>File Name</th>
+                <th>File Type</th>
+                <th>Uploaded Date</th>
+                <th>Uploaded By</th>
+                <th>Download</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var resource in Model.PublishedResources)
+            {
+                <tr>
+                    <td>@resource.FileName_</td>
+                    <td>@resource.FileType</td>
+                    <td>@resource.UploadedDateTime.ToString("MM/dd/yyyy")</td>
+                    <td>@resource.FirstName @resource.LastName</td>
+                    <td>
+                        <a href="@Url.Content(resource.FilePath)" class="btn btn-primary" download>Download</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+   </div>
+ *@

@@ -229,6 +229,17 @@ namespace ValleyVisionSolution.Pages.DB
             return tempReader;
         }
 
+        public static SqlDataReader PublishReader()
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString= MainConnString;
+            cmd.CommandText = "SELECT * FROM FileMeta WHERE published IS NOT NULL";
+            cmd.Connection.Open ();
+            SqlDataReader tempReader = cmd.ExecuteReader();
+            return tempReader;
+        }
+
         public static void PublishFile(int fileID)
         {
             SqlCommand cmd = new SqlCommand();
