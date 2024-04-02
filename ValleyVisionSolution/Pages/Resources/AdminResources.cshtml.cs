@@ -54,6 +54,7 @@ namespace ValleyVisionSolution.Pages.Resources
                             userID = int.Parse(reader["userID"].ToString()),
                             FirstName = reader["firstName"].ToString(),
                             LastName = reader["lastName"].ToString(),
+                            published = reader["published"].ToString(),
                             InitiativeName = init.InitName
                         });
                     }

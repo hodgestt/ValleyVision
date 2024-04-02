@@ -10,7 +10,7 @@ namespace ValleyVisionSolution.Pages.DataClasses
         public string? FileType{ get; set; }
         public DateTime UploadedDateTime { get; set; }
         public int? userID { get; set; }
-        public string? published {  get; set; }
+        public string? published { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string InitiativeName { get; set; }

@@ -60,6 +60,7 @@
                 <th>Initiative</th>
                 <th>Uploaded Date</th>
                 <th>Uploaded By</th>
+                <th>Published</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -71,6 +72,7 @@
                     <td>@fileMeta.InitiativeName</td>
                     <td>@fileMeta.UploadedDateTime.ToString("MM/dd/yy hh:mm tt")</td>
                     <td>@fileMeta.FirstName @fileMeta.LastName</td>
+                    <td>@(string.IsNullOrEmpty(fileMeta.published) ? "No" : "Yes")</td>
                     <td>
                         <a href="@Url.Content(fileMeta.FilePath)" download="@fileMeta.FileName_" class="btn btn-outline-secondary btn-sm">
                             <i class="bi bi-download"></i>
