@@ -12,7 +12,9 @@ namespace ValleyVisionSolution.ViewComponents
     {
         public IViewComponentResult Invoke(int initID)
         {
+            int? UserID = HttpContext.Session.GetInt32("UserID");
             var tiles = new List<Tile>();
+            var inits = new List<Initiative>();
             // Utilize DBClass to fetch tiles data based on initID
             SqlDataReader reader = DBClass.TilesReader(initID);
             while (reader.Read())
@@ -28,7 +30,20 @@ namespace ValleyVisionSolution.ViewComponents
             reader.Close(); // Don't forget to close the reader
             DBClass.ValleyVisionConnection.Close(); // Close connection if it's not managed elsewhere
 
-            return View(tiles); // Pass the list of tiles to the view
+            SqlDataReader reader2 = DBClass.InitiativesReader((int)UserID);
+            while (reader2.Read())
+            {
+                inits.Add(new Initiative
+                {
+                    InitID = int.Parse(reader2["initID"].ToString()),
+                    InitName = reader2["initName"].ToString(),
+                    FilePath = reader2["filePath"].ToString()
+                });
+            }
+            reader.Close(); // Don't forget to close the reader
+            DBClass.ValleyVisionConnection.Close(); // Close connection if it's not managed elsewhere
+
+            return View((tiles, inits)); // Pass the list of tiles to the view
         }
     }
 }
