@@ -12,6 +12,8 @@ namespace ValleyVisionSolution.Pages.Resources
         public List<FileMeta> FileUpload { get; set; }
         public List <Initiative> InitativeList { get; set; }
         public string CurrentInitiativeName { get; set; }
+        public List<FileMeta> PublishedFiles { get; set; } = new List<FileMeta>();
+
 
         public AdminResourcesModel()
         {
@@ -95,56 +97,6 @@ namespace ValleyVisionSolution.Pages.Resources
             HttpContext.Session.Clear();
             return RedirectToPage("/Index");
         }
-        public async Task<IActionResult> OnPostAsync(IFormFile file)
-        {
-            int initID = HttpContext.Session.GetInt32("InitID") ?? 0;
-            if (file != null && file.Length > 0)
-            {
-                // The directory to save the files in (relative to wwwroot)
-                var uploadsRelativePath = "/uploads"; // Relative path from wwwroot
-                var uploadsDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
-                if (!Directory.Exists(uploadsDirectoryPath))
-                {
-                    Directory.CreateDirectory(uploadsDirectoryPath);
-                }
-
-                // Generate a unique file name to avoid overwriting existing files
-                var fileName = Path.GetFileNameWithoutExtension(file.FileName);
-                var fileExtension = Path.GetExtension(file.FileName);
-                var uniqueFileName = fileName + DateTime.Now.ToString("yyyyMMddHHmmss") + fileExtension;
-                var filePath = Path.Combine(uploadsDirectoryPath, uniqueFileName); // For saving to disk
-                var fileRelativePath = Path.Combine(uploadsRelativePath, uniqueFileName); // For saving in DB
-
-                // Replace backslashes with forward slashes for web compatibility
-                fileRelativePath = fileRelativePath.Replace('\\', '/');
-
-                // Save the file to disk
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(fileStream);
-                }
-
-                // Create a FileMeta object with the relative path starting from wwwroot
-                var fileMeta = new FileMeta
-                {
-                    FileName_ = fileName + fileExtension,
-                    FilePath = fileRelativePath, // Save the relative path instead of the absolute path
-                    FileType = fileExtension,
-                    UploadedDateTime = DateTime.Now,
-                    userID = HttpContext.Session.GetInt32("UserID")
-                };
-
-                // Save the file metadata to your database
-                DBClass.UploadFile(initID, fileMeta);
-
-                // Redirect to the ResourcesPage
-                return RedirectToPage("./AdminResources");
-            }
-
-            // In case of no file selected or an error, reload the page showing an error message
-            ViewData["ErrorMessage"] = "You must select a file.";
-            return Page();
-        }
 
         public async Task<IActionResult> OnPostDeleteFileAsync(int fileId, string filePath)
         {
@@ -167,8 +119,11 @@ namespace ValleyVisionSolution.Pages.Resources
             return RedirectToPage();
         }
 
-
-
+        public IActionResult OnPostPublishFileAsync(int fileId)
+        {
+            DBClass.PublishFile(fileId);
+            return RedirectToPage(); // Redirect back to the same page to refresh the list and show the updated publish status
+        }
 
 
         public class DeleteRequest
