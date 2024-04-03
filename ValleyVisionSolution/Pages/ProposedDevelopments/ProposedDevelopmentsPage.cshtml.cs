@@ -20,7 +20,21 @@ namespace ValleyVisionSolution.Pages.ProposedDev
             LowImpact = new List<DevelopmentArea>();
         }
 
-        public void OnGet()
+        public IActionResult OnGet()
+        {
+            if (HttpContext.Session.GetString("LoggedIn") == "True")
+            {
+                loadData();
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Index");
+            }
+
+        }
+
+        public void loadData()
         {
             try
             {
@@ -61,6 +75,13 @@ namespace ValleyVisionSolution.Pages.ProposedDev
             {
                 DBClass.ValleyVisionConnection.Close();
             }
+
+        }
+
+        public IActionResult OnPostLogoutHandler()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToPage("/Index");
         }
 
     }

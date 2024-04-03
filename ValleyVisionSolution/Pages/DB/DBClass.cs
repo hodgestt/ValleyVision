@@ -234,7 +234,7 @@ namespace ValleyVisionSolution.Pages.DB
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString= MainConnString;
-            cmd.CommandText = "SELECT * FROM FileMeta WHERE published IS NOT NULL";
+            cmd.CommandText = "SELECT * FROM FileMeta WHERE published = 'yes'";
             cmd.Connection.Open ();
             SqlDataReader tempReader = cmd.ExecuteReader();
             return tempReader;
