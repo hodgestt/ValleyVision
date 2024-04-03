@@ -903,6 +903,23 @@ namespace ValleyVisionSolution.Pages.DB
             return tempReader;
         }
 
+        //START DASHBOARD "DETAILS" PAGE
+        public static SqlDataReader DevDetailsReader(int devID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@UserID", devID);
+            cmd.CommandText = "SELECT D.devID, D.devName, D.devDescription, D.devImpactLevel, D.uploadedDateTime \r\nFROM DevelopmentArea D LEFT JOIN DevAreaFiles A ON A.devID=D.devID \r\nLEFT JOIN FileMeta F ON F.fileMetaID=A.fileMetaID WHERE D.devID = @devID;";
+            cmd.Connection.Open(); // Open connection here, close in Model! 
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+        //END DASHBOARD "DETAILS" PAGE
+
+
 
 
 

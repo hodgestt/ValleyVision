@@ -78,6 +78,19 @@ namespace ValleyVisionSolution.Pages.ProposedDev
 
         }
 
+
+        public IActionResult OnPostViewDetails(int devID)
+        {
+            // Optional: Validate devID or retrieve additional details as necessary
+
+            // For demonstration, using TempData to pass data (ensure TempData is enabled in startup)
+            TempData["devID"] = devID;
+
+            // Redirect to the DevelopmentPage
+            return RedirectToPage("/DevelopmentPage");
+        }
+
+
         public IActionResult OnPostLogoutHandler()
         {
             HttpContext.Session.Clear();
