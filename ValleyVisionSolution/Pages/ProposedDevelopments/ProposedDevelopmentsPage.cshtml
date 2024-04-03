@@ -31,12 +31,14 @@
                         <td>@dev.devImpactLevel</td>
                         <td>@dev.uploadedDateTime.ToString("MM/dd/yyyy")</td>
                         <td>
-                            <!-- Replace with actual paths to actions -->
-                            <a href="#" class="btn btn-info btn-sm">Details</a>
-                            <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                            <form method="post" asp-page-handler="ViewDetails">
+                                <input type="hidden" name="devID" value="@dev.devID" />
+                                <button type="submit" class="btn btn-info btn-sm">Details</button>
+                            </form>
                         </td>
                     </tr>
                 }
+
             </tbody>
         </table>
     </div>
