@@ -889,7 +889,19 @@ namespace ValleyVisionSolution.Pages.DB
         }
         //END SPENDING PROJECTION PAGE-------------------------------------------------------------------------------------
 
+        //BEGIN PROPOSED DEVELOPMENT PAGE_________________________________________________________________________________________
+        public static SqlDataReader DevelopmentReader()
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.CommandText = "SELECT * FROM DevelopmentArea ORDER BY devImpactLevel DESC";
+            cmd.Connection.Open(); // Open connection here, close in Model! 
 
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
 
 
 
