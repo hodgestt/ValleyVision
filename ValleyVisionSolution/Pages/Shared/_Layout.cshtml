@@ -203,19 +203,14 @@
                 <h1>Madison County Government</h1>
 
                 @{
-
-
-
                     if (Context.Session.GetInt32("UserID").HasValue)
-
                     {
-
                         int? UserId = (int?)Context.Session.GetInt32("UserID");
-
                         String? EmpName = DB.DBClass.CheckUserName(UserId);
-
                         <h4 style="-webkit-text-fill-color:white;">@EmpName</h4>
-
+                         <div class="button-26">
+                                <a class="nav-link" asp-area="" data-bs-toggle="modal" data-bs-target="#LogoutForm" style="text-align:left; -webkit-text-fill-color:white;">Logout</a>
+                         </div>
                     }
 
                 }
@@ -246,11 +241,7 @@
                                         </li>
                                     }
                                     <br/>
-                                    <li class="nav-item">
-                                        <div class="button-26">
-                                            <a class="nav-link" asp-area="" data-bs-toggle="modal" data-bs-target="#LogoutForm" style="text-align:left; -webkit-text-fill-color:white;">Logout</a>
-                                        </div>
-                                    </li>
+                                    
                                 }
                                 else
                                 {
