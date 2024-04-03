@@ -2,18 +2,66 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home";
-   
 }
 
-<div class="bannerObject external fixedBanner" id="bannerDivbanner1" style="min-height: 549px; top: 0px; left: -537.499px; right: 0px; position: absolute; overflow: hidden; z-index: -999999; padding: 0px;" data-image-scale="true"><img class="bannerObject" width="1257px" style="position: absolute; left: 0px; margin: 0px; width: 100%;" src="/images/MadCoHomePagePic.jpeg" data-is-delayed="false" alt=""></div>
-<div class="container mt-5">
-    <form method="get" class="mb-4">
-        <div class="input-group">
-            <input type="text" name="searchTerm" class="form-control" placeholder="Search published files...">
-            <button class="btn btn-outline-secondary" type="submit">Search</button>
-        </div>
-    </form>
+<style>
+     .bkgImage {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60vh;
+        background-image: url('/images/MadCoHomePagePic.jpeg');
+        background-size: cover;
+        background-position: center;
+        z-index: -1;
+    }
 
+    
+    .content-container {
+        position: relative; 
+        top: 50vh; 
+        height: 50vh; 
+        overflow: auto; 
+    }
+    
+
+    .search-bar-container {
+        position: absolute;
+        top: 50%; 
+        left: 50%; 
+        transform: translate(-50%, -50%); 
+        width: 30%; 
+    }
+
+    .input-group {
+        width: 100%;
+    }
+
+    .form-control {
+        width: calc(100% - 120px);
+    }
+
+    .btn-search {
+        width: 80px;
+        background-color: blue;
+        color: white;
+    }
+</style>
+
+<div class="bkgImage"></div>
+
+    <div class="container mt-5">
+        <div class="search-bar-container">
+            <form method="get" class="mb-4">
+                <div class="input-group">
+                    <input type="text" name="searchTerm" class="form-control" placeholder="Search published files...">
+                    <button class="btn btn-search" type="submit">Search</button>
+                </div>
+            </form>
+        </div>
+
+    <div class="content-container">
     <h2>Published Resources</h2>
     <table class="table table-bordered">
         <thead>
@@ -40,5 +88,7 @@
             }
         </tbody>
     </table>
-   </div>
+    </div>
+</div>
+
 
