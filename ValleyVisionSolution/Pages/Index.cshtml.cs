@@ -1,7 +1,10 @@
 ﻿using System.Data.SqlClient;
+using System.Net.NetworkInformation;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ValleyVisionSolution.Pages.DataClasses;
 using ValleyVisionSolution.Pages.DB;
+using Microsoft.AspNetCore.Mvc;
+
 
 namespace ValleyVisionSolution.Pages
 {
@@ -34,8 +37,15 @@ namespace ValleyVisionSolution.Pages
             reader.Close();
             DBClass.ValleyVisionConnection.Close();
         }
+        public IActionResult OnPostLogoutHandler()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToPage("/Index");
+        }
     }
 }
+
+
 
 
 //using ValleyVisionSolution.Pages.DataClasses;
