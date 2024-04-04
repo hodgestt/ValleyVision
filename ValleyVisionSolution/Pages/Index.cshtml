@@ -3,92 +3,90 @@
 @{
     ViewData["Title"] = "Home";
 }
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-     .bkgImage {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
+    .container {
+        max-width: 2000px;
+        padding: revert;
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-rows: 60vh auto;
+        gap: 10px; 
+        max-width: 2000px;
+        margin: 0;
+        padding: 0;   
+    }
+
+    .top-section {
+        
         height: 60vh;
         background-image: url('/images/MadCoHomePagePic.jpeg');
         background-size: cover;
         background-position: center;
-        z-index: -1;
+        background-repeat: no-repeat;
+        margin: 0;
     }
-
-    
-    .content-container {
-        position: relative; 
-        top: 50vh; 
-        height: 50vh; 
-        overflow: auto; 
-    }
-    
 
     .search-bar-container {
         position: absolute;
-        top: 50%; 
-        left: 50%; 
-        transform: translate(-50%, -50%); 
-        width: 30%; 
+        top: 46%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40%;
     }
 
-    .input-group {
-        width: 100%;
+    .bottom-section {
+        padding-right: 15vw;
+        padding-left: 15vw;
     }
 
-    .form-control {
-        width: calc(100% - 120px);
-    }
-
-    .btn-search {
-        width: 80px;
-        background-color: blue;
-        color: white;
-    }
 </style>
 
-<div class="bkgImage"></div>
+<div class="grid-container">
 
-    <div class="container mt-5">
+    <div class="top-section" id="bkgImage">
         <div class="search-bar-container">
             <form method="get" class="mb-4">
                 <div class="input-group">
                     <input type="text" name="searchTerm" class="form-control" placeholder="Search published files...">
-                    <button class="btn btn-search" type="submit">Search</button>
+                    <button class="btn btn-primary" type="submit">Search</button>
                 </div>
             </form>
         </div>
-
-    <div class="content-container">
-    <h2>Published Resources</h2>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>File Name</th>
-                <th>File Type</th>
-                <th>Uploaded Date</th>
-                <th>Uploaded By</th>
-                <th>Download</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var resource in Model.PublishedResources)
-            {
-                <tr>
-                    <td>@resource.FileName_</td>
-                    <td>@resource.FileType</td>
-                    <td>@resource.UploadedDateTime.ToString("MM/dd/yyyy")</td>
-                    <td>@resource.FirstName @resource.LastName</td>
-                    <td>
-                        <a href="@Url.Content(resource.FilePath)" class="btn btn-primary" download>Download</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
     </div>
+
+    <div class="bottom-section">
+        <div class="content-container">
+            <h2>Published Resources</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>File Name</th>
+                        <th>File Type</th>
+                        <th>Uploaded Date</th>
+                        <th>Uploaded By</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var resource in Model.PublishedResources)
+                    {
+                        <tr>
+                            <td>@resource.FileName_</td>
+                            <td>@resource.FileType</td>
+                            <td>@resource.UploadedDateTime.ToString("MM/dd/yyyy")</td>
+                            <td>@resource.FirstName @resource.LastName</td>
+                            <td>
+                                <a href="@Url.Content(resource.FilePath)" class="btn btn-primary" download>Download</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
-
-
