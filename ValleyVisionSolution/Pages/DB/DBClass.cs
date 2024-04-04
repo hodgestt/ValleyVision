@@ -800,7 +800,41 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.ExecuteNonQuery();
             cmd.Connection.Close();
         }
-        
+
+        //editing revenue data on revenue projection page
+        public static void EditRevenueData(Revenue rev)
+        {
+            SqlCommand cmd2 = new SqlCommand();
+            cmd2.Connection = ValleyVisionConnection;
+            cmd2.Connection.ConnectionString = MainConnString;
+            cmd2.Parameters.AddWithValue("@Year", rev.Year);
+            cmd2.Parameters.AddWithValue("@RealEstateTax", rev.RealEstateTax);
+            cmd2.Parameters.AddWithValue("@PersonalPropertyTax", rev.PersonalPropertyTax);
+            cmd2.Parameters.AddWithValue("@FeesLicensesTax", rev.FeesLicensesTax);
+            cmd2.Parameters.AddWithValue("@StateFunding", rev.StateFunding);
+            decimal TotalRevenue = (rev.RealEstateTax + rev.PersonalPropertyTax + rev.FeesLicensesTax + rev.StateFunding);
+            cmd2.Parameters.AddWithValue("@TotalRevenue", TotalRevenue);
+            String sqlQuery2 = "UPDATE DataFile_2 SET realEstateTax=@RealEstateTax, personalPropertyTax=@PersonalPropertyTax, feesLicensesTax=@FeesLicensesTax, stateFunding=@StateFunding, totalRevenue=@TotalRevenue WHERE year_=@Year;";
+            cmd2.CommandText = sqlQuery2;
+            cmd2.Connection.Open();
+            cmd2.ExecuteNonQuery();
+        }
+
+        public static SqlDataReader SingleRevenueDataReader(int? year)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@Year", year);
+            cmd.CommandText = "SELECT * FROM DataFile_2 WHERE DataFile_2.year_ = @Year;";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+
+
         //END REVENUE SPECIFIC PAGE METHODS
 
         //BEGIN CREATE FULL PROFILE METHODS-------------------------------------------------------------------------------------
