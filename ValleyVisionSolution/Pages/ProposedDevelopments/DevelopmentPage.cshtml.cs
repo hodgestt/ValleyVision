@@ -9,11 +9,17 @@ namespace ValleyVisionSolution.Pages.ProposedDevelopments
     public class DevelopmentPageModel : PageModel
     {
         public List<FileMeta> DevFilesList { get; set; }
+        public string DevName { get; set; }
+        public string DevDescription { get; set; }
+        public string DevImpactLevel { get; set; }
+        public DateTime UploadTime { get; set; }
+        public List<FileMeta> EconFileList { get; set; }
 
         public DevelopmentPageModel() 
         { 
 
             DevFilesList = new List<FileMeta>();
+            EconFileList = new List<FileMeta>();
 
         }
 
@@ -34,6 +40,20 @@ namespace ValleyVisionSolution.Pages.ProposedDevelopments
         public void loadData()
         {
             int? devID = HttpContext.Session.GetInt32("devID");
+
+            SqlDataReader reader2 = DBClass.DevelopmentReader2((int)devID);
+            while (reader2.Read())
+            {
+                DevName = reader2["devName"].ToString();
+                DevDescription = reader2["devDescription"].ToString() ;
+                DevImpactLevel = reader2["devImpactLevel"].ToString();
+                UploadTime = Convert.ToDateTime(reader2["uploadedDateTime"]);
+
+            }
+            DBClass.ValleyVisionConnection.Close();
+
+
+
             SqlDataReader reader = DBClass.DevDetailsReader((int)devID);
             while (reader.Read())
             {
@@ -48,9 +68,13 @@ namespace ValleyVisionSolution.Pages.ProposedDevelopments
                     LastName = reader["lastName"].ToString()
                 });
             }
-            DBClass.ValleyVisionConnection.Close(); 
+            DBClass.ValleyVisionConnection.Close();
 
+            //SqlDataReader reader3 = DBClass.ResourceReader(2);
+            //while (reader3.Read())
+            //{
 
+            //}
         }
     }
 }
