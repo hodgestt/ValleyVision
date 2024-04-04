@@ -196,10 +196,15 @@
         <nav class="navbar bg-body-secondary" style="background-color:#274c77;">
             <div class="container-fluid">
                 <div class="navbar-dark">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                </div>
+                    @{
+                        if (Context.Session.GetInt32("UserID").HasValue)
+                        {
+                            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                        }
+                    }
+                        </div>
                 <h1>Madison County Government</h1>
 
                 @{
@@ -219,41 +224,49 @@
                         </div>
                     }
                 }
-                <h2>@ViewBag.SecondHeader</h2>
-                <a class="navbar-brand" href="#"></a>
                 
-                <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel" style="width: 20vw;">
-                    <div class="offcanvas-header">
-                        <h3 class="offcanvas-title" id="offcanvasNavbarLabel" style="text-align:center; font-size:35px; -webkit-text-fill-color:#274c77">Menu</h3>
-                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                    </div>
-                    <div class="offcanvas-body" style="justify-content:left;">
-                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-4">
-                            @{
-                                if (Context.Session.GetInt32("UserID").HasValue)
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-area="" asp-page="/Index" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">Home</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-area="" asp-page="/Initiatives/InitiativesPage" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">Initiatives</a>
-                                    </li>
-                                    if (DB.DBClass.CheckUserType(Context.Session.GetInt32("UserID")) == "Admin")
-                                    {
-                                        <li class="nav-item">
-                                            <a class="nav-link" asp-area="" asp-page="/ManageProfiles/ManageProfilesPage" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">Manage Users</a>
-                                            <a class="nav-link" asp-area="" asp-page="/Resources/AdminResources" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">All Resources</a>
-                                        </li>
+                
+                @{
+                    if (Context.Session.GetInt32("UserID").HasValue)
+                    {
+                        <h2>@ViewBag.SecondHeader</h2>
+                        <a class="navbar-brand" href="#"></a>
+                        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel" style="width: 20vw;">
+                            <div class="offcanvas-header">
+                                <h3 class="offcanvas-title" id="offcanvasNavbarLabel" style="text-align:center; font-size:35px; -webkit-text-fill-color:#274c77">Menu</h3>
+                                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body" style="justify-content:left;">
+                                <ul class="navbar-nav justify-content-end flex-grow-1 pe-4">
+                                    @{
+                                        if (Context.Session.GetInt32("UserID").HasValue)
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="" asp-page="/Index" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">Home</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="" asp-page="/Initiatives/InitiativesPage" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">Initiatives</a>
+                                            </li>
+                                            if (DB.DBClass.CheckUserType(Context.Session.GetInt32("UserID")) == "Admin")
+                                            {
+                                                <li class="nav-item">
+                                                    <a class="nav-link" asp-area="" asp-page="/ManageProfiles/ManageProfilesPage" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">Manage Users</a>
+                                                    <a class="nav-link" asp-area="" asp-page="/Resources/AdminResources" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">All Resources</a>
+                                                </li>
+                                            }
+
+                                        }
+
                                     }
-                                    
-                                }
-                                
-                            }
-                        </ul>
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                }
                     </div>
-                </div>
-            </div>
-        </nav>
+                        </nav>
+                    
+                    
         @{
 
             if (Context.Session.GetString("InitName") != null)

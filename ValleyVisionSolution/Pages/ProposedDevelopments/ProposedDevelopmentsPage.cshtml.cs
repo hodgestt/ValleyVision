@@ -78,6 +78,16 @@ namespace ValleyVisionSolution.Pages.ProposedDev
 
         }
 
+
+        public IActionResult OnPostViewDetails(int devID)
+        {
+            HttpContext.Session.SetInt32("devID", devID);
+
+            // Redirect to the DevelopmentPage
+            return RedirectToPage("/ProposedDevelopments/DevelopmentPage");
+        }
+
+
         public IActionResult OnPostLogoutHandler()
         {
             HttpContext.Session.Clear();

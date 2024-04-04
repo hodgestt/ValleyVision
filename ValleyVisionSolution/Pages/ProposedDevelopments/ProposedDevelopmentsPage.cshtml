@@ -1,127 +1,205 @@
-﻿
-@page
+﻿@page
 @model ValleyVisionSolution.Pages.ProposedDev.ProposedDevPageModel
 @{
     ViewData["Title"] = "Proposed Developments";
 }
 
-<h1>Proposed Developments</h1>
+<style>
+    .tableHeader {
+        background-color: #274c77;
+        color: white;
+        vertical-align: middle !important;
+    }
 
+    /* Fixed column widths */
+    .col-name {
+        width: 20%;
+    }
 
-@if (Model.HighImpact.Any())
-{
-    <div class="container mt-4">
-        <h2>High Impact</h2>
-        <table class="table table-bordered table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Impact Level</th>
-                    <th scope="col">Uploaded Date</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var dev in Model.HighImpact)
-                {
-                    <tr>
-                        <td>@dev.devName</td>
-                        <td>@dev.devDescription</td>
-                        <td>@dev.devImpactLevel</td>
-                        <td>@dev.uploadedDateTime.ToString("MM/dd/yyyy")</td>
-                        <td>
-                            <!-- Replace with actual paths to actions -->
-                            <a href="#" class="btn btn-info btn-sm">Details</a>
-                            <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-}
-else
-{
-    <p>No high impact proposed developments found.</p>
-}
+    .col-description {
+        width: 40%;
+    }
 
-@if (Model.MidImpact.Any())
-{
-    <div class="container mt-4">
-        <h2>Medium Impact</h2>
-        <table class="table table-bordered table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Impact Level</th>
-                    <th scope="col">Uploaded Date</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var dev in Model.MidImpact)
-                {
-                    <tr>
-                        <td>@dev.devName</td>
-                        <td>@dev.devDescription</td>
-                        <td>@dev.devImpactLevel</td>
-                        <td>@dev.uploadedDateTime.ToString("MM/dd/yyyy")</td>
-                        <td>
-                            <!-- Replace with actual paths to actions -->
-                            <a href="#" class="btn btn-info btn-sm">Details</a>
-                            <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-}
-else
-{
-    <p>No medium impact proposed developments found.</p>
-}
+    .col-impact, .col-date, .col-actions {
+        width: 13.33%;
+    }
 
-@if (Model.LowImpact.Any())
-{
-    <div class="container mt-4">
-        <h2>Low Impact</h2>
-        <table class="table table-bordered table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Impact Level</th>
-                    <th scope="col">Uploaded Date</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var dev in Model.LowImpact)
-                {
-                    <tr>
-                        <td>@dev.devName</td>
-                        <td>@dev.devDescription</td>
-                        <td>@dev.devImpactLevel</td>
-                        <td>@dev.uploadedDateTime.ToString("MM/dd/yyyy")</td>
-                        <td>
-                            <!-- Replace with actual paths to actions -->
-                            <a href="#" class="btn btn-info btn-sm">Details</a>
-                            <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-}
-else
-{
-    <p>No low impact proposed developments found.</p>
-}
+    /* Adjusted button sizing for better visibility and aesthetics */
+    .btn-action {
+        width: calc(50% - 4px); /* Slightly reduce width to account for margins */
+        display: inline-block; /* Keep inline but allow block level properties */
+        margin: 0 2px; /* Small margin between buttons */
+        font-size: 0.875rem; /* Adjust font size for visibility */
+        padding: 0.375rem 0.75rem; /* Adequate padding for usability */
+    }
 
+    .trash {
+        display: inline-block; /* Keep inline but allow block level properties */
+        margin: 0 2px; /* Small margin between buttons */
+        font-size: 0.875rem; /* Adjust font size for visibility */
+        padding: 0.375rem 0.75rem; /* Adequate padding for usability */
+    }
+
+    .action-form {
+        display: inline; /* Display forms inline without additional margins */
+        margin: 0; /* Override any default margins */
+    }
+
+    /* Ensure action area is well utilized */
+    .col-actions {
+        padding: 0.5rem; /* Minimize padding to maximize space */
+        text-align: center; /* Center the action buttons */
+    }
+
+    .section-title {
+        background-color: #274c77; /* Matching table header background */
+        color: white; /* Matching table header text color */
+        padding: 10px; /* Adequate padding around the text */
+        border-radius: 5px; /* Slightly rounded corners for a modern look */
+        margin-bottom: 20px; /* Space between title and table */
+    }
+</style>
+
+<div class="container mt-4">
+    <!-- High Impact Section -->
+    @if (Model.HighImpact.Any())
+    {
+        <div class="row">
+            <div class="col-12">
+                <h2 class="section-title">High Impact Proposed Developments</h2>
+                <table class="table table-bordered table-hover">
+                    <thead class="tableHeader">
+                        <tr>
+                            <th scope="col" class="col-name">Name</th>
+                            <th scope="col" class="col-description">Description</th>
+                            <th scope="col" class="col-impact">Impact Level</th>
+                            <th scope="col" class="col-date">Uploaded Date</th>
+                            <th scope="col" class="col-actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var dev in Model.HighImpact)
+                        {
+                            <tr>
+                                <td>@dev.devName</td>
+                                <td>@dev.devDescription</td>
+                                <td>@dev.devImpactLevel</td>
+                                <td>@dev.uploadedDateTime.ToString("MM/dd/yyyy")</td>
+                                <td>
+                                    <form method="post" asp-page-handler="ViewDetails" class="action-form">
+                                        <input type="hidden" name="devID" value="@dev.devID" />
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm trash"><i class="bi bi-info-lg"></i></button>
+                                    </form>
+                                    <form method="post" asp-page-handler="Delete" class="action-form">
+                                        <!-- Assuming Delete handler is present -->
+                                        <input type="hidden" name="devID" value="@dev.devID" />
+                                        <button class="btn btn-danger btn-sm trash"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>No high impact proposed developments found.</p>
+    }
+
+    <!-- Medium Impact Section -->
+    @if (Model.MidImpact.Any())
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <h2 class="section-title">Medium Impact Proposed Developments</h2>
+                <table class="table table-bordered table-hover">
+                    <thead class="tableHeader">
+                        <tr>
+                            <th scope="col" class="col-name">Name</th>
+                            <th scope="col" class="col-description">Description</th>
+                            <th scope="col" class="col-impact">Impact Level</th>
+                            <th scope="col" class="col-date">Uploaded Date</th>
+                            <th scope="col" class="col-actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var dev in Model.MidImpact)
+                        {
+                            <tr>
+                                <td>@dev.devName</td>
+                                <td>@dev.devDescription</td>
+                                <td>@dev.devImpactLevel</td>
+                                <td>@dev.uploadedDateTime.ToString("MM/dd/yyyy")</td>
+                                <td>
+                                    <form method="post" asp-page-handler="ViewDetails" class="action-form">
+                                        <input type="hidden" name="devID" value="@dev.devID" />
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm trash"><i class="bi bi-info-lg"></i></button>
+                                    </form>
+                                    <form method="post" asp-page-handler="Delete" class="action-form">
+                                        <input type="hidden" name="devID" value="@dev.devID" />
+                                        <button class="btn btn-danger btn-sm trash"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>No medium impact proposed developments found.</p>
+    }
+
+    <!-- Low Impact Section -->
+    @if (Model.LowImpact.Any())
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <h2 class="section-title">Low Impact Proposed Developments</h2>
+                <table class="table table-bordered table-hover">
+                    <thead class="tableHeader">
+                        <tr>
+                            <th scope="col" class="col-name">Name</th>
+                            <th scope="col" class="col-description">Description</th>
+                            <th scope="col" class="col-impact">Impact Level</th>
+                            <th scope="col" class="col-date">Uploaded Date</th>
+                            <th scope="col" class="col-actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var dev in Model.LowImpact)
+                        {
+                            <tr>
+                                <td>@dev.devName</td>
+                                <td>@dev.devDescription</td>
+                                <td>@dev.devImpactLevel</td>
+                                <td>@dev.uploadedDateTime.ToString("MM/dd/yyyy")</td>
+                                <td>
+                                    <form method="post" asp-page-handler="ViewDetails" class="action-form">
+                                        <input type="hidden" name="devID" value="@dev.devID" />
+                                        <button type="submit" class="btn btn-outline-secondary trash"><i class="bi bi-info-lg"></i></button>
+                                    </form>
+                                    <form method="post" asp-page-handler="Delete" class="action-form">
+                                        <input type="hidden" name="devID" value="@dev.devID" />
+                                        <button class="btn btn-danger trash"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>No low impact proposed developments found.</p>
+    }
+</div>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">

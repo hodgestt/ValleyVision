@@ -1,0 +1,146 @@
+﻿@page
+@model ValleyVisionSolution.Pages.ProposedDevelopments.DevelopmentPageModel
+@{
+    ViewData["Title"] = "Development Files";
+}
+
+<div class="container mt-4 mb-4">
+    <div class="card bg-dark text-white">
+        <div class="card-header">
+            <h3>@Model.DevName Proposed Development Information</h3>
+        </div>
+        <div class="card-body">
+            <p class="card-text">@Model.DevDescription</p>
+            <p class="card-text">Impact Level: <strong>@Model.DevImpactLevel</strong></p>
+            <p class="card-text">Date Uploaded: @Model.UploadTime.ToString("MM/dd/yyyy")</p>
+        </div>
+    </div>
+</div>
+
+@if (Model.DevFilesList.Any())
+{
+    <div class="container mt-3">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">File Name</th>
+                    <th scope="col">File Type</th>
+                    <th scope="col">Uploaded By</th>
+                    <th scope="col">Uploaded Date</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var file in Model.DevFilesList)
+                {
+                    <tr>
+                        <td>@file.FileName_</td>
+                        <td>@file.FileType</td>
+                        <td>@file.FirstName @file.LastName</td>
+                        <td>@file.UploadedDateTime.ToString("MM/dd/yyyy")</td>
+                        <td>
+                            <a href="@Url.Content(file.FilePath)" class="btn btn-primary btn-sm" download>Download</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="text-center">
+        <!-- Center the content when no files are found -->
+        <p>No files found for this development area.</p>
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#ecoDevFilesModal">
+            Add Resources from Economic Development
+        </button>
+    </div>
+}
+
+
+@* <!-- Modal -->
+<div class="modal fade" id="ecoDevFilesModal" tabindex="-1" aria-labelledby="ecoDevFilesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ecoDevFilesModalLabel">Select a File to Add</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="fileSelectionForm">
+                    @foreach (var file in Model.EcoDevFiles) // Assuming EcoDevFiles is a list of file names
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="selectedFile" id="@file" value="@file">
+                            <label class="form-check-label" for="@file">
+                                @file
+                            </label>
+                        </div>
+                    }
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" onclick="submitFileSelection()">Add Selected File</button>
+            </div>
+        </div>
+    </div>
+</div> *@
+
+
+@* @page
+@model ValleyVisionSolution.Pages.ProposedDevelopments.DevelopmentPageModel
+@{
+    ViewData["Title"] = "Development Files";
+}
+
+
+<!-- Development Info Section -->
+<div class="container mt-4 mb-4">
+    <div class="card bg-dark text-white">
+        <div class="card-header">
+            <h3>@Model.DevName Proposed Development Information</h3>
+        </div>
+            <p class="card-text">@Model.DevDescription</p>
+            <p class="card-text">Impact Level: <strong>@Model.DevImpactLevel</strong></p>
+            <p class="card-text">Date Uploaded: @Model.UploadTime.ToString("MM/dd/yyyy")</p>
+        </div>
+    </div>
+</div>
+
+@if (Model.DevFilesList.Any())
+{
+    <div class="container mt-3">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">File Name</th>
+                    <th scope="col">File Type</th>
+                    <th scope="col">Uploaded By</th>
+                    <th scope="col">Uploaded Date</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var file in Model.DevFilesList)
+                {
+                    <tr>
+                        <td>@file.FileName_</td>
+                        <td>@file.FileType</td>
+                        <td>@file.FirstName @file.LastName</td>
+                        <td>@file.UploadedDateTime.ToString("MM/dd/yyyy")</td>
+                        <td>
+                            <a href="@Url.Content(file.FilePath)" class="btn btn-primary btn-sm" download>Download</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p>No files found for this development area.</p>
+}
+ *@

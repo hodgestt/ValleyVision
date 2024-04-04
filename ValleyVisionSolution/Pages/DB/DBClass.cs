@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static BenchmarkDotNet.Engines.EngineEventSource;
 using System.Net;
+using DocumentFormat.OpenXml.Spreadsheet;
 namespace ValleyVisionSolution.Pages.DB
 {
     public class DBClass
@@ -902,6 +903,35 @@ namespace ValleyVisionSolution.Pages.DB
 
             return tempReader;
         }
+
+        public static SqlDataReader DevelopmentReader2(int devID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@DevID", devID);
+            cmd.CommandText = "SELECT * FROM DevelopmentArea WHERE devID = @DevID";
+            cmd.Connection.Open(); // Open connection here, close in Model! 
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+        //START DASHBOARD "DETAILS" PAGE
+        public static SqlDataReader DevDetailsReader(int devID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@devID", devID);
+            cmd.CommandText = "SELECT F.fileName_, F.fileType, F.uploadedDateTime, U.firstName, U.lastName FROM DevelopmentArea D LEFT JOIN DevAreaFiles A ON A.devID = D.devID LEFT JOIN FileMeta F ON F.fileMetaID = A.fileMetaID JOIN User_ U ON U.userID = F.userID WHERE D.devID = @devID; ";
+            cmd.Connection.Open(); // Open connection here, close in Model! 
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+        //END DASHBOARD "DETAILS" PAGE
 
 
 
