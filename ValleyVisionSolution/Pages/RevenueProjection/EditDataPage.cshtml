@@ -1,4 +1,68 @@
 ﻿@page
 @model ValleyVisionSolution.Pages.RevenueProjection.EditDataPageModel
+@using Revenue = ValleyVisionSolution.Pages.DataClasses.Revenue;
 @{
+    ViewData["Title"] = "Edit Revenue";
 }
+
+<!-- Edit Revenue Data Form -->
+<div class="modal fade" id="editRevenueDataForm" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form method="post" asp-page="/EditProfilesPage">
+                <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Edit Annual Revenue Data</h5>
+                    <button type="button" class="btn-close" id="closeButton" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <input type="hidden" asp-for="@Model.RevenueToUpdate.Year">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Real Estate Property Tax:</div>
+                            <input asp-for="@Model.RevenueToUpdate.RealEstateTax" type="text" class="form-control" />
+                            <span class="text-danger" asp-validation-for="@Model.RevenueToUpdate.RealEstateTax"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Personal Property Tax:</div>
+                            <input asp-for="@Model.RevenueToUpdate.PersonalPropertyTax" type="text" class="form-control" />
+                            <span class="text-danger" asp-validation-for="@Model.RevenueToUpdate.PersonalPropertyTax"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Fees & Licenses Tax: </div>
+                            <input asp-for="@Model.RevenueToUpdate.FeesLicensesTax" type="text" class="form-control" />
+                            <span class="text-danger" asp-validation-for="@Model.RevenueToUpdate.FeesLicensesTax"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>State Funding: </div>
+                            <input asp-for="@Model.RevenueToUpdate.StateFunding" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.RevenueToUpdate.StateFunding"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-top:none">
+                        <button type="submit" class="btn btn-primary" asp-page-handler="UpdateRevenueData">Update</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-- End Edit Revenue Data Form -->
+
+
+<script>
+    // Check if AddTaskInvalid is true on page load and reopen modal if needed
+    window.addEventListener('DOMContentLoaded', (event) => {
+        $('#editRevenueDataForm').modal('show');
+
+    });
+</script>
+<script>
+    document.getElementById('closeButton').addEventListener('click', function () {
+        // Redirect to the specific page
+        window.location.href = '/RevenueProjection/ViewDataPage';
+    });
+</script>    

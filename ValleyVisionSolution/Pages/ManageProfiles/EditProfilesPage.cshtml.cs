@@ -11,8 +11,6 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
     public class EditProfilesPageModel : PageModel
     {
         
-        
-
         [BindProperty]
         public FullProfile ProfileToUpdate { get; set; }
 
