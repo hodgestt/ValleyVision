@@ -1,4 +1,44 @@
 ﻿@page
 @model ValleyVisionSolution.Pages.ProposedDevelopments.DevelopmentPageModel
 @{
+    ViewData["Title"] = "Development Files";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (Model.DevFilesList.Any())
+{
+    <div class="container mt-3">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">File Name</th>
+                    <th scope="col">File Type</th>
+                    <th scope="col">Uploaded By</th>
+                    <th scope="col">Uploaded Date</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var file in Model.DevFilesList)
+                {
+                    <tr>
+                        <td>@file.FileName_</td>
+                        <td>@file.FileType</td>
+                        <td>@file.FirstName @file.LastName</td>
+                        <td>@file.UploadedDateTime.ToString("MM/dd/yyyy")</td>
+                        <td>
+                            <!-- Actions for each file. Adjust as needed -->
+                            <a href="@Url.Content(file.FilePath)" class="btn btn-primary btn-sm" download>Download</a>
+                            <!-- Additional actions can be added here -->
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p>No files found for this development area.</p>
 }
