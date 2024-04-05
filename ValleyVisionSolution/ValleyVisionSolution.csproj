@@ -14,6 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Pages\HistoricalSpending\HistoricalSpendingTemplate.xlsx" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
     <PackageReference Include="ClosedXML" Version="0.102.2" />
     <PackageReference Include="CsvHelper" Version="31.0.2" />
@@ -24,6 +28,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\lib\uploads\" />
+    <Folder Include="wwwroot\templates\" />
   </ItemGroup>
 
 </Project>
