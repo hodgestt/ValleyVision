@@ -1,3 +1,4 @@
+using DocumentFormat.OpenXml.EMMA;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Data.SqlClient;
@@ -78,6 +79,7 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
             {
                 NewProfile.Apartment = "";
             }
+
             DBClass.AddUser(NewProfile);
             loadData();
             ModelState.Clear();
@@ -96,6 +98,29 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
         {
             HttpContext.Session.Clear();
             return RedirectToPage("/Index");
+        }
+
+        public IActionResult OnPostPopulateHandler()
+        {
+            ModelState.Clear();
+            NewProfile.UserName = "JamesMad";
+            NewProfile.Password = "1234!";
+            NewProfile.FirstName = "James";
+            NewProfile.LastName = "Madison";
+            NewProfile.Email = "maddy@dukes.edu";
+            NewProfile.Phone = "5034567980";
+            NewProfile.Street = "MLK Way";
+            NewProfile.Apartment = "";
+            NewProfile.City = "Harrisonburg";
+            NewProfile.State = "VA";
+            NewProfile.Zip = 22801;
+            NewProfile.Country = "U.S.A";
+
+            OpenAddProfileModal = true;
+
+            loadData();
+
+            return Page(); 
         }
 
     }

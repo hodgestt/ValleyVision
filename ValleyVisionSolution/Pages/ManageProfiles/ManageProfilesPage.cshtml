@@ -11,6 +11,12 @@
         color: white;
         vertical-align: middle !important;
     }
+
+    .populatebtn { /* Style specifically for the populate button */
+        padding: 10px 15px; /* Smaller padding for a smaller button */
+        background-color: #6c757d; /* Bootstrap's secondary button color for differentiation */
+        color: white;
+    }
 </style>
 
 
@@ -70,6 +76,7 @@
     <button class="btn" style=" background-color:#2e4c74; -webkit-text-fill-color:white;" data-bs-toggle="modal" data-bs-target="#addProfileForm">Create Profile</button>
 
 
+
     <!-- Add New Profile Form -->
     <div class="modal fade" id="addProfileForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -90,7 +97,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div>Password: </div>
-                                <input asp-for="@Model.NewProfile.Password" type="password" class="form-control">
+                                <input asp-for="@Model.NewProfile.Password" type="text" class="form-control">
                                 <span class="text-danger" asp-validation-for="@Model.NewProfile.Password"></span>
                             </div>
                         </div>
@@ -168,18 +175,33 @@
                     </div>
                     <div class="modal-footer" style="border-top:none">
                         <button type="submit" class="btn btn-primary" asp-page-handler="NewProfile">Create</button>
+                        <button class="btn btn-primary" asp-page="/ManageProfiles/ManageProfilesPage" asp-page-handler="PopulateHandler" formnovalidate>Populate</button>
                     </div>
-                </form>
+                    
+                    </form>
             </div>
         </div>
     </div>
     <!-- End New Profile Form -->
 
 <script>
-    // Check if AddTaskInvalid is true on page load and reopen modal if needed
+    // Check if AddProfile is true on page load and reopen modal if needed
     window.addEventListener('DOMContentLoaded', (event) => {
         if (@Model.OpenAddProfileModal.ToString().ToLower()) {
             $('#addProfileForm').modal('show');
+        }
+    });
+</script>
+
+<script>
+    // Check if AddProfile is true on page load and reload page without closing the modal
+    window.addEventListener('DOMContentLoaded', (event) => {
+        if (@Model.OpenAddProfileModal.ToString().ToLower()) {
+            $('#addProfileForm').modal('show');
+            // Trigger reload after modal is shown
+            $('#addProfileForm').on('shown.bs.modal', function () {
+                
+            });
         }
     });
 </script>
