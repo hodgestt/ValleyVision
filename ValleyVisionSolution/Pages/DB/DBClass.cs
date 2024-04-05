@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using static BenchmarkDotNet.Engines.EngineEventSource;
 using System.Net;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
 namespace ValleyVisionSolution.Pages.DB
 {
     public class DBClass
@@ -495,31 +496,158 @@ namespace ValleyVisionSolution.Pages.DB
 
         //BEGIN MANAGE PROFILES PAGE_________________________________________________________________________________________
         //reads all user data in the system for the admin to see
-        public static SqlDataReader FullProfilesReader()
+        public static List<FullProfile> FullProfilesReader()
         {
+            List<FullProfile> MainProfilesInfo = new List<FullProfile>();   
+
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
-            cmd.CommandText = "SELECT C.UserName, C.Password_, U.UserID, U.firstName, U.lastName, U.email, U.phone, U.userType, A.street, A.apartment, A.city, A.state_, A.zip, A.country FROM AUTH.dbo.HashedCredentials C JOIN Main.dbo.User_ U ON U.UserID = C.UserID JOIN Main.dbo.Address_ A ON A.AddressID = U.AddressID;";
+            cmd.CommandText = "SELECT U.UserID, U.firstName, U.lastName, U.email, U.phone, U.userType, A.street, A.apartment, A.city, A.state_, A.zip, A.country FROM User_ U JOIN Address_ A ON A.AddressID = U.AddressID;";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
 
-            return tempReader;
+            while (tempReader.Read())
+            {
+                MainProfilesInfo.Add(new FullProfile
+                {
+                    UserID = int.Parse(tempReader["UserID"].ToString()),
+                    FirstName = tempReader["FirstName"].ToString(),
+                    LastName = tempReader["LastName"].ToString(),
+                    Email = tempReader["Email"].ToString(),
+                    Phone = tempReader["Phone"].ToString(),
+                    UserType = tempReader["UserType"].ToString(),
+                    Street = tempReader["Street"].ToString(),
+                    Apartment = tempReader["Apartment"].ToString(),
+                    City = tempReader["City"].ToString(),
+                    State = tempReader["State_"].ToString(),
+                    Zip = int.Parse(tempReader["Zip"].ToString()),
+                    Country = tempReader["Country"].ToString()
+                });
+            }
+            cmd.Connection.Close();
+
+            List<HashedCredential> AuthProfilesInfo = new List<HashedCredential>();
+
+            SqlCommand cmd2 = new SqlCommand();
+            cmd2.Connection = ValleyVisionConnection;
+            cmd2.Connection.ConnectionString = AuthConnString;
+            cmd2.CommandText = "SELECT * FROM HashedCredentials;";
+            cmd2.Connection.Open(); 
+
+            SqlDataReader tempReader2 = cmd2.ExecuteReader();
+
+            while (tempReader2.Read())
+            {
+                AuthProfilesInfo.Add(new HashedCredential
+                {
+                    UserID = int.Parse(tempReader2["UserID"].ToString()),
+                    Username = tempReader2["UserName"].ToString(),
+                    Password = tempReader2["Password_"].ToString()
+                    
+                });
+            }
+            cmd2.Connection.Close();
+
+            List<FullProfile> FullProfileList = new List<FullProfile>();
+            
+            foreach(var allUser in MainProfilesInfo)
+            {
+                foreach(var activeUser in AuthProfilesInfo)
+                {
+                    if(allUser.UserID == activeUser.UserID)
+                    {
+                        FullProfileList.Add(new FullProfile
+                        {
+                            UserID = allUser.UserID,
+                            UserName = activeUser.Username,
+                            FirstName = allUser.FirstName,
+                            LastName = allUser.LastName,
+                            Email = allUser.Email,
+                            Phone = allUser.Phone,
+                            UserType = allUser.UserType,
+                            Street = allUser.Street,
+                            Apartment = allUser.Apartment,
+                            City = allUser.City,
+                            State = allUser.State,
+                            Zip = allUser.Zip,
+                            Country = allUser.Country
+                        });
+                        break;
+                    }
+                }
+              
+            }
+
+            return FullProfileList;
         }
-
-        public static SqlDataReader SingleProfilesReader(int? userid)
+        public static FullProfile SingleProfilesReader(int? UserID)
         {
+            FullProfile MainProfileInfo = new FullProfile();
+
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
-            cmd.Parameters.AddWithValue("@UserID", userid);
-            cmd.CommandText = "SELECT C.UserName, C.Password_, U.userID, U.firstName, U.lastName, U.email, U.phone, U.userType, A.street, A.apartment, A.city, A.state_, A.zip, A.country FROM AUTH.dbo.HashedCredentials C JOIN Main.dbo.User_ U ON U.userID = C.UserID JOIN Main.dbo.Address_ A ON A.AddressID = U.AddressID WHERE U.userID=@UserID;";
+            cmd.Parameters.AddWithValue("@UserID", UserID);
+            cmd.CommandText = "SELECT U.UserID, U.firstName, U.lastName, U.email, U.phone, U.userType, A.street, A.apartment, A.city, A.state_, A.zip, A.country FROM User_ U JOIN Address_ A ON A.AddressID = U.AddressID WHERE U.userID = @UserID;";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
 
-            return tempReader;
+            if (tempReader.Read())
+            {
+                MainProfileInfo.UserID = int.Parse(tempReader["UserID"].ToString());
+                MainProfileInfo.FirstName = tempReader["FirstName"].ToString();
+                MainProfileInfo.LastName = tempReader["LastName"].ToString();
+                MainProfileInfo.Email = tempReader["Email"].ToString();
+                MainProfileInfo.Phone = tempReader["Phone"].ToString();
+                MainProfileInfo.UserType = tempReader["UserType"].ToString();
+                MainProfileInfo.Street = tempReader["Street"].ToString();
+                MainProfileInfo.Apartment = tempReader["Apartment"].ToString();
+                MainProfileInfo.City = tempReader["City"].ToString();
+                MainProfileInfo.State = tempReader["State_"].ToString();
+                MainProfileInfo.Zip = int.Parse(tempReader["Zip"].ToString());
+                MainProfileInfo.Country = tempReader["Country"].ToString();
+            }
+            cmd.Connection.Close();
+
+            HashedCredential AuthProfilesInfo = new HashedCredential();
+
+            SqlCommand cmd2 = new SqlCommand();
+            cmd2.Connection = ValleyVisionConnection;
+            cmd2.Connection.ConnectionString = AuthConnString;
+            cmd2.Parameters.AddWithValue("@UserID", UserID);
+            cmd2.CommandText = "SELECT * FROM HashedCredentials WHERE UserID = @UserID;";
+            cmd2.Connection.Open();
+
+            SqlDataReader tempReader2 = cmd2.ExecuteReader();
+
+            if (tempReader2.Read())
+            {
+                AuthProfilesInfo.UserID = int.Parse(tempReader2["UserID"].ToString());
+                AuthProfilesInfo.Username = tempReader2["UserName"].ToString();
+                AuthProfilesInfo.Password = tempReader2["Password_"].ToString();
+            }
+            cmd2.Connection.Close();
+
+            FullProfile SingleProfile = new FullProfile();
+
+            SingleProfile.UserID = MainProfileInfo.UserID;
+            SingleProfile.UserName = AuthProfilesInfo.Username;
+            SingleProfile.FirstName = MainProfileInfo.FirstName;
+            SingleProfile.LastName = MainProfileInfo.LastName;
+            SingleProfile.Email = MainProfileInfo.Email;
+            SingleProfile.Phone = MainProfileInfo.Phone;
+            SingleProfile.UserType = MainProfileInfo.UserType;
+            SingleProfile.Street = MainProfileInfo.Street;
+            SingleProfile.Apartment = MainProfileInfo.Apartment;
+            SingleProfile.City = MainProfileInfo.City;
+            SingleProfile.State = MainProfileInfo.State;
+            SingleProfile.Zip = MainProfileInfo.Zip;
+            SingleProfile.Country = MainProfileInfo.Country;
+           
+            return SingleProfile;
         }
 
         public static void DeleteUser(int? userid)
@@ -533,81 +661,6 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
             cmd.Connection.Close();
-
-            //SqlCommand cmd3 = new SqlCommand();
-            //cmd3.Connection = ValleyVisionConnection;
-            //cmd3.Connection.ConnectionString = MainConnString;
-            //cmd3.Parameters.AddWithValue("@UserID", userid);
-            //String sqlQuery3 = "DELETE FROM Message_ WHERE userID = @UserID;";
-            //cmd3.CommandText = sqlQuery3;
-            //cmd3.Connection.Open();
-            //cmd3.ExecuteNonQuery();
-            //cmd3.Connection.Close();
-
-            //SqlCommand cmd4 = new SqlCommand();
-            //cmd4.Connection = ValleyVisionConnection;
-            //cmd4.Connection.ConnectionString = MainConnString;
-            //cmd4.Parameters.AddWithValue("@UserID", userid);
-            //String sqlQuery4 = "DELETE FROM InitiativeUsers WHERE userID = @UserID;";
-            //cmd4.CommandText = sqlQuery4;
-            //cmd4.Connection.Open();
-            //cmd4.ExecuteNonQuery();
-            //cmd4.Connection.Close();
-
-            //SqlCommand cmd5 = new SqlCommand();
-            //cmd5.Connection = ValleyVisionConnection;
-            //cmd5.Connection.ConnectionString = MainConnString;
-            //cmd5.Parameters.AddWithValue("@UserID", userid);
-            //String sqlQuery5 = "DELETE FROM TaskUsers WHERE userID = @UserID;";
-            //cmd5.CommandText = sqlQuery5;
-            //cmd5.Connection.Open();
-            //cmd5.ExecuteNonQuery();
-            //cmd5.Connection.Close();
-
-            //SqlCommand cmd6 = new SqlCommand();
-            //cmd6.Connection = ValleyVisionConnection;
-            //cmd6.Connection.ConnectionString = MainConnString;
-            //cmd5.Parameters.AddWithValue("@UserID", userid);
-            //String sqlQuery6 = "SELECT fileMetaID FROM FileMeta WHERE userID = @UserID;";
-            //cmd6.CommandText = sqlQuery6;
-            //cmd6.Connection.Open();
-            //SqlDataReader tempReader2 = cmd.ExecuteReader();
-            //cmd6.Connection.Close();
-
-            //int filemeta;
-            //while (tempReader2.Read())
-            //{
-            //    filemeta = Int32.Parse(tempReader2["fileMetaID"].ToString());
-            //}
-
-            //SqlCommand cmd7 = new SqlCommand();
-            //cmd7.Connection = ValleyVisionConnection;
-            //cmd7.Connection.ConnectionString = MainConnString;
-            //String sqlQuery7 = "DELETE FROM Initiatives WHERE fileMetaID = " + @filemeta + ";";
-            //cmd7.CommandText = sqlQuery6;
-            //cmd7.Connection.Open();
-            //cmd7.ExecuteNonQuery();
-            //cmd7.Connection.Close();
-
-            //SqlCommand cmd8 = new SqlCommand();
-            //cmd8.Connection = ValleyVisionConnection;
-            //cmd8.Connection.ConnectionString = MainConnString;
-            //cmd8.Parameters.AddWithValue("@UserID", userid);
-            //String sqlQuery8 = "DELETE FROM FileMeta WHERE userID = @UserID;";
-            //cmd8.CommandText = sqlQuery8;
-            //cmd8.Connection.Open();
-            //cmd8.ExecuteNonQuery();
-            //cmd8.Connection.Close();
-
-            //SqlCommand cmd9 = new SqlCommand();
-            //cmd9.Connection = ValleyVisionConnection;
-            //cmd9.Connection.ConnectionString = MainConnString;
-            //cmd9.Parameters.AddWithValue("@UserID", userid);
-            //String sqlQuery9 = "DELETE FROM User_ WHERE userID = @UserID;";
-            //cmd9.CommandText = sqlQuery9;
-            //cmd9.Connection.Open();
-            //cmd9.ExecuteNonQuery();
-            //cmd9.Connection.Close();
         }
 
         //editing profiles
@@ -689,7 +742,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@UserID", userID);
-            cmd.CommandText = "SELECT U.UserType FROM Main.dbo.User_ U JOIN AUTH.dbo.HashedCredentials C ON C.UserID=U.userID WHERE U.userID = @UserID;";
+            cmd.CommandText = "SELECT U.UserType FROM User_ U WHERE U.userID = @UserID;";
             cmd.Connection.Open();
             SqlDataReader reader = cmd.ExecuteReader();
 
@@ -713,11 +766,11 @@ namespace ValleyVisionSolution.Pages.DB
 
             cmd.Connection = ValleyVisionConnection;
 
-            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Connection.ConnectionString = AuthConnString;
 
             cmd.Parameters.AddWithValue("@UserID", userid);
 
-            cmd.CommandText = "SELECT C.UserName FROM AUTH.dbo.HashedCredentials C JOIN Main.dbo.User_ U ON U.userID = C.UserID WHERE U.userID=@UserID;";
+            cmd.CommandText = "SELECT UserName FROM HashedCredentials WHERE UserID = @UserID;";
 
             cmd.Connection.Open(); // Open connection here, close in Model! 
 

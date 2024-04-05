@@ -17,31 +17,11 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
         public EditProfilesPageModel()
         {
             ProfileToUpdate = new FullProfile();
-           
         }
 
         public void loadData()
         {
-
-            SqlDataReader singleUser = DBClass.SingleProfilesReader(HttpContext.Session.GetInt32("EditedUserID"));
-            while (singleUser.Read())
-            {
-                ProfileToUpdate.UserID = Int32.Parse(singleUser["UserID"].ToString());
-                ProfileToUpdate.UserName = singleUser["UserName"].ToString();
-                ProfileToUpdate.Password = singleUser["Password_"].ToString();
-                ProfileToUpdate.FirstName = singleUser["FirstName"].ToString();
-                ProfileToUpdate.LastName = singleUser["LastName"].ToString();
-                ProfileToUpdate.Email = singleUser["Email"].ToString();
-                ProfileToUpdate.Phone = singleUser["Phone"].ToString();
-                ProfileToUpdate.UserType = singleUser["UserType"].ToString();
-                ProfileToUpdate.Street = singleUser["Street"].ToString();
-                ProfileToUpdate.Apartment = singleUser["Apartment"].ToString();
-                ProfileToUpdate.City = singleUser["City"].ToString();
-                ProfileToUpdate.State = singleUser["State_"].ToString();
-                ProfileToUpdate.Zip = Int32.Parse(singleUser["Zip"].ToString());
-                ProfileToUpdate.Country = singleUser["Country"].ToString();
-            }
-            DBClass.ValleyVisionConnection.Close();
+            ProfileToUpdate = DBClass.SingleProfilesReader(HttpContext.Session.GetInt32("EditedUserID"));
         }
         public void OnGet (int userid)
         {

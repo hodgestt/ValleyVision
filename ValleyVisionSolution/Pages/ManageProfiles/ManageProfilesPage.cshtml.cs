@@ -26,29 +26,8 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
         public void loadData() 
         {
             //populate FullProfilesList with FullProfiles
-            SqlDataReader reader = DBClass.FullProfilesReader();
-            while (reader.Read())
-            {
-                FullProfileList.Add(new FullProfile
-                {
-                    UserID = int.Parse(reader["UserID"].ToString()),
-                    UserName = reader["UserName"].ToString(),
-                    FirstName = reader["FirstName"].ToString(),
-                    LastName = reader["LastName"].ToString(),
-                    Email = reader["Email"].ToString(),
-                    Phone = reader["Phone"].ToString(),
-                    UserType = reader["UserType"].ToString(),
-                    Street = reader["Street"].ToString(),
-                    Apartment = reader["Apartment"].ToString(),
-                    City = reader["City"].ToString(),
-                    State = reader["State_"].ToString(),
-                    Zip = int.Parse(reader["Zip"].ToString()),
-                    Country = reader["Country"].ToString()
-                });
-            }
-
-            // Close your connection in DBClass
-            DBClass.ValleyVisionConnection.Close();
+            FullProfileList = DBClass.FullProfilesReader();
+            
         }
 
 
