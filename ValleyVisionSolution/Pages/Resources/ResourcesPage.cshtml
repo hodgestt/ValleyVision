@@ -70,9 +70,15 @@
                     <td>@fileMeta.UploadedDateTime.ToString("MM/dd/yy hh:mm tt")</td>
                     <td>@fileMeta.FirstName @fileMeta.LastName</td>
                     <td>
-                        <a href="@Url.Content(fileMeta.FilePath)" download="@fileMeta.FileName_" class="btn btn-outline-secondary btn-sm">
+                        <a asp-page-handler="DownloadFile"
+                           asp-route-filePath="@fileMeta.FilePath"
+                           asp-route-fileName="@fileMeta.FileName_"
+                           class="btn btn-outline-secondary btn-sm">
                             <i class="bi bi-download"></i>
                         </a>
+@*                         <a href="@Url.Content(fileMeta.FilePath)" download="@fileMeta.FileName_" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-download"></i>
+                        </a> *@
                         <form method="post" style="display: inline-block;"
                               asp-page-handler="DeleteFile"
                               asp-route-fileId="@fileMeta.FileMetaID"

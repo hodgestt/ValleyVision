@@ -86,8 +86,11 @@ namespace ValleyVisionSolution.Pages.Resources
             if (file != null && file.Length > 0)
             {
                 // The directory to save the files in (relative to wwwroot)
-                var uploadsRelativePath = "/uploads"; // Relative path from wwwroot
-                var uploadsDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+                //var uploadsRelativePath = "/uploads"; // Relative path from wwwroot
+                //var uploadsDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+
+                var uploadsDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+
                 if (!Directory.Exists(uploadsDirectoryPath))
                 {
                     Directory.CreateDirectory(uploadsDirectoryPath);
@@ -98,10 +101,10 @@ namespace ValleyVisionSolution.Pages.Resources
                 var fileExtension = Path.GetExtension(file.FileName);
                 var uniqueFileName = fileName + DateTime.Now.ToString("yyyyMMddHHmmss") + fileExtension;
                 var filePath = Path.Combine(uploadsDirectoryPath, uniqueFileName); // For saving to disk
-                var fileRelativePath = Path.Combine(uploadsRelativePath, uniqueFileName); // For saving in DB
+                //var fileRelativePath = Path.Combine(uploadsRelativePath, uniqueFileName); // For saving in DB
 
-                // Replace backslashes with forward slashes for web compatibility
-                fileRelativePath = fileRelativePath.Replace('\\', '/');
+                //// Replace backslashes with forward slashes for web compatibility
+                //fileRelativePath = fileRelativePath.Replace('\\', '/');
 
                 // Save the file to disk
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
@@ -113,7 +116,7 @@ namespace ValleyVisionSolution.Pages.Resources
                 var fileMeta = new FileMeta
                 {
                     FileName_ = fileName + fileExtension,
-                    FilePath = fileRelativePath, // Save the relative path instead of the absolute path
+                    FilePath = filePath, // Save the relative path instead of the absolute path
                     FileType = fileExtension,
                     UploadedDateTime = DateTime.Now,
                     userID = HttpContext.Session.GetInt32("UserID")
@@ -137,7 +140,7 @@ namespace ValleyVisionSolution.Pages.Resources
             var fileName = Path.GetFileName(filePath);
 
             // Combine the directory path with the sanitized fileName to get the absolute path
-            var absoluteFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
+            var absoluteFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", fileName);
 
             if (System.IO.File.Exists(absoluteFilePath))
             {
@@ -152,8 +155,24 @@ namespace ValleyVisionSolution.Pages.Resources
             return RedirectToPage();
         }
 
+        public async Task<IActionResult> OnGetDownloadFileAsync(string filePath, string fileName)
+        {
+            var fileDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+            var absoluteFilePath = Path.Combine(fileDirectory, filePath);
 
- 
+            if (!System.IO.File.Exists(absoluteFilePath))
+            {
+                return NotFound();
+            }
+
+            string contentType = "application/octet-stream";
+            var bytes = await System.IO.File.ReadAllBytesAsync(absoluteFilePath);
+            return File(bytes, contentType, fileName);
+        }
+
+
+
+
 
 
         public class DeleteRequest

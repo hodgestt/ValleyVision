@@ -123,20 +123,17 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
             {
                 ProjectedRevenues = JsonSerializer.Deserialize<Revenue[]>(HttpContext.Session.GetString("ProjectedRevenues"));
 
-                using (var workbook = new XLWorkbook())
+                // Specify the path to your projected revenues Excel template
+                string templatePath = "Pages/RevenueProjection/RevenueProjectionsTemplate.xlsx";
+
+                using (var workbook = new XLWorkbook(templatePath)) // Open the template
                 {
-                    var worksheet = workbook.Worksheets.Add("Revenue Projections");
-                    var currentRow = 1;
+                    IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming you want to use the second worksheet
+                    var currentRow = 5; // Starting row for the data
 
-                    // Header
-                    worksheet.Cell(currentRow, 1).Value = "Year";
-                    worksheet.Cell(currentRow, 2).Value = "Real Estate Tax";
-                    worksheet.Cell(currentRow, 3).Value = "Personal Property Tax";
-                    worksheet.Cell(currentRow, 4).Value = "Fees Licenses Tax";
-                    worksheet.Cell(currentRow, 5).Value = "State Funding";
-                    worksheet.Cell(currentRow, 6).Value = "Total Revenue";
+                    // Header rows might already be set in your template, so you might not need to set them again here
 
-                    // Data
+                    // Populate the worksheet with data from ProjectedRevenues
                     foreach (var revenue in ProjectedRevenues)
                     {
                         currentRow++;
@@ -147,6 +144,9 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
                         worksheet.Cell(currentRow, 5).Value = revenue.StateFunding;
                         worksheet.Cell(currentRow, 6).Value = revenue.TotalRevenue;
                     }
+
+                    // Adjust column widths to content, if necessary
+                    worksheet.Columns().AdjustToContents();
 
                     using (var stream = new MemoryStream())
                     {
@@ -162,10 +162,81 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
             }
             else
             {
-                TempData["ErrorMessage"] = "Please run the projection before downloading the report.";
+                //TempData["ErrorMessage"] = "Please run the projection before downloading the report.";
                 return RedirectToPage("/RevenueProjection");
             }
         }
+
+        public IActionResult OnPostSaveExcel()
+        {
+            // Check if ProjectedRevenues are stored in session and deserialize them
+            if (HttpContext.Session.GetString("ProjectedRevenues") != null)
+            {
+                ProjectedRevenues = JsonSerializer.Deserialize<Revenue[]>(HttpContext.Session.GetString("ProjectedRevenues"));
+            }
+            else
+            {
+                loadData();
+
+            }
+
+            // Path to your Excel template for Projected Revenues
+            string templatePath = "Pages/RevenueProjection/RevenueProjectionsTemplate.xlsx";
+
+            // Open the template
+            using (var workbook = new XLWorkbook(templatePath))
+            {
+                IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming the data should be placed in the second worksheet
+
+                // Starting row for the data
+                int currentRow = 5; // Adjust based on your template
+
+                // Populate the worksheet with data from ProjectedRevenues
+                foreach (var revenue in ProjectedRevenues)
+                {
+                    currentRow++;
+                    worksheet.Cell(currentRow, 1).Value = revenue.Year;
+                    worksheet.Cell(currentRow, 2).Value = revenue.RealEstateTax;
+                    worksheet.Cell(currentRow, 3).Value = revenue.PersonalPropertyTax;
+                    worksheet.Cell(currentRow, 4).Value = revenue.FeesLicensesTax;
+                    worksheet.Cell(currentRow, 5).Value = revenue.StateFunding;
+                    worksheet.Cell(currentRow, 6).Value = revenue.TotalRevenue;
+                }
+
+                // Adjust column widths to content
+                worksheet.Columns().AdjustToContents();
+
+                // Define a path for the server-side file
+                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+                var uniqueFileName = $"RevenueProjections_{DateTime.Now:MMdd_HHmmss}.xlsx";
+                var filePath = Path.Combine(directoryPath, uniqueFileName);
+
+                // Save the workbook to the specified path
+                workbook.SaveAs(filePath);
+
+                // Optional: Update your database with the file's details
+                int initID = HttpContext.Session.GetInt32("InitID") ?? 0;
+                var fileMeta = new FileMeta
+                {
+                    FileName_ = uniqueFileName,
+                    FilePath = filePath,
+                    FileType = ".xlsx",
+                    UploadedDateTime = DateTime.Now,
+                    userID = HttpContext.Session.GetInt32("UserID")
+                };
+
+                DBClass.UploadFile(initID, fileMeta);
+
+                // Notify the user
+                TempData["Message"] = $"{uniqueFileName} was Succesfully Saved to Budget Process Resources";
+                return Page();
+            }
+        }
+
 
 
         public IActionResult OnPostLogoutHandler()

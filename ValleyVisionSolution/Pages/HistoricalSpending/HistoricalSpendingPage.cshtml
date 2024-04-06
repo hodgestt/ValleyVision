@@ -67,7 +67,15 @@
     }
 
 </style>
+<div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+    <form method="post" asp-page-handler="DownloadExcel">
+        <button type="submit" class="btn btn-secondary">Download Report</button>
+    </form>
 
+    <form method="post" asp-page-handler="SaveExcel" style="margin-left: 10px;">
+        <button type="submit" class="btn btn-primary">Save Report Locally</button>
+    </form>
+</div>
 <div class="chart-grid">
     <div class="dashboard-tile" id="chartA">
         <div class="dashboard-tile-title-bar">
@@ -102,11 +110,7 @@
         </div>
     </div>
 </div>
-<div style="display: flex; justify-content: flex-end; margin-top: 20px;">
-    <form method="post" asp-page-handler="DownloadExcel">
-        <button type="submit" class="btn btn-secondary">Download Report</button>
-    </form>
-</div>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -161,6 +165,18 @@
         createChart('expenditureChartC', 'line', ['TotalExpenditure', 'InflationRate', 'InterestRate'], yAxisExpenditureSettings);
         createChart('expenditureChartD', 'line', [...expenditureLabels, 'InflationRate', 'InterestRate'], yAxisExpenditureSettings);
 
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    @if (TempData["Message"] != null)
+    {
+        <text>
+                var message = JSON.parse('@Json.Serialize(TempData["Message"])');
+            alert(message);
+        </text>
+    }
     });
 </script>
 

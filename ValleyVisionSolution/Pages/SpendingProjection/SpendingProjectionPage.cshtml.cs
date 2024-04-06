@@ -8,6 +8,7 @@ using MathNet.Numerics;
 using MathNet.Numerics.LinearRegression;
 using System.Text.Json;
 using MathNet.Numerics.LinearAlgebra;
+using ClosedXML.Excel;
 
 namespace ValleyVisionSolution.Pages.SpendingProjection
 {
@@ -172,7 +173,6 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
 
                 nextYear++;
             }
-            
 
 
 
@@ -180,12 +180,131 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
 
 
 
+            HttpContext.Session.SetString("ProjectedExpenditures", JsonSerializer.Serialize(ProjectedExpenditures));
             return Page();
         }
 
         public string GetChartDataAsJson()
         {
             return JsonSerializer.Serialize(ProjectedExpenditures);
+        }
+
+        public IActionResult OnPostDownloadExcel()
+        {
+
+            if (HttpContext.Session.GetString("ProjectedExpenditures") != null)
+            {
+                ProjectedExpenditures = JsonSerializer.Deserialize<List<Expenditure>>(HttpContext.Session.GetString("ProjectedExpenditures"));
+            }
+            else
+            {
+                // If not in session, load from DB (or handle as necessary)
+                loadData();
+            }
+
+            string templatePath = "Pages/SpendingProjection/SpendingProjectionTemplate.xlsx";
+
+            using (var workbook = new XLWorkbook(templatePath))
+            {
+                IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming you want to use the first worksheet
+                var currentRow = 2;
+
+                // Data Rows
+                foreach (var expenditure in ProjectedExpenditures)
+                {
+                    worksheet.Cell(currentRow, 1).Value = expenditure.Year;
+                    worksheet.Cell(currentRow, 2).Value = expenditure.InflationRate;
+                    worksheet.Cell(currentRow, 3).Value = expenditure.InterestRate;
+                    worksheet.Cell(currentRow, 4).Value = expenditure.PublicSafety;
+                    worksheet.Cell(currentRow, 5).Value = expenditure.School;
+                    worksheet.Cell(currentRow, 6).Value = expenditure.Anomaly;
+                    worksheet.Cell(currentRow, 7).Value = expenditure.Other;
+                    worksheet.Cell(currentRow, 8).Value = expenditure.TotalExpenditure;
+                    currentRow++;
+                }
+
+                // Adjust column widths to content
+                worksheet.Columns().AdjustToContents();
+
+                // Prepare the memory stream to download
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    var content = stream.ToArray();
+                    return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"SpendingProjections.xlsx");
+                }
+            }
+        }
+
+        public IActionResult OnPostSaveExcel()
+        {
+            // Check if ProjectedExpenditures are stored in session and deserialize them
+            if (HttpContext.Session.GetString("ProjectedExpenditures") != null)
+            {
+                ProjectedExpenditures = JsonSerializer.Deserialize<List<Expenditure>>(HttpContext.Session.GetString("ProjectedExpenditures"));
+            }
+            else
+            {
+                // If not in session, load from DB (or handle as necessary)
+                loadData();
+            }
+
+
+            // Path to your Excel template for Projected Revenues
+            string templatePath = "Pages/SpendingProjection/SpendingProjectionTemplate.xlsx";
+
+            // Open the template
+            using (var workbook = new XLWorkbook(templatePath))
+            {
+                IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming you want to use the first worksheet
+                var currentRow = 2;
+
+                // Data Rows
+                foreach (var expenditure in ProjectedExpenditures)
+                {
+                    worksheet.Cell(currentRow, 1).Value = expenditure.Year;
+                    worksheet.Cell(currentRow, 2).Value = expenditure.InflationRate;
+                    worksheet.Cell(currentRow, 3).Value = expenditure.InterestRate;
+                    worksheet.Cell(currentRow, 4).Value = expenditure.PublicSafety;
+                    worksheet.Cell(currentRow, 5).Value = expenditure.School;
+                    worksheet.Cell(currentRow, 6).Value = expenditure.Anomaly;
+                    worksheet.Cell(currentRow, 7).Value = expenditure.Other;
+                    worksheet.Cell(currentRow, 8).Value = expenditure.TotalExpenditure;
+                    currentRow++;
+                }
+
+                // Adjust column widths to content
+                worksheet.Columns().AdjustToContents();
+
+                // Define a path for the server-side file
+                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+                var uniqueFileName = $"SpendingProjections_{DateTime.Now:MMdd_HHmmss}.xlsx";
+                var filePath = Path.Combine(directoryPath, uniqueFileName);
+
+                // Save the workbook to the specified path
+                workbook.SaveAs(filePath);
+
+                // Optional: Update your database with the file's details
+                int initID = HttpContext.Session.GetInt32("InitID") ?? 0;
+                var fileMeta = new FileMeta
+                {
+                    FileName_ = uniqueFileName,
+                    FilePath = filePath,
+                    FileType = ".xlsx",
+                    UploadedDateTime = DateTime.Now,
+                    userID = HttpContext.Session.GetInt32("UserID")
+                };
+
+                DBClass.UploadFile(initID, fileMeta);
+
+                // Notify the user
+                TempData["Message"] = $"{uniqueFileName} was Succesfully Saved to Budget Process Resources";
+                return Page();
+            }
         }
 
 
