@@ -17,6 +17,11 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
         public List<Expenditure> HistoricalExpenditures { get; set; }
         public Expenditure LatestHistoricalExpenditure { get; set; }
         public List<Expenditure> ProjectedExpenditures { get; set; }
+        public decimal LastTotal = 0;
+        public decimal ChangeInTotal = 0;
+        public decimal SumChangeInTotal = 0;
+        public decimal Counter = -1;
+        public decimal AverageExpenditureChange = 0;
 
         [BindProperty]
         public int NumProjectionYears { get; set; }
@@ -36,24 +41,42 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
 
         public void loadData()
         {
+
+            decimal InflationAdjustment = 0;
+            decimal InterestAdjustment = 0;
             //Populate current year revenue data
             SqlDataReader reader = DBClass.HistoricalExpendituresReader();
             while (reader.Read())
             {
+                
                 HistoricalExpenditures.Add(new Expenditure
                 {
                     Year = int.Parse(reader["Year_"].ToString()),
-                    InflationRate = Decimal.Parse(reader["InflationRate"].ToString()),
-                    InterestRate = Decimal.Parse(reader["InterestRate"].ToString()),
+                    InflationRate = Decimal.Parse(reader["InflationRate"].ToString()) + InflationAdjustment,
+                    InterestRate = Decimal.Parse(reader["InterestRate"].ToString()) + InterestAdjustment,
                     PublicSafety = Decimal.Parse(reader["PublicSafety"].ToString()),
                     School = Decimal.Parse(reader["School"].ToString()),
                     Anomaly = Decimal.Parse(reader["Anomaly"].ToString()),
                     Other = Decimal.Parse(reader["Other"].ToString()),
                     TotalExpenditure = Decimal.Parse(reader["TotalExpenditure"].ToString())
                 });
+                //InflationAdjustment = Decimal.Parse(reader["InflationRate"].ToString()) + InflationAdjustment;
+                //InterestAdjustment = Decimal.Parse(reader["InterestRate"].ToString()) + InterestAdjustment;
             }
             // Close your connection in DBClass
             DBClass.ValleyVisionConnection.Close();
+
+            LastTotal = HistoricalExpenditures[0].TotalExpenditure;
+
+            foreach (var e in HistoricalExpenditures)
+            {
+                ChangeInTotal = e.TotalExpenditure - LastTotal;
+                SumChangeInTotal += ChangeInTotal;
+                Counter++;
+                LastTotal = e.TotalExpenditure;
+            }
+
+            AverageExpenditureChange = SumChangeInTotal / Counter;
 
             //Populate current year revenue data
             SqlDataReader reader2 = DBClass.LatestHistoricalExpenditureReader();
@@ -95,11 +118,12 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
             loadData();
             ProjectedExpenditures.Add(LatestHistoricalExpenditure);
             ParameterInflationRate = ParameterInflationRate / 100;
+            decimal Adjustment = 0;
             ParameterInterestRate = ParameterInterestRate / 100;
 
             int nextYear = LatestHistoricalExpenditure.Year + 1;
 
-            for (int i = 0; i < NumProjectionYears; i++)
+            for (int i = 1; i <= NumProjectionYears; i++)
             {
                 // Extracting data from the list into arrays
                 double[] inflationRate = HistoricalExpenditures.Select(e => (double)e.InflationRate).ToArray();
@@ -139,7 +163,7 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
                 var schoolcoefficients = MultipleRegression.NormalEquations(designMatrixSchool, schoolVector);
                 var othercoefficients = MultipleRegression.NormalEquations(designMatrixOther, otherVector);
 
-                
+
 
                 ProjectedExpenditures.Add(new Expenditure
                 {
@@ -154,6 +178,7 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
                                        + (decimal)(schoolcoefficients[0] + (schoolcoefficients[1] * (double)ParameterInflationRate) + (schoolcoefficients[2] * (double)ParameterInterestRate))
                                        + ParameterAnomaly
                                        + (decimal)(othercoefficients[0] + (othercoefficients[1] * (double)ParameterInflationRate) + (othercoefficients[2] * (double)ParameterInterestRate))
+                                       + Adjustment
                 });
 
                 HistoricalExpenditures.Add(new Expenditure
@@ -169,9 +194,12 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
                                        + (decimal)(schoolcoefficients[0] + (schoolcoefficients[1] * (double)ParameterInflationRate) + (schoolcoefficients[2] * (double)ParameterInterestRate))
                                        + ParameterAnomaly
                                        + (decimal)(othercoefficients[0] + (othercoefficients[1] * (double)ParameterInflationRate) + (othercoefficients[2] * (double)ParameterInterestRate))
+                                       + Adjustment
                 });
 
                 nextYear++;
+                Adjustment = AverageExpenditureChange * i * (1+ParameterInflationRate);
+                
             }
 
 
