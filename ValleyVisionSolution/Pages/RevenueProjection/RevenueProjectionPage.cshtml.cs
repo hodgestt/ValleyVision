@@ -46,7 +46,7 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
                     RealEstateTax = Decimal.Parse(reader["RealEstateTax"].ToString()),
                     PersonalPropertyTax = Decimal.Parse(reader["PersonalPropertyTax"].ToString()),
                     FeesLicensesTax = Decimal.Parse(reader["FeesLicensesTax"].ToString()),
-                    StateFunding = Decimal.Parse(reader["StateFunding"].ToString()),
+                    StateFunding = Decimal.Parse(reader["OtherRevenue"].ToString()),
                     TotalRevenue = Decimal.Parse(reader["TotalRevenue"].ToString())
                 };
             }
