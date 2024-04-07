@@ -12,6 +12,7 @@ namespace ValleyVisionSolution.Pages
     {
         public List<FileMeta> PublishedResources { get; set; } = new List<FileMeta>();
 
+
         public void OnGet(string searchTerm)
         {
             HttpContext.Session.Remove("InitName");
@@ -36,7 +37,36 @@ namespace ValleyVisionSolution.Pages
             }
             reader.Close();
             DBClass.ValleyVisionConnection.Close();
+
+            // Sort the list of published resources by UploadedDateTime in descending order
+            PublishedResources = PublishedResources.OrderByDescending(file => file.UploadedDateTime).ToList();
         }
+
+        //public void OnGet(string searchTerm)
+        //{
+        //    HttpContext.Session.Remove("InitName");
+        //    SqlDataReader reader = DBClass.PublishReader();
+        //    while (reader.Read())
+        //    {
+        //        var file = new FileMeta
+        //        {
+        //            FileMetaID = int.Parse(reader["FileMetaID"].ToString()),
+        //            FileName_ = reader["FileName_"].ToString(),
+        //            FilePath = reader["FilePath"].ToString(),
+        //            FileType = reader["FileType"].ToString(),
+        //            UploadedDateTime = DateTime.Parse(reader["UploadedDateTime"].ToString()),
+        //            userID = int.Parse(reader["userID"].ToString()),
+        //        };
+
+        //        // If a search term is provided, only add files that match the term.
+        //        if (string.IsNullOrEmpty(searchTerm) || file.FileName_.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            PublishedResources.Add(file);
+        //        }
+        //    }
+        //    reader.Close();
+        //    DBClass.ValleyVisionConnection.Close();
+        //}
         public IActionResult OnPostLogoutHandler()
         {
             HttpContext.Session.Clear();
