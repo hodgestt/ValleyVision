@@ -126,6 +126,21 @@ namespace ValleyVisionSolution.Pages.Resources
             return RedirectToPage(); // Redirect back to the same page to refresh the list and show the updated publish status
         }
 
+        public async Task<IActionResult> OnGetDownloadFileAsync(string filePath, string fileName)
+        {
+            var fileDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+            var absoluteFilePath = Path.Combine(fileDirectory, filePath);
+
+            if (!System.IO.File.Exists(absoluteFilePath))
+            {
+                return NotFound();
+            }
+
+            string contentType = "application/octet-stream";
+            var bytes = await System.IO.File.ReadAllBytesAsync(absoluteFilePath);
+            return File(bytes, contentType, fileName);
+        }
+
 
         public class DeleteRequest
         {
