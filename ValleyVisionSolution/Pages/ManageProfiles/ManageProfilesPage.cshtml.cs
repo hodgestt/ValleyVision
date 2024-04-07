@@ -35,6 +35,7 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
         {
             if (HttpContext.Session.GetString("LoggedIn") == "True" && DBClass.CheckUserType((int)HttpContext.Session.GetInt32("UserID")) == "Admin")
             {
+                HttpContext.Session.Remove("InitName");
                 loadData();
                 return Page();
             }

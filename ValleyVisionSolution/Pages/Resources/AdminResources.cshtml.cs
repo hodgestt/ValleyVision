@@ -80,6 +80,7 @@ namespace ValleyVisionSolution.Pages.Resources
 
         public IActionResult OnGet(string searchTerm)
         {
+            HttpContext.Session.Remove("InitName");
             int initID = HttpContext.Session.GetInt32("InitID") ?? 0;
             if (HttpContext.Session.GetString("LoggedIn") == "True")
             {
