@@ -24,17 +24,17 @@ namespace ValleyVisionSolution.Pages.DB
         public static SqlConnection ValleyVisionConnection = new SqlConnection();
 
         //// Connection String - How to find and connect to DB
-        private static readonly String? MainConnString = "Server=Localhost;Database=Main;Trusted_Connection=True";
-        private static readonly String? AuthConnString = "Server=Localhost;Database=AUTH;Trusted_Connection=True";
+        //private static readonly String? MainConnString = "Server=Localhost;Database=Main;Trusted_Connection=True";
+        //private static readonly String? AuthConnString = "Server=Localhost;Database=AUTH;Trusted_Connection=True";
 
         //Azure hosted database connection strings 
-        //private static readonly String? MainConnString = "Server=valleyvisioncapstone.database.windows.net,1433;" +
-        //"Database=ValleyVisionMain;" +
-        //"User ID=ValleyVisionAdmin;" +
-        //"Password=CIS484ValleyVision;" +
-        //"Encrypt=True;" +
-        //"TrustServerCertificate=True;" +
-        //"Connection Timeout=30;";
+        private static readonly String? MainConnString = "Server=valleyvisioncapstone.database.windows.net,1433;" +
+        "Database=ValleyVisionMain;" +
+        "User ID=ValleyVisionAdmin;" +
+        "Password=CIS484ValleyVision;" +
+        "Encrypt=True;" +
+        "TrustServerCertificate=True;" +
+        "Connection Timeout=30;";
 
         //private static readonly String? AuthConnString = "Server=valleyvisioncapstone.database.windows.net,1433;" +
         //"Database=ValleyVisionAuth;" +
