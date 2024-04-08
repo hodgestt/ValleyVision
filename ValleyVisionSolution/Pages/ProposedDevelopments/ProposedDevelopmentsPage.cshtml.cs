@@ -1,6 +1,8 @@
 using DocumentFormat.OpenXml.EMMA;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Data.SqlClient;
 using ValleyVisionSolution.Pages.DataClasses;
 using ValleyVisionSolution.Pages.DB;
@@ -31,6 +33,8 @@ namespace ValleyVisionSolution.Pages.ProposedDev
             if (HttpContext.Session.GetString("LoggedIn") == "True")
             {
                 loadData();
+                int? userID = HttpContext.Session.GetInt32("userID");
+                //NewDevelopmentArea.userID=HttpContext.Session.GetInt32("userID");
                 return Page();
             }
             else
@@ -54,7 +58,9 @@ namespace ValleyVisionSolution.Pages.ProposedDev
                             devName = reader["devName"].ToString(),
                             devDescription = reader["devDescription"].ToString(),
                             devImpactLevel = reader["devImpactLevel"].ToString(), // Fixed this line
-                            uploadedDateTime = Convert.ToDateTime(reader["uploadedDateTime"])
+                            uploadedDateTime = Convert.ToDateTime(reader["uploadedDateTime"]),
+                            userID = int.Parse(reader["userID"].ToString())
+                            
                         };
 
                         switch (development.devImpactLevel)
@@ -94,9 +100,10 @@ namespace ValleyVisionSolution.Pages.ProposedDev
                 return Page();
             }
             
-            DBClass.AddDevelopmentArea(NewDevelopmentArea, HttpContext);
+            DBClass.AddDevelopmentArea(NewDevelopmentArea);
             loadData();
             ModelState.Clear();
+            
             NewDevelopmentArea = new DevelopmentArea();
 
             return Page();

@@ -1015,10 +1015,8 @@ namespace ValleyVisionSolution.Pages.DB
 
         //BEGIN PROPOSED DEVELOPMENT PAGE_________________________________________________________________________________________
         
-        public static void AddDevelopmentArea(DevelopmentArea newDevArea, HttpContext httpContext)
+        public static void AddDevelopmentArea(DevelopmentArea newDevArea)
         {
-            int? userId = httpContext.Session.GetInt32("userID");
-
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
@@ -1026,7 +1024,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Parameters.AddWithValue("@DevDescription", newDevArea.devDescription);
             cmd.Parameters.AddWithValue("@DevImpactLevel", newDevArea.devImpactLevel);
             cmd.Parameters.AddWithValue("@UploadedDateTime", newDevArea.uploadedDateTime);
-            cmd.Parameters.AddWithValue("@UserID", userId);
+            cmd.Parameters.AddWithValue("@UserID", newDevArea.userID);
             String sqlQuery = "INSERT INTO DevelopmentArea (devName, devDescription, devImpactLevel, uploadedDateTime, userID) VALUES (@DevName, @DevDescription, @DevImpactLevel, @UploadedDateTime, @UserID);";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();

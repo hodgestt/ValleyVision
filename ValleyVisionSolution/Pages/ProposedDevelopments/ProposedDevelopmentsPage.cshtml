@@ -247,7 +247,10 @@
                             <input type="hidden" class="form-control" asp-for="@Model.NewDevelopmentArea.uploadedDateTime" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" required />
                             <span class="validity" />
                         </div>
-                        
+                        <div class="col-md-6">
+                            <input type="hidden" class="form-control" asp-for="@Model.NewDevelopmentArea.userID" required />
+                            <span class="validity" />
+                        </div>
                         
                 </div>
                 <div class="modal-footer" style="border-top:none">
