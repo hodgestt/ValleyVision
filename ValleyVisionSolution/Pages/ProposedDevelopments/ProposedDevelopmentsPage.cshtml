@@ -60,6 +60,11 @@
     }
 </style>
 
+<div class="text-end">
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProposedDevelopment">Create Proposed Development</button>
+
+</div>
+
 <div class="container mt-4">
     <!-- High Impact Section -->
     @if (Model.HighImpact.Any())
@@ -90,10 +95,10 @@
                                         <input type="hidden" name="devID" value="@dev.devID" />
                                         <button type="submit" class="btn btn-outline-secondary btn-sm trash"><i class="bi bi-info-lg"></i></button>
                                     </form>
-                                    <form method="post" asp-page-handler="Delete" class="action-form">
+                                    <form method="post" asp-page-handler="Delete" class="action-form" onsubmit="return confirm('Are you sure you want to delete this dev area?')">
                                         <!-- Assuming Delete handler is present -->
                                         <input type="hidden" name="devID" value="@dev.devID" />
-                                        <button class="btn btn-danger btn-sm trash"><i class="bi bi-trash"></i></button>
+                                        <button type="submit" class="btn btn-danger btn-sm trash"><i class="bi bi-trash"></i></button>
                                     </form>
                                 </td>
                             </tr>
@@ -122,6 +127,7 @@
                             <th scope="col" class="col-impact">Impact Level</th>
                             <th scope="col" class="col-date">Uploaded Date</th>
                             <th scope="col" class="col-actions">Actions</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -137,9 +143,10 @@
                                         <input type="hidden" name="devID" value="@dev.devID" />
                                         <button type="submit" class="btn btn-outline-secondary btn-sm trash"><i class="bi bi-info-lg"></i></button>
                                     </form>
-                                    <form method="post" asp-page-handler="Delete" class="action-form">
+                                    <form method="post" asp-page-handler="Delete" class="action-form" onsubmit="return confirm('Are you sure you want to delete this dev area?')">
+                                        <!-- Assuming Delete handler is present -->
                                         <input type="hidden" name="devID" value="@dev.devID" />
-                                        <button class="btn btn-danger btn-sm trash"><i class="bi bi-trash"></i></button>
+                                        <button type="submit" class="btn btn-danger btn-sm trash"><i class="bi bi-trash"></i></button>
                                     </form>
                                 </td>
                             </tr>
@@ -168,6 +175,7 @@
                             <th scope="col" class="col-impact">Impact Level</th>
                             <th scope="col" class="col-date">Uploaded Date</th>
                             <th scope="col" class="col-actions">Actions</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -183,9 +191,10 @@
                                         <input type="hidden" name="devID" value="@dev.devID" />
                                         <button type="submit" class="btn btn-outline-secondary trash"><i class="bi bi-info-lg"></i></button>
                                     </form>
-                                    <form method="post" asp-page-handler="Delete" class="action-form">
+                                    <form method="post" asp-page-handler="Delete" class="action-form" onsubmit="return confirm('Are you sure you want to delete this dev area?')">
+                                        <!-- Assuming Delete handler is present -->
                                         <input type="hidden" name="devID" value="@dev.devID" />
-                                        <button class="btn btn-danger trash"><i class="bi bi-trash"></i></button>
+                                        <button type="submit" class="btn btn-danger btn-sm trash"><i class="bi bi-trash"></i></button>
                                     </form>
                                 </td>
                             </tr>
@@ -201,5 +210,80 @@
     }
 </div>
 
+<!--CONNOR LOOK HERE. IT CALLS THE DB CLASS AND THEN THE ERROR HAPPENS-->
+<!-- Add New Proposed Development Form -->
+<div class="modal fade" id="addProposedDevelopment" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form method="post" asp-page="/ProposedDevelopments/ProposedDevelopmentsPage">
+                <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add Proposed Development</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Development Name: </div>
+                            <input asp-for="@Model.NewDevelopmentArea.devName" type="text" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewDevelopmentArea.devName"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Development Description: </div>
+                            <input asp-for="@Model.NewDevelopmentArea.devDescription" type="text" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewDevelopmentArea.devDescription"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Development Impact Level: </div>
+                            <select asp-for="@Model.NewDevelopmentArea.devImpactLevel" class="form-select" id="devImpactLevel">
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                            <span class="text-danger" asp-validation-for="@Model.NewDevelopmentArea.devImpactLevel"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="hidden" class="form-control" asp-for="@Model.NewDevelopmentArea.uploadedDateTime" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" required />
+                            <span class="validity" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="hidden" class="form-control" asp-for="@Model.NewDevelopmentArea.userID" required />
+                            <span class="validity" />
+                        </div>
+                        
+                </div>
+                <div class="modal-footer" style="border-top:none">
+                    <button type="submit" class="btn btn-primary" asp-page-handler="NewDevelopmentArea">Create</button>
+                    <button class="btn btn-primary" asp-page="/ProposedDevelopments/ProposedDevelopmentsPage" asp-page-handler="NewDevelopmentArea">Populate</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div> 
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+@* 
+<script>
+    // Check if AddProfile is true on page load and reopen modal if needed
+    window.addEventListener('DOMContentLoaded', (event) => {
+        if (@Model.OpenAddProfileModal.ToString().ToLower()) {
+            $('#addProfileForm').modal('show');
+        }
+    });
+</script>
+
+<script>
+    // Check if AddProfile is true on page load and reload page without closing the modal
+    window.addEventListener('DOMContentLoaded', (event) => {
+        if (@Model.OpenAddProfileModal.ToString().ToLower()) {
+            $('#addProfileForm').modal('show');
+            // Trigger reload after modal is shown
+            $('#addProfileForm').on('shown.bs.modal', function () {
+
+            });
+        }
+    });
+</script> *@

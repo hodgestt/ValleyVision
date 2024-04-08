@@ -9,5 +9,7 @@ namespace ValleyVisionSolution.Pages.DataClasses
         public string devDescription { get; set; }
         public string devImpactLevel { get; set; }
         public DateTime uploadedDateTime { get; set; }
+        public int userID { get; set; }
+
     }
 }

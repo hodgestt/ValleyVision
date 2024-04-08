@@ -1,5 +1,8 @@
+using DocumentFormat.OpenXml.EMMA;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Data.SqlClient;
 using ValleyVisionSolution.Pages.DataClasses;
 using ValleyVisionSolution.Pages.DB;
@@ -11,6 +14,10 @@ namespace ValleyVisionSolution.Pages.ProposedDev
         public List<DevelopmentArea> HighImpact { get; set; }
         public List<DevelopmentArea> MidImpact { get; set; }
         public List<DevelopmentArea> LowImpact { get; set; }
+        [BindProperty]
+        public DevelopmentArea NewDevelopmentArea { get; set; }
+
+        public bool OpenAddProfileModal { get; set; }
 
 
         public ProposedDevPageModel() 
@@ -18,6 +25,7 @@ namespace ValleyVisionSolution.Pages.ProposedDev
             HighImpact = new List<DevelopmentArea>();
             MidImpact = new List<DevelopmentArea>();
             LowImpact = new List<DevelopmentArea>();
+            OpenAddProfileModal = false; //keeps the modal open on page reload if input validations were not successful
         }
 
         public IActionResult OnGet()
@@ -25,6 +33,8 @@ namespace ValleyVisionSolution.Pages.ProposedDev
             if (HttpContext.Session.GetString("LoggedIn") == "True")
             {
                 loadData();
+                int? userID = HttpContext.Session.GetInt32("userID");
+                //NewDevelopmentArea.userID=HttpContext.Session.GetInt32("userID");
                 return Page();
             }
             else
@@ -48,7 +58,9 @@ namespace ValleyVisionSolution.Pages.ProposedDev
                             devName = reader["devName"].ToString(),
                             devDescription = reader["devDescription"].ToString(),
                             devImpactLevel = reader["devImpactLevel"].ToString(), // Fixed this line
-                            uploadedDateTime = Convert.ToDateTime(reader["uploadedDateTime"])
+                            uploadedDateTime = Convert.ToDateTime(reader["uploadedDateTime"]),
+                            userID = int.Parse(reader["userID"].ToString())
+                            
                         };
 
                         switch (development.devImpactLevel)
@@ -78,6 +90,24 @@ namespace ValleyVisionSolution.Pages.ProposedDev
 
         }
 
+        public IActionResult OnPostNewDevelopmentArea()
+        {
+            if (!ModelState.IsValid)
+            {
+                // Model state is not valid, return the page with validation errors
+                loadData();
+                OpenAddProfileModal = true;
+                return Page();
+            }
+            
+            DBClass.AddDevelopmentArea(NewDevelopmentArea);
+            loadData();
+            ModelState.Clear();
+            
+            NewDevelopmentArea = new DevelopmentArea();
+
+            return Page();
+        }
 
         public IActionResult OnPostViewDetails(int devID)
         {
@@ -85,6 +115,13 @@ namespace ValleyVisionSolution.Pages.ProposedDev
 
             // Redirect to the DevelopmentPage
             return RedirectToPage("/ProposedDevelopments/DevelopmentPage");
+        }
+
+
+        public IActionResult OnPostDelete(int devid)
+        {
+            DBClass.DeleteDevelopmentArea(devid);
+            return RedirectToPage("/ProposedDevelopments/ProposedDevelopmentsPage");
         }
 
 

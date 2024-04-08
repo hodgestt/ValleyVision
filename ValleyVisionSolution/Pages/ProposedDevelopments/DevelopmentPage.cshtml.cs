@@ -59,11 +59,11 @@ namespace ValleyVisionSolution.Pages.ProposedDevelopments
             {
                 DevFilesList.Add(new FileMeta
                 {
-                    FileMetaID = int.Parse(reader["FileMetaID"].ToString()),
-                    FileName_ = reader["FileName_"].ToString(),
-                    FilePath = reader["FilePath"].ToString(),
-                    FileType = reader["FileType"].ToString(),
-                    UploadedDateTime = Convert.ToDateTime(reader["UploadedDateTime"]),
+                    FileMetaID = int.Parse(reader["fileMetaID"].ToString()),
+                    FileName_ = reader["fileName_"].ToString(),
+                    FilePath = reader["filePath"].ToString(),
+                    FileType = reader["fileType"].ToString(),
+                    UploadedDateTime = Convert.ToDateTime(reader["uploadedDateTime"]),
                     FirstName = reader["firstName"].ToString(),
                     LastName = reader["lastName"].ToString()
                 });
