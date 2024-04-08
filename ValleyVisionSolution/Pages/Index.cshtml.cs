@@ -12,6 +12,15 @@ namespace ValleyVisionSolution.Pages
     {
         public List<FileMeta> PublishedResources { get; set; } = new List<FileMeta>();
 
+        private readonly IWebHostEnvironment _environment;
+
+        public IndexModel(IWebHostEnvironment environment)
+        {
+            _environment = environment;
+        }
+
+        // Now, use _environment.WebRootPath or _environment.ContentRootPath depending on your needs
+
 
         public void OnGet(string searchTerm)
         {
@@ -73,9 +82,13 @@ namespace ValleyVisionSolution.Pages
             return RedirectToPage("/Index");
         }
 
+
+
         public async Task<IActionResult> OnGetDownloadFileAsync(string filePath, string fileName)
         {
-            var fileDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+            // Assuming the 'Uploads' folder is in the root directory of your web application, not inside 'wwwroot'
+            var fileDirectory = Path.Combine(_environment.ContentRootPath, "Uploads");
+
             var absoluteFilePath = Path.Combine(fileDirectory, filePath);
 
             if (!System.IO.File.Exists(absoluteFilePath))
@@ -87,6 +100,23 @@ namespace ValleyVisionSolution.Pages
             var bytes = await System.IO.File.ReadAllBytesAsync(absoluteFilePath);
             return File(bytes, contentType, fileName);
         }
+
+
+        //public async Task<IActionResult> OnGetDownloadFileAsync(string filePath, string fileName)
+        //{
+        //    var fileDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+        //    var absoluteFilePath = Path.Combine(fileDirectory, filePath);
+
+        //    if (!System.IO.File.Exists(absoluteFilePath))
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    string contentType = "application/octet-stream";
+        //    var bytes = await System.IO.File.ReadAllBytesAsync(absoluteFilePath);
+        //    return File(bytes, contentType, fileName);
+        //}
+
 
 
     }
