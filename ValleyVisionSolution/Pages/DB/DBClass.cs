@@ -267,16 +267,38 @@ namespace ValleyVisionSolution.Pages.DB
             return tempReader;
         }
 
+
         public static SqlDataReader PublishReader()
         {
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = ValleyVisionConnection;
-            cmd.Connection.ConnectionString= MainConnString;
-            cmd.CommandText = "SELECT * FROM FileMeta WHERE published = 'yes'";
-            cmd.Connection.Open ();
-            SqlDataReader tempReader = cmd.ExecuteReader();
-            return tempReader;
+            var tempConnection = new SqlConnection(MainConnString); // Create a new connection instance
+            SqlCommand cmd = new SqlCommand
+            {
+                Connection = tempConnection,
+                CommandText = "SELECT * FROM FileMeta WHERE published = 'yes'"
+            };
+
+            try
+            {
+                cmd.Connection.Open();
+                return cmd.ExecuteReader(CommandBehavior.CloseConnection); // Ensure the connection is closed when the SqlDataReader is closed
+            }
+            catch
+            {
+                cmd.Connection.Close(); // Ensure connection is closed in case of an exception
+                throw;
+            }
         }
+
+        //public static SqlDataReader PublishReader()
+        //{
+        //    SqlCommand cmd = new SqlCommand();
+        //    cmd.Connection = ValleyVisionConnection;
+        //    cmd.Connection.ConnectionString= MainConnString;
+        //    cmd.CommandText = "SELECT * FROM FileMeta WHERE published = 'yes'";
+        //    cmd.Connection.Open ();
+        //    SqlDataReader tempReader = cmd.ExecuteReader();
+        //    return tempReader;
+        //}
 
         public static void PublishFile(int fileID)
         {
