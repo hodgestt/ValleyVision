@@ -1,3 +1,4 @@
+using DocumentFormat.OpenXml.EMMA;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Data.SqlClient;
@@ -11,6 +12,10 @@ namespace ValleyVisionSolution.Pages.ProposedDev
         public List<DevelopmentArea> HighImpact { get; set; }
         public List<DevelopmentArea> MidImpact { get; set; }
         public List<DevelopmentArea> LowImpact { get; set; }
+        [BindProperty]
+        public DevelopmentArea NewDevelopmentArea { get; set; }
+
+        public bool OpenAddProfileModal { get; set; }
 
 
         public ProposedDevPageModel() 
@@ -18,6 +23,7 @@ namespace ValleyVisionSolution.Pages.ProposedDev
             HighImpact = new List<DevelopmentArea>();
             MidImpact = new List<DevelopmentArea>();
             LowImpact = new List<DevelopmentArea>();
+            OpenAddProfileModal = false; //keeps the modal open on page reload if input validations were not successful
         }
 
         public IActionResult OnGet()
@@ -78,6 +84,23 @@ namespace ValleyVisionSolution.Pages.ProposedDev
 
         }
 
+        public IActionResult OnPostNewDevelopmentArea()
+        {
+            if (!ModelState.IsValid)
+            {
+                // Model state is not valid, return the page with validation errors
+                loadData();
+                OpenAddProfileModal = true;
+                return Page();
+            }
+            
+            DBClass.AddDevelopmentArea(NewDevelopmentArea, HttpContext);
+            loadData();
+            ModelState.Clear();
+            NewDevelopmentArea = new DevelopmentArea();
+
+            return Page();
+        }
 
         public IActionResult OnPostViewDetails(int devID)
         {
@@ -85,6 +108,13 @@ namespace ValleyVisionSolution.Pages.ProposedDev
 
             // Redirect to the DevelopmentPage
             return RedirectToPage("/ProposedDevelopments/DevelopmentPage");
+        }
+
+
+        public IActionResult OnPostDelete(int devid)
+        {
+            DBClass.DeleteDevelopmentArea(devid);
+            return RedirectToPage("/ProposedDevelopments/ProposedDevelopmentsPage");
         }
 
 

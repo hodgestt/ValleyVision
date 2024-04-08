@@ -13,6 +13,9 @@ using static BenchmarkDotNet.Engines.EngineEventSource;
 using System.Net;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using System;
+using Microsoft.AspNetCore.SignalR;
 namespace ValleyVisionSolution.Pages.DB
 {
     public class DBClass
@@ -21,25 +24,25 @@ namespace ValleyVisionSolution.Pages.DB
         public static SqlConnection ValleyVisionConnection = new SqlConnection();
 
         //// Connection String - How to find and connect to DB
-        //private static readonly String? MainConnString = "Server=Localhost;Database=Main;Trusted_Connection=True";
-        //private static readonly String? AuthConnString = "Server=Localhost;Database=AUTH;Trusted_Connection=True";
+        private static readonly String? MainConnString = "Server=Localhost;Database=Main;Trusted_Connection=True";
+        private static readonly String? AuthConnString = "Server=Localhost;Database=AUTH;Trusted_Connection=True";
 
         //Azure hosted database connection strings 
-        private static readonly String? MainConnString = "Server=valleyvisioncapstone.database.windows.net,1433;" +
-        "Database=ValleyVisionMain;" +
-        "User ID=ValleyVisionAdmin;" +
-        "Password=CIS484ValleyVision;" +
-        "Encrypt=True;" +
-        "TrustServerCertificate=True;" +
-        "Connection Timeout=30;";
+        //private static readonly String? MainConnString = "Server=valleyvisioncapstone.database.windows.net,1433;" +
+        //"Database=ValleyVisionMain;" +
+        //"User ID=ValleyVisionAdmin;" +
+        //"Password=CIS484ValleyVision;" +
+        //"Encrypt=True;" +
+        //"TrustServerCertificate=True;" +
+        //"Connection Timeout=30;";
 
-        private static readonly String? AuthConnString = "Server=valleyvisioncapstone.database.windows.net,1433;" +
-        "Database=ValleyVisionAuth;" +
-        "User ID=ValleyVisionAdmin;" +
-        "Password=CIS484ValleyVision;" +
-        "Encrypt=True;" +
-        "TrustServerCertificate=True;" +
-        "Connection Timeout=30;";
+        //private static readonly String? AuthConnString = "Server=valleyvisioncapstone.database.windows.net,1433;" +
+        //"Database=ValleyVisionAuth;" +
+        //"User ID=ValleyVisionAdmin;" +
+        //"Password=CIS484ValleyVision;" +
+        //"Encrypt=True;" +
+        //"TrustServerCertificate=True;" +
+        //"Connection Timeout=30;";
 
 
 
@@ -213,7 +216,22 @@ namespace ValleyVisionSolution.Pages.DB
             
         }
 
-      
+        //delete initiative 
+        public static void DeleteInitiative(int initID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@InitID", initID);
+            String sqlQuery = "DELETE FROM TaskUsers WHERE TaskID IN (SELECT TaskID FROM Task WHERE InitID = @InitID;" + "DELETE FROM Task WHERE initID = @InitID;" + "DELETE FROM Message_ WHERE initID = @InitID;" + "DELETE FROM InitiativeUsers WHERE initID=@InitID;" + "DELETE FROM Initiativefiles WHERE initID=@InitID;" + "DELETE FROM Initiativetiles WHERE initID=@InitID;" + "DELETE FROM Initiative WHERE initID=@InitID;";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+
+        }
+
+
         //END INITIATIVES PAGE
 
 
@@ -996,6 +1014,26 @@ namespace ValleyVisionSolution.Pages.DB
         //END SPENDING PROJECTION PAGE-------------------------------------------------------------------------------------
 
         //BEGIN PROPOSED DEVELOPMENT PAGE_________________________________________________________________________________________
+        
+        public static void AddDevelopmentArea(DevelopmentArea newDevArea, HttpContext httpContext)
+        {
+            int? userId = httpContext.Session.GetInt32("userID");
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@DevName", newDevArea.devName);
+            cmd.Parameters.AddWithValue("@DevDescription", newDevArea.devDescription);
+            cmd.Parameters.AddWithValue("@DevImpactLevel", newDevArea.devImpactLevel);
+            cmd.Parameters.AddWithValue("@UploadedDateTime", newDevArea.uploadedDateTime);
+            cmd.Parameters.AddWithValue("@UserID", userId);
+            String sqlQuery = "INSERT INTO DevelopmentArea (devName, devDescription, devImpactLevel, uploadedDateTime, userID) VALUES (@DevName, @DevDescription, @DevImpactLevel, @UploadedDateTime, @UserID);";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+        }
+        
         public static SqlDataReader DevelopmentReader()
         {
             SqlCommand cmd = new SqlCommand();
@@ -1022,6 +1060,22 @@ namespace ValleyVisionSolution.Pages.DB
 
             return tempReader;
         }
+
+        //delete development area 
+        public static void DeleteDevelopmentArea(int devID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@DevID", devID);
+            String sqlQuery = "DELETE FROM DevAreaFiles WHERE devID = @DevID;" + "DELETE FROM DevelopmentArea WHERE devID = @DevID;";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+
+        }
+
         //START DASHBOARD "DETAILS" PAGE
         public static SqlDataReader DevDetailsReader(int devID)
         {
@@ -1029,7 +1083,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@devID", devID);
-            cmd.CommandText = "SELECT F.fileName_, F.fileType, F.uploadedDateTime, U.firstName, U.lastName FROM DevelopmentArea D LEFT JOIN DevAreaFiles A ON A.devID = D.devID LEFT JOIN FileMeta F ON F.fileMetaID = A.fileMetaID JOIN User_ U ON U.userID = F.userID WHERE D.devID = @devID; ";
+            cmd.CommandText = "SELECT F.fileMetaID, F.fileName_, F.filePath, F.fileType, F.uploadedDateTime, U.firstName, U.lastName FROM DevelopmentArea D LEFT JOIN DevAreaFiles A ON A.devID = D.devID LEFT JOIN FileMeta F ON F.fileMetaID = A.fileMetaID JOIN User_ U ON U.userID = F.userID WHERE D.devID = @devID; ";
             cmd.Connection.Open(); // Open connection here, close in Model! 
 
             SqlDataReader tempReader = cmd.ExecuteReader();
