@@ -19,7 +19,7 @@
         grid-template-rows:auto auto;
         grid-template-areas: 
         "ChartA ChartB"
-        "ChartC ChartC";
+        "ChartC ChartD";
         gap:2vw;
     }
     #chartA{
@@ -32,6 +32,10 @@
 
     #chartC {
         grid-area: ChartC;
+    }
+
+    #chartD {
+        grid-area: ChartD;
     }
 
     .dashboard-tile {
@@ -53,7 +57,7 @@
         transform: translateX(-50%);
         margin: 0;
         color: #fff;
-        /*font-size:1vw;*/
+        font-size:1vw;
     }
 
     .dashboard-tile-contents {
@@ -116,10 +120,18 @@
     </div>
     <div class="dashboard-tile" id="chartC">
         <div class="dashboard-tile-title-bar">
-            <div class="dashboard-tile-title">Total Revenue and Tax Category Projection </div>
+            <div class="dashboard-tile-title">Total Revenue Projection </div>
         </div>
         <div class="dashboard-tile-contents">
             <canvas id="revenueChartC"></canvas>
+        </div>
+    </div>
+    <div class="dashboard-tile" id="chartD">
+        <div class="dashboard-tile-title-bar">
+            <div class="dashboard-tile-title">Tax Category Projection </div>
+        </div>
+        <div class="dashboard-tile-contents">
+            <canvas id="revenueChartD"></canvas>
         </div>
     </div>
 </div>
@@ -190,13 +202,14 @@
 
         createChart('revenueChartA', 'bar', ['Total Revenue']);
         createChart('revenueChartB', 'bar', allLabels.slice(0, -1)); // Exclude 'Total Revenue'
-        createChart('revenueChartC', 'line', allLabels);
+        createChart('revenueChartC', 'line', ['Total Revenue']);
+        createChart('revenueChartD', 'line', allLabels.slice(0, -1)); // Exclude 'Total Revenue'
     });
-    createChart('revenueChartA', 'bar', ['Total Revenue']); // Total Revenue Bar Chart
+    // createChart('revenueChartA', 'bar', ['Total Revenue']); // Total Revenue Bar Chart
+    // createChart('revenueChartB', 'bar', ['Real Estate Tax', 'Personal Property Tax', 'Fees Licenses Tax', 'State Funding']); // Revenues Split Bar Chart
+    // createChart('revenueChartC', 'line', ['Total Revenue']);
+    // createChart('revenueChartD', 'line', ['Real Estate Tax', 'Personal Property Tax', 'Fees Licenses Tax', 'State Funding']); // Revenues Split Line Chart with Total
 
-    createChart('revenueChartB', 'bar', ['Real Estate Tax', 'Personal Property Tax', 'Fees Licenses Tax', 'State Funding']); // Revenues Split Bar Chart
-
-    createChart('revenueChartC', 'line', ['Real Estate Tax', 'Personal Property Tax', 'Fees Licenses Tax', 'State Funding', 'Total Revenue']); // Revenues Split Line Chart with Total
 </script>
 
 <script>

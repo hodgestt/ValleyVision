@@ -7,13 +7,14 @@ using ValleyVisionSolution.Pages.DataClasses;
 using ValleyVisionSolution.Pages.DB;
 using ClosedXML.Excel;
 using ValleyVisionSolution.Services;
+using System.Collections.Generic;
 
 namespace ValleyVisionSolution.Pages.RevenueProjection
 {
     public class RevenueProjectionPageModel : PageModel
     {
         public Revenue LatestRevenue = new Revenue();
-        public Revenue[] ProjectedRevenues { get; set; }
+        public List<Revenue> ProjectedRevenues { get; set; } = new List<Revenue>();
         public bool DefaultLoad = true;
 
 
@@ -75,15 +76,14 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
         {
             loadData();
 
-            // Generate a random number between 0.975 and 1.025
-            Random random = new Random();
-            double randomNum = 0.975 + (random.NextDouble() * 0.05);
-            decimal randomNumber = (decimal)randomNum;
+            //// Generate a random number between 0.975 and 1.025
+            //Random random = new Random();
+            //double randomNum = 0.975 + (random.NextDouble() * 0.05);
+            //decimal randomNumber = (decimal)randomNum;
 
-            //list of the projected revenues
-            ProjectedRevenues = new Revenue[NumProjectionYears + 1];
+            
 
-            ProjectedRevenues[0] = new Revenue
+            ProjectedRevenues.Add(new Revenue
             {
                 RealEstateTax = LatestRevenue.RealEstateTax,
                 PersonalPropertyTax = LatestRevenue.PersonalPropertyTax,
@@ -91,25 +91,26 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
                 StateFunding = LatestRevenue.StateFunding,
                 TotalRevenue = LatestRevenue.TotalRevenue,
                 Year = LatestRevenue.Year
-            };
+            });
 
             // Calculate projections for subsequent years
             for (int i = 1; i <= NumProjectionYears; i++)
             {
-                ProjectedRevenues[i] = new Revenue
+                ProjectedRevenues.Add(new Revenue
                 {
-                    RealEstateTax = Math.Round(ProjectedRevenues[i - 1].RealEstateTax * (1 + (RealEstateTaxGrowth / 100)) * randomNumber, 2),
-                    PersonalPropertyTax = Math.Round(ProjectedRevenues[i - 1].PersonalPropertyTax * (1 + (PersonalPropertyTaxGrowth / 100)) * randomNumber, 2),
-                    FeesLicensesTax = Math.Round(ProjectedRevenues[i - 1].FeesLicensesTax * (1 + (FeesLicensesTaxGrowth / 100)) * randomNumber, 2),
+                    RealEstateTax = Math.Round(ProjectedRevenues[i - 1].RealEstateTax * (1 + (RealEstateTaxGrowth / 100)), 2),
+                    PersonalPropertyTax = Math.Round(ProjectedRevenues[i - 1].PersonalPropertyTax * (1 + (PersonalPropertyTaxGrowth / 100)), 2),
+                    FeesLicensesTax = Math.Round(ProjectedRevenues[i - 1].FeesLicensesTax * (1 + (FeesLicensesTaxGrowth / 100)), 2),
                     StateFunding = Math.Round(StateFundingAmount, 2),
-                    Year = ProjectedRevenues[i - 1].Year + 1
-                };
+                    Year = ProjectedRevenues[i - 1].Year + 1,
+                    TotalRevenue = Math.Round((ProjectedRevenues[i - 1].RealEstateTax * (1 + (RealEstateTaxGrowth / 100))) +
+                        (ProjectedRevenues[i - 1].PersonalPropertyTax * (1 + (PersonalPropertyTaxGrowth / 100))) +
+                        (ProjectedRevenues[i - 1].FeesLicensesTax * (1 + (FeesLicensesTaxGrowth / 100))) +
+                        (StateFundingAmount), 2)
 
-                ProjectedRevenues[i].TotalRevenue = Math.Round(
-                    ProjectedRevenues[i].RealEstateTax +
-                    ProjectedRevenues[i].PersonalPropertyTax +
-                    ProjectedRevenues[i].FeesLicensesTax +
-                    ProjectedRevenues[i].StateFunding, 2);
+                });
+
+               
             }
             HttpContext.Session.SetString("ProjectedRevenues", JsonSerializer.Serialize(ProjectedRevenues));
             DefaultLoad = false;
@@ -120,181 +121,13 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
         {
             return JsonSerializer.Serialize(ProjectedRevenues);
         }
-        //public async Task<IActionResult> OnPostDownloadExcel()
-        //{
-        //    if (HttpContext.Session.GetString("ProjectedRevenues") != null)
-        //    {
-        //        ProjectedRevenues = JsonSerializer.Deserialize<Revenue[]>(HttpContext.Session.GetString("ProjectedRevenues"));
-
-        //        // Download the Excel template as a stream from Azure Blob Storage
-        //        Stream templateStream = await _blobService.DownloadFileBlobAsync("RevenueProjectionsTemplate.xlsx");
-        //        if (templateStream == null)
-        //        {
-        //            TempData["Error"] = "The template could not be found in Blob Storage.";
-        //            return Page(); // Or RedirectToPage("/RevenueProjection") with an error message
-        //        }
-
-        //        using (var stream = new MemoryStream())
-        //        {
-        //            using (var workbook = new XLWorkbook(templateStream)) // Open the template from the stream
-        //            {
-        //                IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming you want to use the second worksheet
-        //                var currentRow = 5; // Starting row for the data
-
-        //                // Populate the worksheet with data from ProjectedRevenues
-        //                foreach (var revenue in ProjectedRevenues)
-        //                {
-        //                    currentRow++;
-        //                    worksheet.Cell(currentRow, 1).Value = revenue.Year;
-        //                    worksheet.Cell(currentRow, 2).Value = revenue.RealEstateTax;
-        //                    worksheet.Cell(currentRow, 3).Value = revenue.PersonalPropertyTax;
-        //                    worksheet.Cell(currentRow, 4).Value = revenue.FeesLicensesTax;
-        //                    worksheet.Cell(currentRow, 5).Value = revenue.StateFunding;
-        //                    worksheet.Cell(currentRow, 6).Value = revenue.TotalRevenue;
-        //                }
-
-        //                // Adjust column widths to content, if necessary
-        //                worksheet.Columns().AdjustToContents();
-
-        //                workbook.SaveAs(stream); // Save the populated workbook to the stream
-        //                stream.Position = 0; // Reset stream position for reading
-        //                return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "RevenueProjections.xlsx");
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        TempData["ErrorMessage"] = "Please run the projection before downloading the report.";
-        //        return RedirectToPage("/RevenueProjection");
-        //    }
-        //}
-
-
-        //public IActionResult OnPostDownloadExcel()
-        //{
-        //    if (HttpContext.Session.GetString("ProjectedRevenues") != null)
-        //    {
-        //        ProjectedRevenues = JsonSerializer.Deserialize<Revenue[]>(HttpContext.Session.GetString("ProjectedRevenues"));
-
-        //        // Specify the path to your projected revenues Excel template
-        //        string templatePath = "Pages/RevenueProjection/RevenueProjectionsTemplate.xlsx";
-
-        //        using (var workbook = new XLWorkbook(templatePath)) // Open the template
-        //        {
-        //            IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming you want to use the second worksheet
-        //            var currentRow = 5; // Starting row for the data
-
-        //            // Header rows might already be set in your template, so you might not need to set them again here
-
-        //            // Populate the worksheet with data from ProjectedRevenues
-        //            foreach (var revenue in ProjectedRevenues)
-        //            {
-        //                currentRow++;
-        //                worksheet.Cell(currentRow, 1).Value = revenue.Year;
-        //                worksheet.Cell(currentRow, 2).Value = revenue.RealEstateTax;
-        //                worksheet.Cell(currentRow, 3).Value = revenue.PersonalPropertyTax;
-        //                worksheet.Cell(currentRow, 4).Value = revenue.FeesLicensesTax;
-        //                worksheet.Cell(currentRow, 5).Value = revenue.StateFunding;
-        //                worksheet.Cell(currentRow, 6).Value = revenue.TotalRevenue;
-        //            }
-
-        //            // Adjust column widths to content, if necessary
-        //            worksheet.Columns().AdjustToContents();
-
-        //            using (var stream = new MemoryStream())
-        //            {
-        //                workbook.SaveAs(stream);
-        //                var content = stream.ToArray();
-
-        //                return File(
-        //                    content,
-        //                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        //                    "RevenueProjections.xlsx");
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        //TempData["ErrorMessage"] = "Please run the projection before downloading the report.";
-        //        return RedirectToPage("/RevenueProjection");
-        //    }
-        //}
-
-        //public IActionResult OnPostSaveExcel()
-        //{
-        //    // Check if ProjectedRevenues are stored in session and deserialize them
-        //    if (HttpContext.Session.GetString("ProjectedRevenues") != null)
-        //    {
-        //        ProjectedRevenues = JsonSerializer.Deserialize<Revenue[]>(HttpContext.Session.GetString("ProjectedRevenues"));
-        //    }
-        //    else
-        //    {
-        //        loadData();
-
-        //    }
-
-        //    // Path to your Excel template for Projected Revenues
-        //    string templatePath = "Pages/RevenueProjection/RevenueProjectionsTemplate.xlsx";
-
-        //    // Open the template
-        //    using (var workbook = new XLWorkbook(templatePath))
-        //    {
-        //        IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming the data should be placed in the second worksheet
-
-        //        // Starting row for the data
-        //        int currentRow = 5; // Adjust based on your template
-
-        //        // Populate the worksheet with data from ProjectedRevenues
-        //        foreach (var revenue in ProjectedRevenues)
-        //        {
-        //            currentRow++;
-        //            worksheet.Cell(currentRow, 1).Value = revenue.Year;
-        //            worksheet.Cell(currentRow, 2).Value = revenue.RealEstateTax;
-        //            worksheet.Cell(currentRow, 3).Value = revenue.PersonalPropertyTax;
-        //            worksheet.Cell(currentRow, 4).Value = revenue.FeesLicensesTax;
-        //            worksheet.Cell(currentRow, 5).Value = revenue.StateFunding;
-        //            worksheet.Cell(currentRow, 6).Value = revenue.TotalRevenue;
-        //        }
-
-        //        // Adjust column widths to content
-        //        worksheet.Columns().AdjustToContents();
-
-        //        // Define a path for the server-side file
-        //        var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-        //        if (!Directory.Exists(directoryPath))
-        //        {
-        //            Directory.CreateDirectory(directoryPath);
-        //        }
-        //        var uniqueFileName = $"RevenueProjections_{DateTime.Now:MMdd_HHmmss}.xlsx";
-        //        var filePath = Path.Combine(directoryPath, uniqueFileName);
-
-        //        // Save the workbook to the specified path
-        //        workbook.SaveAs(filePath);
-
-        //        // Optional: Update your database with the file's details
-        //        int initID = HttpContext.Session.GetInt32("InitID") ?? 0;
-        //        var fileMeta = new FileMeta
-        //        {
-        //            FileName_ = uniqueFileName,
-        //            FilePath = filePath,
-        //            FileType = ".xlsx",
-        //            UploadedDateTime = DateTime.Now,
-        //            userID = HttpContext.Session.GetInt32("UserID")
-        //        };
-
-        //        DBClass.UploadFile(initID, fileMeta);
-
-        //        // Notify the user
-        //        TempData["Message"] = $"{uniqueFileName} was Succesfully Saved to Budget Process Resources";
-        //        return Page();
-        //    }
-        //}
+        
 
         public async Task<IActionResult> OnPostDownloadExcel()
         {
             if (HttpContext.Session.GetString("ProjectedRevenues") != null)
             {
-                ProjectedRevenues = JsonSerializer.Deserialize<Revenue[]>(HttpContext.Session.GetString("ProjectedRevenues"));
+                ProjectedRevenues = JsonSerializer.Deserialize<List<Revenue>>(HttpContext.Session.GetString("ProjectedRevenues"));
 
                 Stream templateStream = await _blobService.DownloadFileBlobAsync("RevenueProjectionsTemplate.xlsx");
                 if (templateStream == null)
@@ -351,7 +184,7 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
         {
             if (HttpContext.Session.GetString("ProjectedRevenues") != null)
             {
-                ProjectedRevenues = JsonSerializer.Deserialize<Revenue[]>(HttpContext.Session.GetString("ProjectedRevenues"));
+                ProjectedRevenues = JsonSerializer.Deserialize<List<Revenue>>(HttpContext.Session.GetString("ProjectedRevenues"));
             }
             else
             {

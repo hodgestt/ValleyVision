@@ -33,7 +33,7 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
                     RealEstateTax = Decimal.Parse(reader["realEstateTax"].ToString()),
                     PersonalPropertyTax = Decimal.Parse(reader["personalPropertyTax"].ToString()),
                     FeesLicensesTax = Decimal.Parse(reader["feesLicensesTax"].ToString()),
-                    StateFunding = Decimal.Parse(reader["stateFunding"].ToString()),
+                    StateFunding = Decimal.Parse(reader["otherRevenue"].ToString()),
                     TotalRevenue = Decimal.Parse(reader["totalRevenue"].ToString())
                 });
             }
