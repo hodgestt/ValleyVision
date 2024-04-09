@@ -3,23 +3,22 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Data.SqlClient;
 using ValleyVisionSolution.Pages.DataClasses;
 using ValleyVisionSolution.Pages.DB;
+using ValleyVisionSolution.Services;
 
 namespace ValleyVisionSolution.Pages.Resources
 {
     public class AdminResourcesModel : PageModel
     {
-        public List<FileMeta> ResourceList { get; set; }
-        public List<FileMeta> FileUpload { get; set; }
-        public List <Initiative> InitativeList { get; set; }
-        public string CurrentInitiativeName { get; set; }
+        public List<FileMeta> ResourceList { get; set; } = new List<FileMeta>();
+        public List<FileMeta> FileUpload { get; set; } = new List<FileMeta> { };
+    public List <Initiative> InitativeList { get; set; } = new List<Initiative>();
+    public string CurrentInitiativeName { get; set; }
         public List<FileMeta> PublishedFiles { get; set; } = new List<FileMeta>();
 
-
-        public AdminResourcesModel()
+        private readonly IBlobService _blobService;
+        public AdminResourcesModel(IBlobService blobService)
         {
-            ResourceList = new List<FileMeta>();
-            FileUpload = new List<FileMeta> { };
-            InitativeList = new List<Initiative>();
+            _blobService = blobService;
         }
 
 
@@ -100,26 +99,6 @@ namespace ValleyVisionSolution.Pages.Resources
             return RedirectToPage("/Index");
         }
 
-        public async Task<IActionResult> OnPostDeleteFileAsync(int fileId, string filePath)
-        {
-            // Sanitize the filePath to prevent directory traversal attacks
-            var fileName = Path.GetFileName(filePath);
-
-            // Combine the directory path with the sanitized fileName to get the absolute path
-            var absoluteFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
-
-            if (System.IO.File.Exists(absoluteFilePath))
-            {
-                // Delete the file from the file system
-                System.IO.File.Delete(absoluteFilePath);
-            }
-
-            // Now delete the record from the database
-            DBClass.DeleteFile(fileId);
-
-            // Redirect back to the page to refresh the list of files
-            return RedirectToPage();
-        }
 
         public IActionResult OnPostPublishFileAsync(int fileId)
         {
@@ -129,17 +108,34 @@ namespace ValleyVisionSolution.Pages.Resources
 
         public async Task<IActionResult> OnGetDownloadFileAsync(string filePath, string fileName)
         {
-            var fileDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-            var absoluteFilePath = Path.Combine(fileDirectory, filePath);
+            // Assuming 'filePath' is the unique blob name used when the file was uploaded
+            Stream blobStream = await _blobService.DownloadFileBlobAsync(filePath);
 
-            if (!System.IO.File.Exists(absoluteFilePath))
+            if (blobStream == null)
             {
                 return NotFound();
             }
 
+            // Determine the content type
+            // You might want to have a better way to determine the content type based on the file extension
             string contentType = "application/octet-stream";
-            var bytes = await System.IO.File.ReadAllBytesAsync(absoluteFilePath);
-            return File(bytes, contentType, fileName);
+
+            // Return the file to the user
+            // 'fileName' is the original file name that the user uploaded
+            return File(blobStream, contentType, fileName);
+        }
+
+        public async Task<IActionResult> OnPostDeleteFileAsync(int fileId, string filePath)
+        {
+            // Since 'filePath' should contain the unique blob name,
+            // use the IBlobService to delete the file from Azure Blob Storage
+            await _blobService.DeleteFileBlobAsync(filePath);
+
+            // Now delete the record from the database
+            DBClass.DeleteFile(fileId);
+
+            // Redirect back to the page to refresh the list of files
+            return RedirectToPage();
         }
 
 

@@ -89,23 +89,23 @@ namespace ValleyVisionSolution.Pages.ProposedDev
 
         }
 
-        public IActionResult OnPostNewDevelopmentArea()
-        {
-            if (!ModelState.IsValid)
-            {
-                // Model state is not valid, return the page with validation errors
-                loadData();
-                return Page();
-            }
+        //public IActionResult OnPostNewDevelopmentArea()
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        // Model state is not valid, return the page with validation errors
+        //        loadData();
+        //        return Page();
+        //    }
             
-            DBClass.AddDevelopmentArea(NewDevelopmentArea, HttpContext.Session.GetInt32("UserID"));
-            loadData();
-            ModelState.Clear();
+        //    DBClass.AddDevelopmentArea(NewDevelopmentArea, HttpContext.Session.GetInt32("UserID"));
+        //    loadData();
+        //    ModelState.Clear();
             
-            NewDevelopmentArea = new DevelopmentArea();
+        //    NewDevelopmentArea = new DevelopmentArea();
 
-            return Page();
-        }
+        //    return Page();
+        //}
 
         public IActionResult OnPostViewDetails(int devID)
         {

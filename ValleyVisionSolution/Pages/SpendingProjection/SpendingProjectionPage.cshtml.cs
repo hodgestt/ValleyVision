@@ -9,14 +9,15 @@ using MathNet.Numerics.LinearRegression;
 using System.Text.Json;
 using MathNet.Numerics.LinearAlgebra;
 using ClosedXML.Excel;
+using ValleyVisionSolution.Services;
 
 namespace ValleyVisionSolution.Pages.SpendingProjection
 {
     public class SpendingProjectionPageModel : PageModel
     {
-        public List<Expenditure> HistoricalExpenditures { get; set; }
-        public Expenditure LatestHistoricalExpenditure { get; set; }
-        public List<Expenditure> ProjectedExpenditures { get; set; }
+        public List<Expenditure> HistoricalExpenditures { get; set; } = new List<Expenditure>();
+        public Expenditure LatestHistoricalExpenditure { get; set; } = new Expenditure();
+        public List<Expenditure> ProjectedExpenditures { get; set; } = new List<Expenditure>();
         public decimal LastTotal = 0;
         public decimal ChangeInTotal = 0;
         public decimal SumChangeInTotal = 0;
@@ -32,12 +33,11 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
         [BindProperty]
         public decimal ParameterAnomaly { get; set; }
 
-        public SpendingProjectionPageModel() 
-        { 
-            HistoricalExpenditures = new List<Expenditure>();
-            LatestHistoricalExpenditure = new Expenditure();
-            ProjectedExpenditures = new List<Expenditure> ();
-        }    
+        private readonly IBlobService _blobService;
+        public SpendingProjectionPageModel(IBlobService blobService)
+        {
+            _blobService = blobService;
+        }
 
         public void loadData()
         {
@@ -48,7 +48,7 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
             SqlDataReader reader = DBClass.HistoricalExpendituresReader();
             while (reader.Read())
             {
-                
+
                 HistoricalExpenditures.Add(new Expenditure
                 {
                     Year = int.Parse(reader["Year_"].ToString()),
@@ -198,8 +198,8 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
                 });
 
                 nextYear++;
-                Adjustment = AverageExpenditureChange * i * (1+ParameterInflationRate);
-                
+                Adjustment = AverageExpenditureChange * i * (1 + ParameterInflationRate);
+
             }
 
 
@@ -217,126 +217,254 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
             return JsonSerializer.Serialize(ProjectedExpenditures);
         }
 
-        public IActionResult OnPostDownloadExcel()
+        public async Task<IActionResult> OnPostDownloadExcel()
         {
-
             if (HttpContext.Session.GetString("ProjectedExpenditures") != null)
             {
                 ProjectedExpenditures = JsonSerializer.Deserialize<List<Expenditure>>(HttpContext.Session.GetString("ProjectedExpenditures"));
-            }
-            else
-            {
-                // If not in session, load from DB (or handle as necessary)
-                loadData();
-            }
 
-            string templatePath = "Pages/SpendingProjection/SpendingProjectionTemplate.xlsx";
-
-            using (var workbook = new XLWorkbook(templatePath))
-            {
-                IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming you want to use the first worksheet
-                var currentRow = 2;
-
-                // Data Rows
-                foreach (var expenditure in ProjectedExpenditures)
+                Stream templateStream = await _blobService.DownloadFileBlobAsync("SpendingProjectionTemplate.xlsx");
+                if (templateStream == null)
                 {
-                    worksheet.Cell(currentRow, 1).Value = expenditure.Year;
-                    worksheet.Cell(currentRow, 2).Value = expenditure.InflationRate;
-                    worksheet.Cell(currentRow, 3).Value = expenditure.InterestRate;
-                    worksheet.Cell(currentRow, 4).Value = expenditure.PublicSafety;
-                    worksheet.Cell(currentRow, 5).Value = expenditure.School;
-                    worksheet.Cell(currentRow, 6).Value = expenditure.Anomaly;
-                    worksheet.Cell(currentRow, 7).Value = expenditure.Other;
-                    worksheet.Cell(currentRow, 8).Value = expenditure.TotalExpenditure;
-                    currentRow++;
+                    TempData["Error"] = "The template could not be found in Blob Storage.";
+                    return Page();
                 }
 
-                // Adjust column widths to content
-                worksheet.Columns().AdjustToContents();
-
-                // Prepare the memory stream to download
                 using (var stream = new MemoryStream())
                 {
-                    workbook.SaveAs(stream);
-                    var content = stream.ToArray();
-                    return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"SpendingProjections.xlsx");
+                    await templateStream.CopyToAsync(stream);
+                    stream.Position = 0; // Reset the stream position to the beginning
+
+                    using (var workbook = new XLWorkbook(stream)) // Load the workbook from the stream
+                    {
+                        IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Use the appropriate worksheet
+
+                        int currentRow = 2; // Start populating data from this row onwards
+
+                        foreach (var expenditure in ProjectedExpenditures)
+                        {
+                            worksheet.Cell(currentRow, 1).Value = expenditure.Year;
+                            worksheet.Cell(currentRow, 2).Value = expenditure.InflationRate;
+                            worksheet.Cell(currentRow, 3).Value = expenditure.InterestRate;
+                            worksheet.Cell(currentRow, 4).Value = expenditure.PublicSafety;
+                            worksheet.Cell(currentRow, 5).Value = expenditure.School;
+                            worksheet.Cell(currentRow, 6).Value = expenditure.Anomaly;
+                            worksheet.Cell(currentRow, 7).Value = expenditure.Other;
+                            worksheet.Cell(currentRow, 8).Value = expenditure.TotalExpenditure;
+                            currentRow++;
+                        }
+
+                        worksheet.Columns().AdjustToContents();
+
+                        using (var outputStream = new MemoryStream())
+                        {
+                            workbook.SaveAs(outputStream);
+                            outputStream.Position = 0; // Reset for reading
+                            return File(outputStream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "SpendingProjections.xlsx");
+                        }
+                    }
                 }
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Please run the projection before downloading the report.";
+                return RedirectToPage("/SpendingProjectionPage");
             }
         }
 
-        public IActionResult OnPostSaveExcel()
+        //public IActionResult OnPostDownloadExcel()
+        //{
+
+        //    if (HttpContext.Session.GetString("ProjectedExpenditures") != null)
+        //    {
+        //        ProjectedExpenditures = JsonSerializer.Deserialize<List<Expenditure>>(HttpContext.Session.GetString("ProjectedExpenditures"));
+        //    }
+        //    else
+        //    {
+        //        // If not in session, load from DB (or handle as necessary)
+        //        loadData();
+        //    }
+
+        //    string templatePath = "Pages/SpendingProjection/SpendingProjectionTemplate.xlsx";
+
+        //    using (var workbook = new XLWorkbook(templatePath))
+        //    {
+        //        IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming you want to use the first worksheet
+        //        var currentRow = 2;
+
+        //        // Data Rows
+        //        foreach (var expenditure in ProjectedExpenditures)
+        //        {
+        //            worksheet.Cell(currentRow, 1).Value = expenditure.Year;
+        //            worksheet.Cell(currentRow, 2).Value = expenditure.InflationRate;
+        //            worksheet.Cell(currentRow, 3).Value = expenditure.InterestRate;
+        //            worksheet.Cell(currentRow, 4).Value = expenditure.PublicSafety;
+        //            worksheet.Cell(currentRow, 5).Value = expenditure.School;
+        //            worksheet.Cell(currentRow, 6).Value = expenditure.Anomaly;
+        //            worksheet.Cell(currentRow, 7).Value = expenditure.Other;
+        //            worksheet.Cell(currentRow, 8).Value = expenditure.TotalExpenditure;
+        //            currentRow++;
+        //        }
+
+        //        // Adjust column widths to content
+        //        worksheet.Columns().AdjustToContents();
+
+        //        // Prepare the memory stream to download
+        //        using (var stream = new MemoryStream())
+        //        {
+        //            workbook.SaveAs(stream);
+        //            var content = stream.ToArray();
+        //            return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"SpendingProjections.xlsx");
+        //        }
+        //    }
+        //}
+
+        //public IActionResult OnPostSaveExcel()
+        //{
+        //    // Check if ProjectedExpenditures are stored in session and deserialize them
+        //    if (HttpContext.Session.GetString("ProjectedExpenditures") != null)
+        //    {
+        //        ProjectedExpenditures = JsonSerializer.Deserialize<List<Expenditure>>(HttpContext.Session.GetString("ProjectedExpenditures"));
+        //    }
+        //    else
+        //    {
+        //        // If not in session, load from DB (or handle as necessary)
+        //        loadData();
+        //    }
+
+
+        //    // Path to your Excel template for Projected Revenues
+        //    string templatePath = "Pages/SpendingProjection/SpendingProjectionTemplate.xlsx";
+
+        //    // Open the template
+        //    using (var workbook = new XLWorkbook(templatePath))
+        //    {
+        //        IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming you want to use the first worksheet
+        //        var currentRow = 2;
+
+        //        // Data Rows
+        //        foreach (var expenditure in ProjectedExpenditures)
+        //        {
+        //            worksheet.Cell(currentRow, 1).Value = expenditure.Year;
+        //            worksheet.Cell(currentRow, 2).Value = expenditure.InflationRate;
+        //            worksheet.Cell(currentRow, 3).Value = expenditure.InterestRate;
+        //            worksheet.Cell(currentRow, 4).Value = expenditure.PublicSafety;
+        //            worksheet.Cell(currentRow, 5).Value = expenditure.School;
+        //            worksheet.Cell(currentRow, 6).Value = expenditure.Anomaly;
+        //            worksheet.Cell(currentRow, 7).Value = expenditure.Other;
+        //            worksheet.Cell(currentRow, 8).Value = expenditure.TotalExpenditure;
+        //            currentRow++;
+        //        }
+
+        //        // Adjust column widths to content
+        //        worksheet.Columns().AdjustToContents();
+
+        //        // Define a path for the server-side file
+        //        var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+        //        if (!Directory.Exists(directoryPath))
+        //        {
+        //            Directory.CreateDirectory(directoryPath);
+        //        }
+        //        var uniqueFileName = $"SpendingProjections_{DateTime.Now:MMdd_HHmmss}.xlsx";
+        //        var filePath = Path.Combine(directoryPath, uniqueFileName);
+
+        //        // Save the workbook to the specified path
+        //        workbook.SaveAs(filePath);
+
+        //        // Optional: Update your database with the file's details
+        //        int initID = HttpContext.Session.GetInt32("InitID") ?? 0;
+        //        var fileMeta = new FileMeta
+        //        {
+        //            FileName_ = uniqueFileName,
+        //            FilePath = filePath,
+        //            FileType = ".xlsx",
+        //            UploadedDateTime = DateTime.Now,
+        //            userID = HttpContext.Session.GetInt32("UserID")
+        //        };
+
+        //        DBClass.UploadFile(initID, fileMeta);
+
+        //        // Notify the user
+        //        TempData["Message"] = $"{uniqueFileName} was Succesfully Saved to Budget Process Resources";
+        //        return Page();
+        //    }
+        //}
+        public async Task<IActionResult> OnPostSaveExcel()
         {
-            // Check if ProjectedExpenditures are stored in session and deserialize them
             if (HttpContext.Session.GetString("ProjectedExpenditures") != null)
             {
                 ProjectedExpenditures = JsonSerializer.Deserialize<List<Expenditure>>(HttpContext.Session.GetString("ProjectedExpenditures"));
             }
             else
             {
-                // If not in session, load from DB (or handle as necessary)
                 loadData();
             }
 
+            var uniqueFileName = $"SpendingProjections_{DateTime.Now:MMdd_HHmmss}.xlsx";
 
-            // Path to your Excel template for Projected Revenues
-            string templatePath = "Pages/SpendingProjection/SpendingProjectionTemplate.xlsx";
-
-            // Open the template
-            using (var workbook = new XLWorkbook(templatePath))
+            // Attempt to download the Excel template as a stream from Azure Blob Storage
+            Stream templateStream = await _blobService.DownloadFileBlobAsync("SpendingProjectionTemplate.xlsx");
+            if (templateStream == null)
             {
-                IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming you want to use the first worksheet
-                var currentRow = 2;
-
-                // Data Rows
-                foreach (var expenditure in ProjectedExpenditures)
-                {
-                    worksheet.Cell(currentRow, 1).Value = expenditure.Year;
-                    worksheet.Cell(currentRow, 2).Value = expenditure.InflationRate;
-                    worksheet.Cell(currentRow, 3).Value = expenditure.InterestRate;
-                    worksheet.Cell(currentRow, 4).Value = expenditure.PublicSafety;
-                    worksheet.Cell(currentRow, 5).Value = expenditure.School;
-                    worksheet.Cell(currentRow, 6).Value = expenditure.Anomaly;
-                    worksheet.Cell(currentRow, 7).Value = expenditure.Other;
-                    worksheet.Cell(currentRow, 8).Value = expenditure.TotalExpenditure;
-                    currentRow++;
-                }
-
-                // Adjust column widths to content
-                worksheet.Columns().AdjustToContents();
-
-                // Define a path for the server-side file
-                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-                if (!Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                }
-                var uniqueFileName = $"SpendingProjections_{DateTime.Now:MMdd_HHmmss}.xlsx";
-                var filePath = Path.Combine(directoryPath, uniqueFileName);
-
-                // Save the workbook to the specified path
-                workbook.SaveAs(filePath);
-
-                // Optional: Update your database with the file's details
-                int initID = HttpContext.Session.GetInt32("InitID") ?? 0;
-                var fileMeta = new FileMeta
-                {
-                    FileName_ = uniqueFileName,
-                    FilePath = filePath,
-                    FileType = ".xlsx",
-                    UploadedDateTime = DateTime.Now,
-                    userID = HttpContext.Session.GetInt32("UserID")
-                };
-
-                DBClass.UploadFile(initID, fileMeta);
-
-                // Notify the user
-                TempData["Message"] = $"{uniqueFileName} was Succesfully Saved to Budget Process Resources";
+                TempData["Error"] = "The template could not be found in Blob Storage.";
                 return Page();
             }
+
+            using (var seekableStream = new MemoryStream())
+            {
+                await templateStream.CopyToAsync(seekableStream);
+                seekableStream.Position = 0; // Ensure the stream is at the beginning before reading it
+
+                using (var workbook = new XLWorkbook(seekableStream)) // Load the workbook from the stream
+                {
+                    IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Use the appropriate worksheet
+
+                    int currentRow = 2; // Adjust based on your template's starting row for data
+
+                    // Populate the worksheet with data from ProjectedRevenues
+                    foreach (var expenditure in ProjectedExpenditures)
+                    {
+                        worksheet.Cell(currentRow, 1).Value = expenditure.Year;
+                        worksheet.Cell(currentRow, 2).Value = expenditure.InflationRate;
+                        worksheet.Cell(currentRow, 3).Value = expenditure.InterestRate;
+                        worksheet.Cell(currentRow, 4).Value = expenditure.PublicSafety;
+                        worksheet.Cell(currentRow, 5).Value = expenditure.School;
+                        worksheet.Cell(currentRow, 6).Value = expenditure.Anomaly;
+                        worksheet.Cell(currentRow, 7).Value = expenditure.Other;
+                        worksheet.Cell(currentRow, 8).Value = expenditure.TotalExpenditure;
+                        currentRow++;
+                    }
+
+                    worksheet.Columns().AdjustToContents();
+
+                    using (var outputStream = new MemoryStream())
+                    {
+                        workbook.SaveAs(outputStream);
+                        outputStream.Position = 0; // Ready the stream for uploading
+
+                        // Upload the filled workbook to Azure Blob Storage
+                        await _blobService.UploadFileBlobAsync(uniqueFileName, outputStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                    }
+                }
+            }
+            // Update your database with the file's details
+            int initID = HttpContext.Session.GetInt32("InitID") ?? 0;
+            var fileMeta = new FileMeta
+            {
+                FileName_ = uniqueFileName,
+                FilePath = uniqueFileName, // Use a path or identifier suitable for Azure Blob Storage access
+                FileType = ".xlsx",
+                UploadedDateTime = DateTime.Now,
+                userID = HttpContext.Session.GetInt32("UserID")
+            };
+
+            DBClass.UploadFile(initID, fileMeta);
+
+            TempData["Message"] = $"{uniqueFileName} was Successfully Saved to Budget Process Resources";
+            return Page();
         }
 
-
-        public IActionResult OnPostLogoutHandler()
+    public IActionResult OnPostLogoutHandler()
         {
             HttpContext.Session.Clear();
             return RedirectToPage("/Index");
