@@ -6,15 +6,16 @@ using System.Data.SqlClient;
 using ValleyVisionSolution.Pages.DataClasses;
 using ValleyVisionSolution.Pages.DB;
 using ClosedXML.Excel;
+using ValleyVisionSolution.Services;
 
 namespace ValleyVisionSolution.Pages.RevenueProjection
 {
     public class RevenueProjectionPageModel : PageModel
     {
-        public Revenue LatestRevenue { get; set; }
+        public Revenue LatestRevenue = new Revenue();
         public Revenue[] ProjectedRevenues { get; set; }
-        public bool DefaultLoad { get; set; }
-        
+        public bool DefaultLoad = true;
+
 
 
         [BindProperty]
@@ -28,10 +29,13 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
         [BindProperty]
         public int NumProjectionYears { get; set; }
 
-        public RevenueProjectionPageModel() 
-        { 
-            LatestRevenue = new Revenue();
-            DefaultLoad = true;
+        private readonly IBlobService _blobService;
+
+        public RevenueProjectionPageModel(IBlobService blobService) 
+        {
+
+            _blobService = blobService;
+
         }
 
         public void loadData()
@@ -167,7 +171,77 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
             }
         }
 
-        public IActionResult OnPostSaveExcel()
+        //public IActionResult OnPostSaveExcel()
+        //{
+        //    // Check if ProjectedRevenues are stored in session and deserialize them
+        //    if (HttpContext.Session.GetString("ProjectedRevenues") != null)
+        //    {
+        //        ProjectedRevenues = JsonSerializer.Deserialize<Revenue[]>(HttpContext.Session.GetString("ProjectedRevenues"));
+        //    }
+        //    else
+        //    {
+        //        loadData();
+
+        //    }
+
+        //    // Path to your Excel template for Projected Revenues
+        //    string templatePath = "Pages/RevenueProjection/RevenueProjectionsTemplate.xlsx";
+
+        //    // Open the template
+        //    using (var workbook = new XLWorkbook(templatePath))
+        //    {
+        //        IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming the data should be placed in the second worksheet
+
+        //        // Starting row for the data
+        //        int currentRow = 5; // Adjust based on your template
+
+        //        // Populate the worksheet with data from ProjectedRevenues
+        //        foreach (var revenue in ProjectedRevenues)
+        //        {
+        //            currentRow++;
+        //            worksheet.Cell(currentRow, 1).Value = revenue.Year;
+        //            worksheet.Cell(currentRow, 2).Value = revenue.RealEstateTax;
+        //            worksheet.Cell(currentRow, 3).Value = revenue.PersonalPropertyTax;
+        //            worksheet.Cell(currentRow, 4).Value = revenue.FeesLicensesTax;
+        //            worksheet.Cell(currentRow, 5).Value = revenue.StateFunding;
+        //            worksheet.Cell(currentRow, 6).Value = revenue.TotalRevenue;
+        //        }
+
+        //        // Adjust column widths to content
+        //        worksheet.Columns().AdjustToContents();
+
+        //        // Define a path for the server-side file
+        //        var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+        //        if (!Directory.Exists(directoryPath))
+        //        {
+        //            Directory.CreateDirectory(directoryPath);
+        //        }
+        //        var uniqueFileName = $"RevenueProjections_{DateTime.Now:MMdd_HHmmss}.xlsx";
+        //        var filePath = Path.Combine(directoryPath, uniqueFileName);
+
+        //        // Save the workbook to the specified path
+        //        workbook.SaveAs(filePath);
+
+        //        // Optional: Update your database with the file's details
+        //        int initID = HttpContext.Session.GetInt32("InitID") ?? 0;
+        //        var fileMeta = new FileMeta
+        //        {
+        //            FileName_ = uniqueFileName,
+        //            FilePath = filePath,
+        //            FileType = ".xlsx",
+        //            UploadedDateTime = DateTime.Now,
+        //            userID = HttpContext.Session.GetInt32("UserID")
+        //        };
+
+        //        DBClass.UploadFile(initID, fileMeta);
+
+        //        // Notify the user
+        //        TempData["Message"] = $"{uniqueFileName} was Succesfully Saved to Budget Process Resources";
+        //        return Page();
+        //    }
+        //}
+
+        public async Task<IActionResult> OnPostSaveExcel()
         {
             // Check if ProjectedRevenues are stored in session and deserialize them
             if (HttpContext.Session.GetString("ProjectedRevenues") != null)
@@ -177,66 +251,69 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
             else
             {
                 loadData();
-
             }
 
-            // Path to your Excel template for Projected Revenues
-            string templatePath = "Pages/RevenueProjection/RevenueProjectionsTemplate.xlsx";
+            // Generate a unique file name for the new Excel file
+            var uniqueFileName = $"RevenueProjections_{DateTime.Now:MMdd_HHmmss}.xlsx";
 
-            // Open the template
-            using (var workbook = new XLWorkbook(templatePath))
+            // Use a MemoryStream for the Excel package to work with
+            using (var stream = new MemoryStream())
             {
-                IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming the data should be placed in the second worksheet
+                // Path to your Excel template for Projected Revenues
+                //string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Pages", "RevenueProjection", "RevenueProjectionsTemplate.xlsx");
+                string templatePath = "Pages/RevenueProjection/RevenueProjectionsTemplate.xlsx";
 
-                // Starting row for the data
-                int currentRow = 5; // Adjust based on your template
-
-                // Populate the worksheet with data from ProjectedRevenues
-                foreach (var revenue in ProjectedRevenues)
+                using (var workbook = new XLWorkbook(templatePath))
                 {
-                    currentRow++;
-                    worksheet.Cell(currentRow, 1).Value = revenue.Year;
-                    worksheet.Cell(currentRow, 2).Value = revenue.RealEstateTax;
-                    worksheet.Cell(currentRow, 3).Value = revenue.PersonalPropertyTax;
-                    worksheet.Cell(currentRow, 4).Value = revenue.FeesLicensesTax;
-                    worksheet.Cell(currentRow, 5).Value = revenue.StateFunding;
-                    worksheet.Cell(currentRow, 6).Value = revenue.TotalRevenue;
+                    IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming the data should be placed in the second worksheet
+
+                    // Starting row for the data
+                    int currentRow = 5; // Adjust based on your template
+
+                    // Populate the worksheet with data from ProjectedRevenues
+                    foreach (var revenue in ProjectedRevenues)
+                    {
+                        currentRow++;
+                        worksheet.Cell(currentRow, 1).Value = revenue.Year;
+                        worksheet.Cell(currentRow, 2).Value = revenue.RealEstateTax;
+                        worksheet.Cell(currentRow, 3).Value = revenue.PersonalPropertyTax;
+                        worksheet.Cell(currentRow, 4).Value = revenue.FeesLicensesTax;
+                        worksheet.Cell(currentRow, 5).Value = revenue.StateFunding;
+                        worksheet.Cell(currentRow, 6).Value = revenue.TotalRevenue;
+                        
+                    }
+
+                    // Adjust column widths to content
+                    worksheet.Columns().AdjustToContents();
+
+                    // Write the workbook to the MemoryStream
+                    workbook.SaveAs(stream);
                 }
 
-                // Adjust column widths to content
-                worksheet.Columns().AdjustToContents();
+                // Reset the position of the MemoryStream to the beginning
+                stream.Position = 0;
 
-                // Define a path for the server-side file
-                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-                if (!Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                }
-                var uniqueFileName = $"RevenueProjections_{DateTime.Now:MMdd_HHmmss}.xlsx";
-                var filePath = Path.Combine(directoryPath, uniqueFileName);
-
-                // Save the workbook to the specified path
-                workbook.SaveAs(filePath);
+                // Use the IBlobService to upload the MemoryStream to Azure Blob Storage
+                await _blobService.UploadFileBlobAsync(uniqueFileName, stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
                 // Optional: Update your database with the file's details
                 int initID = HttpContext.Session.GetInt32("InitID") ?? 0;
                 var fileMeta = new FileMeta
                 {
                     FileName_ = uniqueFileName,
-                    FilePath = filePath,
+                    FilePath = uniqueFileName, // Since this is in Blob Storage, adjust as needed
                     FileType = ".xlsx",
                     UploadedDateTime = DateTime.Now,
                     userID = HttpContext.Session.GetInt32("UserID")
                 };
 
                 DBClass.UploadFile(initID, fileMeta);
-
-                // Notify the user
-                TempData["Message"] = $"{uniqueFileName} was Succesfully Saved to Budget Process Resources";
-                return Page();
             }
-        }
 
+            // Notify the user
+            TempData["Message"] = $"{uniqueFileName} was Successfully Saved to Budget Process Resources";
+            return Page();
+        }
 
 
         public IActionResult OnPostLogoutHandler()
