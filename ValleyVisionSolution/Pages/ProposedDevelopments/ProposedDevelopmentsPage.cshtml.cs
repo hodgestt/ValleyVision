@@ -17,7 +17,7 @@ namespace ValleyVisionSolution.Pages.ProposedDev
         [BindProperty]
         public DevelopmentArea NewDevelopmentArea { get; set; }
 
-        public bool OpenAddProfileModal { get; set; }
+        
 
 
         public ProposedDevPageModel() 
@@ -25,7 +25,7 @@ namespace ValleyVisionSolution.Pages.ProposedDev
             HighImpact = new List<DevelopmentArea>();
             MidImpact = new List<DevelopmentArea>();
             LowImpact = new List<DevelopmentArea>();
-            OpenAddProfileModal = false; //keeps the modal open on page reload if input validations were not successful
+           
         }
 
         public IActionResult OnGet()
@@ -33,8 +33,7 @@ namespace ValleyVisionSolution.Pages.ProposedDev
             if (HttpContext.Session.GetString("LoggedIn") == "True")
             {
                 loadData();
-                int? userID = HttpContext.Session.GetInt32("userID");
-                //NewDevelopmentArea.userID=HttpContext.Session.GetInt32("userID");
+                
                 return Page();
             }
             else
@@ -96,11 +95,10 @@ namespace ValleyVisionSolution.Pages.ProposedDev
             {
                 // Model state is not valid, return the page with validation errors
                 loadData();
-                OpenAddProfileModal = true;
                 return Page();
             }
             
-            DBClass.AddDevelopmentArea(NewDevelopmentArea);
+            DBClass.AddDevelopmentArea(NewDevelopmentArea, HttpContext.Session.GetInt32("UserID"));
             loadData();
             ModelState.Clear();
             

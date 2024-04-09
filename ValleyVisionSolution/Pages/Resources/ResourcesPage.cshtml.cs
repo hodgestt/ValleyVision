@@ -1,29 +1,34 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.VisualBasic;
 using System;
 using Microsoft.AspNetCore.Http;
 using System.Data.SqlClient;
 using ValleyVisionSolution.Pages.DataClasses;
 using ValleyVisionSolution.Pages.DB;
-using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Threading.Tasks;
-
+using ValleyVisionSolution.Services;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ValleyVisionSolution.Pages.Resources
 {
     public class ResourcesPageModel : PageModel
     {
-        public List<FileMeta> ResourceList { get; set; }
-        public List<FileMeta> FileUpload {  get; set; }
+        public List<FileMeta> ResourceList { get; set; } = new List<FileMeta>();
+        public List<FileMeta> FileUpload { get; set; } = new List<FileMeta>();
         public string CurrentInitiativeName { get; set; }
 
-        public ResourcesPageModel() 
+        private readonly IBlobService _blobService;
+
+        // Modified to include IBlobService through Dependency Injection
+        public ResourcesPageModel(IBlobService blobService)
         {
-            ResourceList = new List<FileMeta>();
-            FileUpload = new List<FileMeta> { };
+            _blobService = blobService;
         }
+
+
+
 
 
         public void loadData(int initID, string searchTerm = null)
@@ -86,32 +91,28 @@ namespace ValleyVisionSolution.Pages.Resources
             int initID = HttpContext.Session.GetInt32("InitID") ?? 0;
             if (file != null && file.Length > 0)
             {
-                var uploadsDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-
-                if (!Directory.Exists(uploadsDirectoryPath))
-                {
-                    Directory.CreateDirectory(uploadsDirectoryPath);
-                }
-
+                // Generate a unique file name to avoid overwriting existing files
                 var fileName = Path.GetFileNameWithoutExtension(file.FileName);
                 var fileExtension = Path.GetExtension(file.FileName);
                 var uniqueFileName = fileName + DateTime.Now.ToString("yyyyMMddHHmmss") + fileExtension;
-                var filePath = Path.Combine(uploadsDirectoryPath, uniqueFileName); // For saving to disk
 
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                // Use the IBlobService to upload the file
+                using (var fileStream = file.OpenReadStream())
                 {
-                    await file.CopyToAsync(fileStream);
+                    await _blobService.UploadFileBlobAsync(uniqueFileName, fileStream, file.ContentType);
                 }
 
+                // Prepare the file metadata
                 var fileMeta = new FileMeta
                 {
                     FileName_ = fileName + fileExtension,
-                    FilePath = uniqueFileName, // Save only the unique file name or a relative path
+                    FilePath = uniqueFileName,
                     FileType = fileExtension,
                     UploadedDateTime = DateTime.Now,
                     userID = HttpContext.Session.GetInt32("UserID")
                 };
 
+                // Update the database with the file metadata
                 DBClass.UploadFile(initID, fileMeta);
 
                 return RedirectToPage("./ResourcesPage");
@@ -122,73 +123,32 @@ namespace ValleyVisionSolution.Pages.Resources
         }
 
 
-        //public async Task<IActionResult> OnPostAsync(IFormFile file)
-        //{
-        //    int initID = HttpContext.Session.GetInt32("InitID") ?? 0;
-        //    if (file != null && file.Length > 0)
-        //    {
-        //        // The directory to save the files in (relative to wwwroot)
-        //        //var uploadsRelativePath = "/uploads"; // Relative path from wwwroot
-        //        //var uploadsDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
 
-        //        var uploadsDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+        public async Task<IActionResult> OnGetDownloadFileAsync(string filePath, string fileName)
+        {
+            // Assuming 'filePath' is the unique blob name used when the file was uploaded
+            Stream blobStream = await _blobService.DownloadFileBlobAsync(filePath);
 
-        //        if (!Directory.Exists(uploadsDirectoryPath))
-        //        {
-        //            Directory.CreateDirectory(uploadsDirectoryPath);
-        //        }
+            if (blobStream == null)
+            {
+                return NotFound();
+            }
 
-        //        // Generate a unique file name to avoid overwriting existing files
-        //        var fileName = Path.GetFileNameWithoutExtension(file.FileName);
-        //        var fileExtension = Path.GetExtension(file.FileName);
-        //        var uniqueFileName = fileName + DateTime.Now.ToString("yyyyMMddHHmmss") + fileExtension;
-        //        var filePath = Path.Combine(uploadsDirectoryPath, uniqueFileName); // For saving to disk
-        //        //var fileRelativePath = Path.Combine(uploadsRelativePath, uniqueFileName); // For saving in DB
+            // Determine the content type
+            // You might want to have a better way to determine the content type based on the file extension
+            string contentType = "application/octet-stream";
 
-        //        //// Replace backslashes with forward slashes for web compatibility
-        //        //fileRelativePath = fileRelativePath.Replace('\\', '/');
+            // Return the file to the user
+            // 'fileName' is the original file name that the user uploaded
+            return File(blobStream, contentType, fileName);
+        }
 
-        //        // Save the file to disk
-        //        using (var fileStream = new FileStream(filePath, FileMode.Create))
-        //        {
-        //            await file.CopyToAsync(fileStream);
-        //        }
-
-        //        // Create a FileMeta object with the relative path starting from wwwroot
-        //        var fileMeta = new FileMeta
-        //        {
-        //            FileName_ = fileName + fileExtension,
-        //            FilePath = filePath, // Save the relative path instead of the absolute path
-        //            FileType = fileExtension,
-        //            UploadedDateTime = DateTime.Now,
-        //            userID = HttpContext.Session.GetInt32("UserID")
-        //        };
-
-        //        // Save the file metadata to your database
-        //        DBClass.UploadFile(initID, fileMeta);
-
-        //        // Redirect to the ResourcesPage
-        //        return RedirectToPage("./ResourcesPage");
-        //    }
-
-        //    // In case of no file selected or an error, reload the page showing an error message
-        //    ViewData["ErrorMessage"] = "You must select a file.";
-        //    return Page();
-        //}
 
         public async Task<IActionResult> OnPostDeleteFileAsync(int fileId, string filePath)
         {
-            // Sanitize the filePath to prevent directory traversal attacks
-            var fileName = Path.GetFileName(filePath);
-
-            // Combine the directory path with the sanitized fileName to get the absolute path
-            var absoluteFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", fileName);
-
-            if (System.IO.File.Exists(absoluteFilePath))
-            {
-                // Delete the file from the file system
-                System.IO.File.Delete(absoluteFilePath);
-            }
+            // Since 'filePath' should contain the unique blob name,
+            // use the IBlobService to delete the file from Azure Blob Storage
+            await _blobService.DeleteFileBlobAsync(filePath);
 
             // Now delete the record from the database
             DBClass.DeleteFile(fileId);
@@ -196,26 +156,6 @@ namespace ValleyVisionSolution.Pages.Resources
             // Redirect back to the page to refresh the list of files
             return RedirectToPage();
         }
-
-        public async Task<IActionResult> OnGetDownloadFileAsync(string filePath, string fileName)
-        {
-            var fileDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-            var absoluteFilePath = Path.Combine(fileDirectory, filePath);
-
-            if (!System.IO.File.Exists(absoluteFilePath))
-            {
-                return NotFound();
-            }
-
-            string contentType = "application/octet-stream";
-            var bytes = await System.IO.File.ReadAllBytesAsync(absoluteFilePath);
-            return File(bytes, contentType, fileName);
-        }
-
-
-
-
-
 
         public class DeleteRequest
         {
