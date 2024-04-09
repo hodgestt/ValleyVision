@@ -17,7 +17,8 @@
     </div>
 </div>
 
-@if (Model.DevFilesList.Any())
+
+@* @if (Model.DevFilesList.Any())
 {
     <form method="post" asp-page="/DevelopmentPage">
         <div class="modal-body">
@@ -72,17 +73,43 @@
     
 }
 else
-{
+{ *@
     <div class="text-center">
         <!-- Center the content when no files are found -->
-        <p>No files found for this development area.</p>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ecoDevFilesModal">Add Resources from Economic Development</button>
     </div>
     <br />
     <div class="text-center">
         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#ecoDevFilesModal">Edit Development Area</button>
     </div>
-}
+<div class="container mt-3">
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">File Name</th>
+                <th scope="col">File Type</th>
+                <th scope="col">Uploaded By</th>
+                <th scope="col">Uploaded Date</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var file in Model.DevFilesList)
+            {
+                <tr>
+                    <td>@file.FileName_</td>
+                    <td>@file.FileType</td>
+                    <td>@file.FirstName @file.LastName</td>
+                    <td>@file.UploadedDateTime.ToString("MM/dd/yyyy")</td>
+                    <td>
+                        <a href="@Url.Content(file.FilePath)" class="btn btn-primary btn-sm" download>Download</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
 
 
 <!-- Modal for adding files to the proposed development -->
