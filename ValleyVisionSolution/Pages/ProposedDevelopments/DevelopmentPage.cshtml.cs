@@ -72,43 +72,11 @@ namespace ValleyVisionSolution.Pages.ProposedDevelopments
             }
             DBClass.ValleyVisionConnection.Close();
 
-            //int? initID = HttpContext.Session.GetInt32("initID");
-
-
-            //SqlDataReader reader = DBClass.ResourceReader((int)initID);
-            //while (reader.Read())
-            //{
-            //    EconFileList.Add(new FileMeta
-            //    {
-            //        FileMetaID = int.Parse(reader["fileMetaID"].ToString()),
-            //        FileName_ = reader["fileName_"].ToString(),
-            //        FilePath = reader["filePath"].ToString(),
-            //        FileType = reader["fileType"].ToString(),
-            //        UploadedDateTime = Convert.ToDateTime(reader["uploadedDateTime"])
-            //    });
-            //}
-            //DBClass.ValleyVisionConnection.Close();
-
+            
             
         }
 
-        //public IActionResult OnPostAddDevelopmentFiles()
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        // Model state is not valid, return the page with validation errors
-        //        loadData();
-        //        return Page();
-        //    }
-
-        //    // Model state is valid, continue with processing
-        //    DBClass.AddDevelopmentFiles(HttpContext.Session.GetInt32("InitID"), NewTask, NewTaskUsers);
-        //    loadData();
-        //    ModelState.Clear();
-        //    NewTaskUsers = new List<int>();
-        //    NewTask = new Task();
-        //    return RedirectToPage("/TaskManager/TaskManagerPage");
-        //}
+        
 
     }
 }
