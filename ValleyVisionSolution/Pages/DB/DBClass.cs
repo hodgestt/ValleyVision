@@ -1036,24 +1036,38 @@ namespace ValleyVisionSolution.Pages.DB
         //END SPENDING PROJECTION PAGE-------------------------------------------------------------------------------------
 
         //BEGIN PROPOSED DEVELOPMENT PAGE_________________________________________________________________________________________
-        
-        //public static void AddDevelopmentArea(DevelopmentArea newDevArea, int? userID)
+
+        public static void AddDevelopmentArea(DevelopmentArea newDevArea, int? userID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@DevName", newDevArea.devName);
+            cmd.Parameters.AddWithValue("@DevDescription", newDevArea.devDescription);
+            cmd.Parameters.AddWithValue("@DevImpactLevel", newDevArea.devImpactLevel);
+            cmd.Parameters.AddWithValue("@UploadedDateTime", newDevArea.uploadedDateTime);
+            cmd.Parameters.AddWithValue("@UserID", userID);
+            String sqlQuery = "INSERT INTO DevelopmentArea (devName, devDescription, devImpactLevel, uploadedDateTime, userID) VALUES (@DevName, @DevDescription, @DevImpactLevel, @UploadedDateTime, @UserID);";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+        }
+
+        //public static void AddDevelopmentFiles(int devID, List<int> newDevelopmentFiles) 
         //{
         //    SqlCommand cmd = new SqlCommand();
         //    cmd.Connection = ValleyVisionConnection;
         //    cmd.Connection.ConnectionString = MainConnString;
-        //    cmd.Parameters.AddWithValue("@DevName", newDevArea.devName);
-        //    cmd.Parameters.AddWithValue("@DevDescription", newDevArea.devDescription);
-        //    cmd.Parameters.AddWithValue("@DevImpactLevel", newDevArea.devImpactLevel);
-        //    cmd.Parameters.AddWithValue("@UploadedDateTime", newDevArea.uploadedDateTime);
-        //    cmd.Parameters.AddWithValue("@UserID", userID);
-        //    String sqlQuery = "INSERT INTO DevelopmentArea (devName, devDescription, devImpactLevel, uploadedDateTime, userID) VALUES (@DevName, @DevDescription, @DevImpactLevel, @UploadedDateTime, @UserID);";
+        //    cmd.Parameters.AddWithValue("@fileID", fileMetaID);
+        //    cmd.Parameters.AddWithValue("@devID", devID);
+        //    String sqlQuery = "INSERT INTO DevAreaFiles (fileMetaID, devID) VALUES (@fileID, @devID)";
         //    cmd.CommandText = sqlQuery;
         //    cmd.Connection.Open();
         //    cmd.ExecuteNonQuery();
         //    cmd.Connection.Close();
         //}
-        
+
         public static SqlDataReader DevelopmentReader()
         {
             SqlCommand cmd = new SqlCommand();
