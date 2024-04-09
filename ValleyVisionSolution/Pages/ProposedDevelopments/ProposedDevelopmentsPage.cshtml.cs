@@ -17,8 +17,7 @@ namespace ValleyVisionSolution.Pages.ProposedDev
         [BindProperty]
         public DevelopmentArea NewDevelopmentArea { get; set; }
 
-        
-
+  
 
         public ProposedDevPageModel() 
         {
@@ -89,23 +88,23 @@ namespace ValleyVisionSolution.Pages.ProposedDev
 
         }
 
-        //public IActionResult OnPostNewDevelopmentArea()
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        // Model state is not valid, return the page with validation errors
-        //        loadData();
-        //        return Page();
-        //    }
-            
-        //    DBClass.AddDevelopmentArea(NewDevelopmentArea, HttpContext.Session.GetInt32("UserID"));
-        //    loadData();
-        //    ModelState.Clear();
-            
-        //    NewDevelopmentArea = new DevelopmentArea();
+        public IActionResult OnPostNewDevelopmentArea()
+        {
+            if (!ModelState.IsValid)
+            {
+                // Model state is not valid, return the page with validation errors
+                loadData();
+                return Page();
+            }
 
-        //    return Page();
-        //}
+            DBClass.AddDevelopmentArea(NewDevelopmentArea, HttpContext.Session.GetInt32("UserID"));
+            loadData();
+            ModelState.Clear();
+
+            NewDevelopmentArea = new DevelopmentArea();
+
+            return Page();
+        }
 
         public IActionResult OnPostViewDetails(int devID)
         {
