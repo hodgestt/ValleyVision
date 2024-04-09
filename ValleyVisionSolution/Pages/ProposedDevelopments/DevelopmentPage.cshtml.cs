@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.VisualBasic;
 using System.Data.SqlClient;
 using ValleyVisionSolution.Pages.DataClasses;
 using ValleyVisionSolution.Pages.DB;
@@ -14,6 +15,9 @@ namespace ValleyVisionSolution.Pages.ProposedDevelopments
         public string DevImpactLevel { get; set; }
         public DateTime UploadTime { get; set; }
         public List<FileMeta> EconFileList { get; set; }
+
+        [BindProperty]
+        public List<int> NewDevelopmentFiles { get; set; }
 
         public DevelopmentPageModel() 
         { 
@@ -52,29 +56,59 @@ namespace ValleyVisionSolution.Pages.ProposedDevelopments
             }
             DBClass.ValleyVisionConnection.Close();
 
-
-
-            SqlDataReader reader = DBClass.DevDetailsReader((int)devID);
-            while (reader.Read())
+            SqlDataReader reader3 = DBClass.DevDetailsReader((int)devID);
+            while (reader3.Read())
             {
                 DevFilesList.Add(new FileMeta
                 {
-                    FileMetaID = int.Parse(reader["fileMetaID"].ToString()),
-                    FileName_ = reader["fileName_"].ToString(),
-                    FilePath = reader["filePath"].ToString(),
-                    FileType = reader["fileType"].ToString(),
-                    UploadedDateTime = Convert.ToDateTime(reader["uploadedDateTime"]),
-                    FirstName = reader["firstName"].ToString(),
-                    LastName = reader["lastName"].ToString()
+                    FileMetaID = int.Parse(reader3["fileMetaID"].ToString()),
+                    FileName_ = reader3["fileName_"].ToString(),
+                    FilePath = reader3["filePath"].ToString(),
+                    FileType = reader3["fileType"].ToString(),
+                    UploadedDateTime = Convert.ToDateTime(reader3["uploadedDateTime"]),
+                    FirstName = reader3["firstName"].ToString(),
+                    LastName = reader3["lastName"].ToString()
                 });
             }
             DBClass.ValleyVisionConnection.Close();
 
-            //SqlDataReader reader3 = DBClass.ResourceReader(2);
-            //while (reader3.Read())
-            //{
+            //int? initID = HttpContext.Session.GetInt32("initID");
 
+
+            //SqlDataReader reader = DBClass.ResourceReader((int)initID);
+            //while (reader.Read())
+            //{
+            //    EconFileList.Add(new FileMeta
+            //    {
+            //        FileMetaID = int.Parse(reader["fileMetaID"].ToString()),
+            //        FileName_ = reader["fileName_"].ToString(),
+            //        FilePath = reader["filePath"].ToString(),
+            //        FileType = reader["fileType"].ToString(),
+            //        UploadedDateTime = Convert.ToDateTime(reader["uploadedDateTime"])
+            //    });
             //}
+            //DBClass.ValleyVisionConnection.Close();
+
+            
         }
+
+        //public IActionResult OnPostAddDevelopmentFiles()
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        // Model state is not valid, return the page with validation errors
+        //        loadData();
+        //        return Page();
+        //    }
+
+        //    // Model state is valid, continue with processing
+        //    DBClass.AddDevelopmentFiles(HttpContext.Session.GetInt32("InitID"), NewTask, NewTaskUsers);
+        //    loadData();
+        //    ModelState.Clear();
+        //    NewTaskUsers = new List<int>();
+        //    NewTask = new Task();
+        //    return RedirectToPage("/TaskManager/TaskManagerPage");
+        //}
+
     }
 }
