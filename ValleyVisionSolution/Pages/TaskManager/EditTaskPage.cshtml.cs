@@ -89,6 +89,13 @@ namespace ValleyVisionSolution.Pages.TaskManager
             }
         }
 
+        public IActionResult OnPostDeleteTask()
+        {
+            ViewedTask = HttpContext.Session.GetInt32("TaskID");
+            DBClass.DeleteTask(ViewedTask);
+            return RedirectToPage("/TaskManager/TaskManagerPage");
+        }
+
         public IActionResult OnPostUpdateTask()
         {
             if (!ModelState.IsValid)
