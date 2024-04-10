@@ -122,6 +122,11 @@ namespace ValleyVisionSolution.Pages.Resources
             return Page();
         }
 
+        public IActionResult OnPostPublishFileAsync(int fileId)
+        {
+            DBClass.PublishFile(fileId);
+            return RedirectToPage(); // Redirect back to the same page to refresh the list and show the updated publish status
+        }
 
 
         public async Task<IActionResult> OnGetDownloadFileAsync(string filePath, string fileName)

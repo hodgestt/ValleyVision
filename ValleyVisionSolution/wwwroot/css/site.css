@@ -16,3 +16,37 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.btn-primary {
+    background-color: #274c77;
+    border-color: #274c77;
+}
+
+    .btn-primary:hover {
+        background-color: #6096BA;
+        border-color: #6096BA;
+    }
+
+.btn-secondary {
+    color: #fff;
+    background-color: #8B8C89;
+    border-color: #8B8C89;
+}
+
+    .btn-secondary:hover {
+        color: #fff;
+        background-color: #b2afaf;
+        border-color: #b2afaf;
+    }
+
+.btn-light {
+    background-color: #6096BA;
+    border-color: #6096BA;
+    color:white;
+}
+
+    .btn-light:hover {
+        background-color: #274c77;
+        border-color: #274c77;
+        color:white;
+    }

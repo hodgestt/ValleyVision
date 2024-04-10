@@ -3,6 +3,25 @@
 @using Task = ValleyVisionSolution.Pages.DataClasses.Task;
 @{
 }
+
+<style>
+    .btn-light {
+        background-color: white !important;
+        border-color: lightgrey;
+        color: black !important;
+    }
+
+        .btn-check:focus + .btn-light, .btn-light:focus {
+            color: #000;
+            background-color: #f9fafb;
+            border-color: #f9fafb;
+            box-shadow: 0 0 0 0.25rem rgba(211,212,213,.5);
+        }
+    .btn-light:hover{
+        border-color:lightgrey;
+    }
+</style>
+
 <!-- Edit Task Form -->
 <div class="modal fade" id="editTaskForm" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">

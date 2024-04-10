@@ -2,7 +2,10 @@
 @model ValleyVisionSolution.Pages.RevenueProjection.ViewDataPageModel
 @{
     ViewData["Title"] = "View Data";
+    ViewData["AddRev"] = "True";
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
 
 <style>
     .tableHeader {
@@ -12,7 +15,7 @@
     }
 </style>
 
-<h2>Annual Revenue Data</h2>
+<h2 style="color:#274c77">Annual Revenue Data</h2>
 <br />
 <table class="table table-bordered table-striped table-responsive table-hover">
     <thead class="tableHeader">
@@ -23,7 +26,7 @@
             <th>Fees & Licenses</th>
             <th>State Funds</th>
             <th>Total Revenue</th>
-            <th> </th>
+            <th>Edit</th>
         </tr>
     </thead>
     <tbody>
@@ -38,7 +41,9 @@
                     <td>@year.StateFunding</td>
                     <td>@year.TotalRevenue</td>
                     <td>
-                        <a asp-page="/RevenueProjection/EditDataPage" class="btn btn-secondary" asp-route-year="@year.Year">Edit</a>
+                        <a type="submit" class="btn btn-sm btn-light" asp-page="/RevenueProjection/EditDataPage" style="margin-right:8px; align-content: center;" asp-route-year="@year.Year">
+                            <i class="bi bi-pencil"></i>
+                        </a>
                     </td>
                </tr>
             }
