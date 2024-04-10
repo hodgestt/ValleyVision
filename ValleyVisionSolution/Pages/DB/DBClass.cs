@@ -721,6 +721,45 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection.Close();
         }
 
+        public static void DeleteDevelopmentFiles(int devID, int fileMetaID)
+
+        {
+
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.Connection = ValleyVisionConnection;
+
+            cmd.Connection.ConnectionString = MainConnString;
+
+            cmd.Parameters.AddWithValue("@DevID", devID);
+
+            cmd.Parameters.AddWithValue("@fileMetaID", fileMetaID);
+
+            String sqlQuery = "DELETE FROM DevAreaFiles WHERE fileMetaID = @fileMetaID AND devID = @DevID;";
+
+            cmd.CommandText = sqlQuery;
+
+            cmd.Connection.Open();
+
+            cmd.ExecuteNonQuery();
+
+            cmd.Connection.Close();
+
+        }
+
+        public static void DeleteTask(int? taskID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@TaskID", taskID);
+            String sqlQuery = "DELETE FROM TaskUsers WHERE taskID = @TaskID;" + "DELETE FROM Task WHERE taskID = @TaskID;";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+        }
+
         //editing profiles
         public static void UpdateProfile(FullProfile profiletoedit)
         {
