@@ -4,6 +4,25 @@
     ViewData["Title"] = "Development Files";
 }
 
+<style>
+    .btn-light {
+        background-color: white !important;
+        border-color: lightgrey;
+        color: black !important;
+    }
+
+        .btn-check:focus + .btn-light, .btn-light:focus {
+            color: #000;
+            background-color: #f9fafb;
+            border-color: #f9fafb;
+            box-shadow: 0 0 0 0.25rem rgba(211,212,213,.5);
+        }
+
+        .btn-light:hover {
+            border-color: lightgrey;
+        }
+</style>
+
 <div class="container mt-4 mb-4">
     <div class="card bg-dark text-white">
         <div class="card-header">
