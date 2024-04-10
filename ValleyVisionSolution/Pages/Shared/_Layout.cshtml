@@ -318,11 +318,17 @@
                 </nav>
 
             }
+
+            @if (ViewData["ShowHeader"]?.ToString() == "True")
+            {
+                <nav class="nav">Initiatives</nav>
+            }
         }
 
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+
             @RenderBody()
         </main>
     </div>

@@ -3,6 +3,7 @@
 @model ValleyVisionSolution.Pages.Initiatives.InitiativesPageModel
 @{
     ViewData["Title"] = "Initiatives";
+    ViewData["ShowHeader"] = "True";
     ViewData["HeaderTitle"] = "Initiatives";
 }
 @{
@@ -15,6 +16,23 @@
         flex-wrap: wrap;
 
     }
+
+    .nav {
+        background-color: lightgrey;
+        width: 100%; 
+        font-size:1.2em;
+        font-weight:bold;
+        text-align:center;
+        display:block;
+        padding:16px;
+
+    }
+
+        .nav::after {
+            content: '';
+            display: table;
+            clear: both;
+        }
 
     .tile {
         text-decoration: none;
@@ -50,6 +68,7 @@
         }
 
 </style>
+
 
 <div class="tile-container">
     @foreach (var initiative in Model.InitiativesList)
