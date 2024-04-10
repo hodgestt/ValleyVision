@@ -116,6 +116,23 @@ namespace ValleyVisionSolution.Pages.ProposedDevelopments
 
         }
 
+        public IActionResult OnPostDeleteDevelopmentFiles(int fileMetaID) 
+        {
+            if (!ModelState.IsValid)
+            {
+                // Model state is not valid, return the page with validation errors
+                loadData();
+                return Page();
+            }
+
+            var devID = HttpContext.Session.GetInt32("devID");
+            DBClass.DeleteDevelopmentFiles((int)devID, fileMetaID);
+            loadData();
+            ModelState.Clear();
+            return RedirectToPage("/ProposedDevelopments/DevelopmentPage");
+
+        }
+
         public IActionResult OnPostLogoutHandler()
         {
             HttpContext.Session.Clear();
