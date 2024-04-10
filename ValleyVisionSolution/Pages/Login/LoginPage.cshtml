@@ -97,19 +97,10 @@
                 font-size: 16px;
             }
 
-        .loginbtn {
-            background-color: #007bff;
-            color: white;
-            /* Maintain the original width for the login button */
-        }
-
-            .loginbtn:hover {
-                background-color: #0056b3;
-            }
 
         .populatebtn { /* Style specifically for the populate button */
             padding: 10px 15px; /* Smaller padding for a smaller button */
-            background-color: #6c757d; /* Bootstrap's secondary button color for differentiation */
+            background-color: #; /* Bootstrap's secondary button color for differentiation */
             color: white;
         }
 
@@ -139,7 +130,29 @@
             .buttons .loginbtn {
                 width: 250px;
             } */
+        .btn-primary {
+            background-color: #274c77;
+            border-color: #274c77;
+            -webkit-text-fill-color: white;
+        }
 
+            .btn-primary:hover {
+                background-color: #6096BA;
+                border-color: #6096BA;
+                -webkit-text-fill-color: white;
+            }
+
+        .btn-secondary {
+            color: #fff;
+            background-color: #8B8C89;
+            border-color: #8B8C89;
+        }
+
+            .btn-secondary:hover {
+                color: #fff;
+                background-color: #b2afaf;
+                border-color: #b2afaf;
+            }
         .text-danger {
             text-align: center;
             margin-top: 5px;
@@ -158,23 +171,23 @@
             {
                 <p style="color:#0ccd0c">@Model.LogoutMessage</p>
             }
-            <h1>Log in</h1>
-            <h5 class="username">Username</h5>
+            <h1 style ="-webkit-text-fill-color:#274c77; text-align:center;">Log in</h1>
+            <h5 class="username" style="-webkit-text-fill-color:#274c77;">Username</h5>
             <input type="text" asp-for="@Model.UserCredentials.Username" placeholder="Enter your username" />
             <span asp-validation-for="@Model.UserCredentials.Username" class="text-danger"></span>
 
-            <h5>Password</h5>
+            <h5 style="-webkit-text-fill-color:#274c77;">Password</h5>
             <input type="text" asp-for="@Model.UserCredentials.Password" placeholder="Enter your password" />
             <span asp-validation-for="@Model.UserCredentials.Password" class="text-danger"></span>
 
             <div class="buttons">
-                <button type="submit" class="loginbtn" asp-page-handler="LoginHandler" formnovalidate>Login &rarr;</button>
+                <button type="submit" class="btn-primary" asp-page-handler="LoginHandler" formnovalidate>Login &rarr;</button>
                 <select name="option" style="border: 1px solid #ccc; border-radius: 2px;">
                     <option value="">Select User</option>
                     <option value="option1">Ryan Thompson</option>
                     <option value="option2">Tiffany Grayson</option>
                 </select>
-                <button type="submit" class="populatebtn" asp-page="/Login/LoginPage" asp-page-handler="PopulateHandler" formnovalidate>Populate</button>
+                <button type="submit" class="btn-secondary" asp-page="/Login/LoginPage" asp-page-handler="PopulateHandler" formnovalidate>Populate</button>
             </div>
 
 @*             <div class="buttons">

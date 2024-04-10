@@ -65,6 +65,26 @@
         padding-left: 15vw;
     }
 
+    .btn-primary{
+        background-color:#6096BA;
+        border-color: #6096BA;
+    }
+    
+    .btn-primary:hover{
+        background-color:#274c77;
+        border-color: #274c77;
+    }
+
+    .btn-secondary {
+        background-color: #274c77;
+        border-color: #274c77;
+    }
+
+        .btn-secondary:hover {
+            background-color: #6096BA;
+            border-color: #6096BA;
+        }
+
 </style>
 
 
@@ -78,7 +98,7 @@
             <form method="get" class="mb-4">
                 <div class="input-group">
                     <input type="text" name="searchTerm" class="form-control" placeholder="Search published files..." value="@HttpContext.Request.Query["searchTerm"]">
-                    <button class="btn btn-primary" type="submit">Search</button>
+                    <button class="btn btn-secondary" type="submit">Search</button>
                 </div>
             </form>
             @if (!string.IsNullOrEmpty(HttpContext.Request.Query["searchTerm"]))
