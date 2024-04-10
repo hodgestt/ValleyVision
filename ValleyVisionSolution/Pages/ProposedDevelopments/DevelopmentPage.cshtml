@@ -102,9 +102,15 @@ else
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ecoDevFilesModal">Add Resources from Economic Development</button>
     </div>
     <br />
-    <div class="text-center">
-        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#ecoDevFilesModal">Edit Development Area</button>
-    </div>
+<div class="text-center">
+    <button type="button" class="btn btn-secondary" onclick="redirectToDevelopmentPage()">Edit Development Area</button>
+</div>
+
+<script>
+    function redirectToDevelopmentPage() {
+        window.location.href = '/ProposedDevelopments/EditDevelopments';
+    }
+</script>
 <div class="container mt-3">
     <table class="table table-hover">
         <thead class="table-dark">

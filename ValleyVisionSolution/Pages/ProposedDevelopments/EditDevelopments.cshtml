@@ -1,0 +1,123 @@
+﻿@page
+@model ValleyVisionSolution.Pages.ProposedDevelopments.EditDevelopmentsModel
+@using DevelopmentArea = ValleyVisionSolution.Pages.DataClasses.DevelopmentArea;
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<style>
+    .btn-light {
+        background-color: white !important;
+        border-color: lightgrey;
+        color: black !important;
+    }
+
+        .btn-check:focus + .btn-light, .btn-light:focus {
+            color: #000;
+            background-color: #f9fafb;
+            border-color: #f9fafb;
+            box-shadow: 0 0 0 0.25rem rgba(211,212,213,.5);
+        }
+
+        .btn-light:hover {
+            border-color: lightgrey;
+        }
+</style>
+
+<!-- Edit Task Form -->
+<div class="modal fade" id="editDevForm" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form method="post" asp-page="/DevelopmentPage">
+                <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Development View</h5>
+                    <button type="button" class="btn-close" id="closeButton" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <input type="hidden" asp-for="@Model.EditedDev.devID" value="@Model.ViewedDev">
+                    @{
+                        DevelopmentArea DevData = new DevelopmentArea();
+                        foreach (var dev in Model.AllDevs)
+                        {
+                            if (dev.devID == Model.ViewedDev)
+                            {
+                                DevData = dev;
+                            }
+                        }
+                    }
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Development Name:</div>
+                            <input asp-for="@Model.EditedDev.devName" type="text" class="form-control" value="@DevData.devName">
+                            <span class="text-danger" asp-validation-for="@Model.EditedDev.devName"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Due Date:</div>
+                            <input asp-for="@Model.EditedDev.uploadedDateTime" type="date" class="form-control" value="@DevData.uploadedDateTime.ToString("yyyy-MM-dd")">
+                            <span class="text-danger" asp-validation-for="@Model.EditedDev.uploadedDateTime"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Impact Level:</div>
+                            <select class="form-select" asp-for="@Model.EditedDev.devImpactLevel" id="devImpactLevel">
+                                @if (DevData.devImpactLevel == "Low")
+                                {
+                                    <option value="Low" selected>Low</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="High">High</option>
+                                }
+                                @if (DevData.devImpactLevel == "Medium")
+                                {
+                                    <option value="Low">Low</option>
+                                    <option value="Medium" selected>Medium</option>
+                                    <option value="High">High</option>
+                                }
+                                @if (DevData.devImpactLevel == "High")
+                                {
+                                    <option value="Low">Low</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="High" selected>High</option>
+                                }
+
+                            </select>
+                            <span class="text-danger" asp-validation-for="@Model.EditedDev.devImpactLevel"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div>Description:</div>
+                            <textarea asp-for="@Model.TempDevDescription" class="form-control" id="devDescription" rows="3" maxlength="250"></textarea>
+                            <span class="text-danger" asp-validation-for="@Model.TempDevDescription"></span>
+                            <input type="hidden" asp-for="@Model.EditedDev.devDescription" value="tempDesc">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer" style="border-top:none">
+                    <button type="submit" class="btn btn-primary" asp-page-handler="EditDev">Update</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-- End Edit Task Form -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Check if AddTaskInvalid is true on page load and reopen modal if needed
+    window.addEventListener('DOMContentLoaded', (event) => {
+        $('#editDevForm').modal('show');
+
+    });
+</script>
+<script>
+    document.getElementById('closeButton').addEventListener('click', function () {
+        // Redirect to the specific page
+        window.location.href = '/ProposedDevelopments/DevelopmentPage';
+    });
+</script>
