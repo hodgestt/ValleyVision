@@ -11,8 +11,8 @@ namespace ValleyVisionSolution.Pages.Resources
     {
         public List<FileMeta> ResourceList { get; set; } = new List<FileMeta>();
         public List<FileMeta> FileUpload { get; set; } = new List<FileMeta> { };
-    public List <Initiative> InitativeList { get; set; } = new List<Initiative>();
-    public string CurrentInitiativeName { get; set; }
+        public List <Initiative> InitativeList { get; set; } = new List<Initiative>();
+        public string CurrentInitiativeName { get; set; }
         public List<FileMeta> PublishedFiles { get; set; } = new List<FileMeta>();
 
         private readonly IBlobService _blobService;

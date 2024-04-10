@@ -40,5 +40,11 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
             DBClass.ValleyVisionConnection.Close();
             return RedirectToPage("/ManageProfiles/ManageProfilesPage");
         }
+
+        public IActionResult OnPostLogoutHandler()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToPage("/Index");
+        }
     }
 }
