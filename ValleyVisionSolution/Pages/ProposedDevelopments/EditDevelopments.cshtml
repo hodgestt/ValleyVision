@@ -63,7 +63,7 @@
                             <span class="text-danger" asp-validation-for="@Model.EditedDev.uploadedDateTime"></span>
                         </div>
                         <div class="col-md-6">
-                            <div>Status:</div>
+                            <div>Impact Level:</div>
                             <select class="form-select" asp-for="@Model.EditedDev.devImpactLevel" id="devImpactLevel">
                                 @if (DevData.devImpactLevel == "Low")
                                 {
