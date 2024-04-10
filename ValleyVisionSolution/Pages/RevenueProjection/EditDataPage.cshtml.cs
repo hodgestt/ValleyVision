@@ -47,5 +47,12 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
             DBClass.ValleyVisionConnection.Close();
             return RedirectToPage("/RevenueProjection/ViewDataPage");
         }
+
+        public IActionResult OnPostLogoutHandler()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToPage("/Index");
+        }
+
     }
 }

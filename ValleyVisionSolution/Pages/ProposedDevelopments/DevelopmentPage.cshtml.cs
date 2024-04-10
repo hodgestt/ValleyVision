@@ -109,11 +109,19 @@ namespace ValleyVisionSolution.Pages.ProposedDevelopments
             return RedirectToPage("/ProposedDevelopments/DevelopmentPage");
 
 
+
             //TempData["FilesAdded"] = "true";
             //// Redirect to the same or another page to show the updated list of files
 
 
         }
+
+        public IActionResult OnPostLogoutHandler()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToPage("/Index");
+        }
+
 
     }
 }
