@@ -75,7 +75,7 @@ namespace ValleyVisionSolution.Pages.ProposedDevelopments
             DBClass.ValleyVisionConnection.Close();
 
 
-            SqlDataReader reader = DBClass.ResourceReader((int)initID);
+            SqlDataReader reader = DBClass.ProposedDevelopmentFileReader(devID, initID);
             while (reader.Read())
             {
                 EconFileList.Add(new FileMeta
@@ -92,28 +92,36 @@ namespace ValleyVisionSolution.Pages.ProposedDevelopments
 
         }
 
-        //public IActionResult OnPostAddDevelopmentFiles()
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        // Model state is not valid, return the page with validation errors
-        //        loadData();
-        //        return Page();
-        //    }
+        public IActionResult OnPostAddDevelopmentFiles()
+        {
+            if (!ModelState.IsValid)
+            {
+                // Model state is not valid, return the page with validation errors
+                loadData();
+                return Page();
+            }
 
-        //    var devID = HttpContext.Session.GetInt32("devID");
-        //    DBClass.AddDevelopmentFiles((int)devID, NewDevelopmentFiles);
-        //    loadData();
-        //    ModelState.Clear();
-        //    NewDevelopmentFiles = new List<int>();
-        //    return RedirectToPage("/ProposedDevelopments/DevelopmentPage");
+            var devID = HttpContext.Session.GetInt32("devID");
+            DBClass.AddDevelopmentFiles((int)devID, NewDevelopmentFiles);
+            loadData();
+            ModelState.Clear();
+            NewDevelopmentFiles = new List<int>();
+            return RedirectToPage("/ProposedDevelopments/DevelopmentPage");
 
-            
-        //    //TempData["FilesAdded"] = "true";
-        //    //// Redirect to the same or another page to show the updated list of files
-            
-      
-        //}
+
+
+            //TempData["FilesAdded"] = "true";
+            //// Redirect to the same or another page to show the updated list of files
+
+
+        }
+
+        public IActionResult OnPostLogoutHandler()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToPage("/Index");
+        }
+
 
     }
 }

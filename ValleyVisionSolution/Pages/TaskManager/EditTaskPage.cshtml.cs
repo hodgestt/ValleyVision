@@ -112,5 +112,12 @@ namespace ValleyVisionSolution.Pages.TaskManager
             DBClass.EditTask(EditedTask, EditedTaskUsers);
             return RedirectToPage("/TaskManager/TaskManagerPage");
         }
+
+        public IActionResult OnPostLogoutHandler()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToPage("/Index");
+        }
+
     }
 }

@@ -31,7 +31,7 @@
     .button {
         grid-area: Button;
         border: none;
-        background-color: #0d6efd;
+        background-color: #6096BA;
         color: white;
     }
 
@@ -66,7 +66,7 @@
     .sentMessage {
         border-radius: 15px;
         padding: 5px 10px 5px 10px;
-        background-color: #5285f7;
+        background-color: #6096BA;
         display: inline-block;
         color: white;
         max-width: 70%;
@@ -79,21 +79,33 @@
 
     .messageContent {
         border-radius: 15px;
-        border: 1px solid grey;
+        border: 1px solid #274c77;
         width: 95%;
         margin: 2.5%;
         padding-top: 5px;
-        padding-bottom: 32px;
+        overflow-x:auto;
+        overflow-y: auto;
         padding-right: 10px;
         padding-left: 10px;
         -webkit-text-fill-color: black;
+        font-size:medium;
     }
 
     .sendMessageBtn {
-        background-color: #5285f7;
-        border-radius: 10px;
+        background-color: #6096BA;
+        border-radius: 8px;
         justify-content:right;
         justify-content:end;
+        width:6vw;
+    }
+
+    .btn-primary{
+        border-color: #6096BA;
+    }
+
+    .btn-primary:hover{
+        border-color: #274c77;
+        background-color: #274c77;
     }
 
     .dashboard-tile-title {
@@ -118,7 +130,7 @@
         @{
             foreach (var user in Model.Users)
             {
-                    <div style="font-size:max-width(20px,0.5vw);">@user.FirstName @user.LastName</div>
+                    <div style="font-size:max-width(20px,0.5vw); -webkit-text-fill-color:#274c77;">@user.FirstName @user.LastName</div>
             }
         }
     </div>

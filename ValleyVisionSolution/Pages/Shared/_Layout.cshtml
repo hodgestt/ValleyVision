@@ -36,6 +36,15 @@
                 margin-bottom:0;
             }
 
+        .nav {
+            color: lightgrey;
+            width: 100%;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            padding: 16px;
+        }
 
 
         .inline-link {
@@ -167,6 +176,22 @@
         .button-26:active {
                 text-decoration: underline;
         }
+
+        .nav{
+            background-color: lightgrey;
+            -webkit-text-fill-color: #274c77;
+        }
+
+
+        .navbar-nav .nav-item .nav-link, .navbar-nav .nav-item .navbar-text {
+            color: #274c77 !important;
+        }
+
+        .dropdown-item {
+            color: #274c77;
+        }
+
+
     </style>
 
 </head>
@@ -318,11 +343,29 @@
                 </nav>
 
             }
+
+            @if (ViewData["ShowHeader"]?.ToString() == "True")
+            {
+                <nav class="nav">Initiatives</nav>
+            }
+
+            @if (ViewData["Title"]?.ToString() == "Users")
+            {
+                <nav class="nav">Manage Users</nav>
+            }
+
+            @if (ViewData["AdminR"]?.ToString() == "True")
+            {
+                <nav class="nav">Admin Resources</nav>
+            }
+
+
         }
 
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+
             @RenderBody()
         </main>
     </div>

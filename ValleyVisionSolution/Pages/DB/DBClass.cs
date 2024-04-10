@@ -1054,19 +1054,22 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection.Close();
         }
 
-        //public static void AddDevelopmentFiles(int devID, List<int> newDevelopmentFiles) 
-        //{
-        //    SqlCommand cmd = new SqlCommand();
-        //    cmd.Connection = ValleyVisionConnection;
-        //    cmd.Connection.ConnectionString = MainConnString;
-        //    cmd.Parameters.AddWithValue("@fileID", fileMetaID);
-        //    cmd.Parameters.AddWithValue("@devID", devID);
-        //    String sqlQuery = "INSERT INTO DevAreaFiles (fileMetaID, devID) VALUES (@fileID, @devID)";
-        //    cmd.CommandText = sqlQuery;
-        //    cmd.Connection.Open();
-        //    cmd.ExecuteNonQuery();
-        //    cmd.Connection.Close();
-        //}
+        public static void AddDevelopmentFiles(int devID, List<int> newDevelopmentFiles)
+        {
+            foreach (var fileMetaID in newDevelopmentFiles)
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = ValleyVisionConnection;
+                cmd.Connection.ConnectionString = MainConnString;
+                cmd.Parameters.AddWithValue("@FileMetaID", fileMetaID);
+                cmd.Parameters.AddWithValue("@DevID", devID);
+                String sqlQuery = "INSERT INTO DevAreaFiles(fileMetaID, devID)VALUES (@FileMetaID, @DevID);";
+                cmd.CommandText = sqlQuery;
+                cmd.Connection.Open();
+                cmd.ExecuteNonQuery();
+                cmd.Connection.Close();
+            }
+        }
 
         public static SqlDataReader DevelopmentReader()
         {
@@ -1124,6 +1127,23 @@ namespace ValleyVisionSolution.Pages.DB
 
             return tempReader;
         }
+
+        public static SqlDataReader ProposedDevelopmentFileReader(int? devid, int? initid)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@DevID", devid);
+            cmd.Parameters.AddWithValue("@InitID", initid);
+            cmd.CommandText = "SELECT DISTINCT F.fileMetaID, F.fileName_, F.filePath, F.fileType, F.uploadedDateTime, F.userID, F.published, U.firstName, U.lastName FROM FileMeta F JOIN InitiativeFiles IT ON F.fileMetaID = IT.fileMetaID JOIN User_ U ON F.userID = U.userID WHERE IT.initID = @InitID AND F.fileMetaID NOT IN (SELECT fileMetaID FROM DevAreaFiles WHERE devID = @DevID);";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+
+
         //END DASHBOARD "DETAILS" PAGE
 
 
