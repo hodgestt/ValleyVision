@@ -6,24 +6,28 @@ using Microsoft.AspNetCore.Http;
 using System.Data.SqlClient;
 using ValleyVisionSolution.Pages.DataClasses;
 using ValleyVisionSolution.Pages.DB;
+using ValleyVisionSolution.Services;
 
 namespace ValleyVisionSolution.Pages.Initiatives
 {
     public class InitiativesPageModel : PageModel
     {
-        public List<Initiative>? InitiativesList { get; set; }
+        public List<Initiative>? InitiativesList { get; set; } = new List<Initiative>();
 
         [BindProperty]
         public Initiative NewInit { get; set; }
 
         [BindProperty]
+        public IFormFile BackgroundFile { get; set; }
+
+        [BindProperty]
         public List<int> NewInitUsers { get; set; }
 
         [BindProperty]
-        public List<User> InitUsers { get; set; }
+        public List<User> InitUsers { get; set; } = new List<User>();
 
         [BindProperty]
-        public List<Tile> Tiles { get; set; }
+        public List<Tile> Tiles { get; set; } = new List<Tile>();
 
         [BindProperty]
         public List<int> NewTiles { get; set; }
@@ -31,14 +35,13 @@ namespace ValleyVisionSolution.Pages.Initiatives
         [BindProperty]
         public int EditedInit { get; set; }
 
-        public bool OpenModal { get; set; }
+        public bool OpenModal { get; set; } = false;
 
-        public InitiativesPageModel()
+        private readonly IBlobService _blobService;
+
+        public InitiativesPageModel(IBlobService blobService)
         {
-            InitiativesList = new List<Initiative>();
-            InitUsers = new List<User>();
-            Tiles = new List<Tile>();
-            OpenModal = false;
+            _blobService = blobService;
         }
 
 
@@ -108,7 +111,7 @@ namespace ValleyVisionSolution.Pages.Initiatives
             
         }
 
-        public IActionResult OnPostAddNewInit()
+        public async Task<IActionResult> OnPostAddNewInit()
         {
             if (!ModelState.IsValid)
             {
@@ -118,16 +121,65 @@ namespace ValleyVisionSolution.Pages.Initiatives
                 return Page();
             }
 
-            // Model state is valid, continue with processing
-            DBClass.AddInit(NewInit, NewInitUsers, NewTiles, HttpContext.Session.GetInt32("UserID"));
-            loadData();
-            ModelState.Clear();
-            NewInit = new Initiative();
-            NewInitUsers = new List<int>();
-            NewTiles = new List<int>();
+            if (BackgroundFile != null && BackgroundFile.Length > 0)
+            {
+                // Generate a unique file name to avoid overwriting existing files
+                var fileName = Path.GetFileNameWithoutExtension(BackgroundFile.FileName);
+                var fileExtension = Path.GetExtension(BackgroundFile.FileName);
+                var uniqueFileName = fileName + DateTime.Now.ToString("yyyyMMddHHmmss") + fileExtension;
 
+                // Use the IBlobService to upload the file
+                using (var fileStream = BackgroundFile.OpenReadStream())
+                {
+                    await _blobService.UploadFileBlobAsync(uniqueFileName, fileStream, BackgroundFile.ContentType);
+                }
+
+                // Model state is valid, continue with processing
+                NewInit.FilePath = uniqueFileName;
+                DBClass.AddInit(NewInit, NewInitUsers, NewTiles, HttpContext.Session.GetInt32("UserID"));
+                loadData();
+                ModelState.Clear();
+                NewInit = new Initiative();
+                NewInitUsers = new List<int>();
+                NewTiles = new List<int>();
+
+                return Page();
+            }
             return Page();
         }
+
+
+        //public async Task<IActionResult> OnPostAsync(IFormFile file)
+        //{
+            
+        //    if (file != null && file.Length > 0)
+        //    {
+        //        // Generate a unique file name to avoid overwriting existing files
+        //        var fileName = Path.GetFileNameWithoutExtension(file.FileName);
+        //        var fileExtension = Path.GetExtension(file.FileName);
+        //        var uniqueFileName = fileName + DateTime.Now.ToString("yyyyMMddHHmmss") + fileExtension;
+
+        //        // Use the IBlobService to upload the file
+        //        using (var fileStream = file.OpenReadStream())
+        //        {
+        //            await _blobService.UploadFileBlobAsync(uniqueFileName, fileStream, file.ContentType);
+        //        }
+
+        //        // Model state is valid, continue with processing
+        //        NewInit.FilePath = uniqueFileName;
+        //        DBClass.AddInit(NewInit, NewInitUsers, NewTiles, HttpContext.Session.GetInt32("UserID"));
+        //        loadData();
+        //        ModelState.Clear();
+        //        NewInit = new Initiative();
+        //        NewInitUsers = new List<int>();
+        //        NewTiles = new List<int>();
+
+        //        return Page();
+        //    }
+
+        //    ViewData["ErrorMessage"] = "You must select a file.";
+        //    return Page();
+        //}
 
         public IActionResult OnPostEditInit()
         {

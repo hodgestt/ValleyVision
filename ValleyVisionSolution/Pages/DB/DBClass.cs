@@ -273,7 +273,8 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@InitName", NewInit.InitName);
             cmd.Parameters.AddWithValue("@InitDateTime", NewInit.InitDateTime);
-            String sqlQuery = "INSERT INTO Initiative (InitName, InitDateTime) VALUES (@InitName, @InitDateTime);" + "SELECT SCOPE_IDENTITY();";
+            cmd.Parameters.AddWithValue("@FilePath", NewInit.FilePath);
+            String sqlQuery = "INSERT INTO Initiative (initName, filePath ,initDateTime) VALUES (@InitName, @FilePath, @InitDateTime);" + "SELECT SCOPE_IDENTITY();";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             NewInit.InitID = Convert.ToInt32(cmd.ExecuteScalar());
