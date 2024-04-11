@@ -385,13 +385,13 @@ namespace ValleyVisionSolution.Pages.DB
             return tempReader;
         }
 
-        public static SqlDataReader AllDevsReader(int? userID)
+        public static SqlDataReader AllDevsReader(int? devID)
         {
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
-            cmd.Parameters.AddWithValue("@UserID", userID);
-            cmd.CommandText = "SELECT DISTINCT * FROM DevelopmentArea D JOIN User_ U ON D.userID = U.userID WHERE U.userID = @UserID;";
+            cmd.Parameters.AddWithValue("@DevID", devID);
+            cmd.CommandText = "SELECT DISTINCT * FROM DevelopmentArea;";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
