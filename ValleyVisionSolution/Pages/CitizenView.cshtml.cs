@@ -1,4 +1,4 @@
-﻿using System.Data.SqlClient;
+using System.Data.SqlClient;
 using System.Net.NetworkInformation;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ValleyVisionSolution.Pages.DataClasses;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ValleyVisionSolution.Pages
 {
-    public class IndexModel : PageModel
+    public class CitizenViewModel : PageModel
     {
         public List<FileMeta> PublishedResources { get; set; } = new List<FileMeta>();
 
@@ -27,7 +27,6 @@ namespace ValleyVisionSolution.Pages
                     FileType = reader["FileType"].ToString(),
                     UploadedDateTime = DateTime.Parse(reader["UploadedDateTime"].ToString()),
                     userID = int.Parse(reader["userID"].ToString()),
-                    publishdate = DateTime.Parse(reader["publishdate"].ToString()),
                 };
 
                 // If a search term is provided, only add files that match the term.

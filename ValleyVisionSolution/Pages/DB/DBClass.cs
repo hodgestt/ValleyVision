@@ -306,7 +306,21 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@fileID", fileID);
-            String sqlQuery = "UPDATE FileMeta SET published = 'yes' WHERE FileMetaID = @fileID";
+            cmd.Parameters.AddWithValue("@publishdate", DateTime.Now);
+            String sqlQuery = "UPDATE FileMeta SET published = 'yes', publishdate = @publishdate WHERE FileMetaID = @fileID";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+        }
+
+        public static void UnPublishFile(int fileID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@fileID", fileID);
+            String sqlQuery = "UPDATE FileMeta SET published = 'no' WHERE FileMetaID = @fileID";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
