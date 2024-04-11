@@ -23,7 +23,7 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
 
         public void loadData()
         {
-            //populate FullProfilesList with FullProfiles
+            
             SqlDataReader reader = DBClass.DataFileReader();
             while (reader.Read())
             {
@@ -58,6 +58,12 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
             ModelState.Clear();
             NewRevenueData = new Revenue();
             return Page();
+        }
+
+        public IActionResult OnPostDelete(int year)
+        {
+            DBClass.DeleteRevenueData(year);
+            return RedirectToPage("/RevenueProjection/ViewDataPage");
         }
 
         public IActionResult OnGet()

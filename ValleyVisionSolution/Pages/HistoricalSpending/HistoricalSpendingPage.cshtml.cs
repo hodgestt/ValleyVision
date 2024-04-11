@@ -22,7 +22,7 @@ namespace ValleyVisionSolution.Pages.HistoricalSpending
 
         public void loadData()
         {
-            //Populate current year revenue data
+            
             SqlDataReader reader = DBClass.HistoricalExpendituresReader();
             while (reader.Read())
             {

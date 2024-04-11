@@ -121,7 +121,7 @@ namespace ValleyVisionSolution.Pages.DB
 
             using (SqlConnection connection = new SqlConnection(MainConnString))
             {
-                string sqlQuery = "SELECT year_, realEstateTax, personalPropertyTax, feesLicensesTax, stateFunding, totalRevenue FROM DataFile_2;";
+                string sqlQuery = "SELECT year_, realEstateTax, personalPropertyTax, feesLicensesTax, otherRevenue, totalRevenue FROM DataFile_2;";
                 SqlCommand command = new SqlCommand(sqlQuery, connection);
                 connection.Open();
 
@@ -133,7 +133,7 @@ namespace ValleyVisionSolution.Pages.DB
                     dataItem.RealEstateTax = Convert.ToDecimal(reader["realEstateTax"]);
                     dataItem.PersonalPropertyTax = Convert.ToDecimal(reader["personalPropertyTax"]);
                     dataItem.FeesLicensesTax = Convert.ToDecimal(reader["feesLicensesTax"]);
-                    dataItem.StateFunding = Convert.ToDecimal(reader["stateFunding"]);
+                    dataItem.StateFunding = Convert.ToDecimal(reader["otherRevenue"]);
                     dataItem.TotalRevenue = Convert.ToDecimal(reader["totalRevenue"]);
                     dataList.Add(dataItem);
                 }
@@ -1012,7 +1012,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Parameters.AddWithValue("@StateFunding", newRevenueData.StateFunding);
             decimal TotalRevenue = (newRevenueData.RealEstateTax + newRevenueData.PersonalPropertyTax + newRevenueData.FeesLicensesTax + newRevenueData.StateFunding);
             cmd.Parameters.AddWithValue("@TotalRevenue", TotalRevenue);
-            String sqlQuery = "INSERT INTO DataFile_2 (year_, realEstateTax, personalPropertyTax,feesLicensesTax,stateFunding,totalRevenue) VALUES (@Year, @RealEstateTax, @PersonalPropertyTax, @FeesLicensesTax, @StateFunding, @TotalRevenue);";
+            String sqlQuery = "INSERT INTO DataFile_2 (year_, realEstateTax, personalPropertyTax,feesLicensesTax,otherRevenue,totalRevenue) VALUES (@Year, @RealEstateTax, @PersonalPropertyTax, @FeesLicensesTax, @StateFunding, @TotalRevenue);";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
@@ -1032,10 +1032,23 @@ namespace ValleyVisionSolution.Pages.DB
             cmd2.Parameters.AddWithValue("@StateFunding", rev.StateFunding);
             decimal TotalRevenue = (rev.RealEstateTax + rev.PersonalPropertyTax + rev.FeesLicensesTax + rev.StateFunding);
             cmd2.Parameters.AddWithValue("@TotalRevenue", TotalRevenue);
-            String sqlQuery2 = "UPDATE DataFile_2 SET realEstateTax=@RealEstateTax, personalPropertyTax=@PersonalPropertyTax, feesLicensesTax=@FeesLicensesTax, stateFunding=@StateFunding, totalRevenue=@TotalRevenue WHERE year_=@Year;";
+            String sqlQuery2 = "UPDATE DataFile_2 SET realEstateTax=@RealEstateTax, personalPropertyTax=@PersonalPropertyTax, feesLicensesTax=@FeesLicensesTax, otherRevenue=@StateFunding, totalRevenue=@TotalRevenue WHERE year_=@Year;";
             cmd2.CommandText = sqlQuery2;
             cmd2.Connection.Open();
             cmd2.ExecuteNonQuery();
+        }
+
+        public static void DeleteRevenueData(int year)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@YeartoEdit", year);
+            String sqlQuery = "DELETE FROM DataFile_2 WHERE year_ = @YeartoEdit;";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
         }
 
         public static SqlDataReader SingleRevenueDataReader(int? year)
@@ -1136,12 +1149,13 @@ namespace ValleyVisionSolution.Pages.DB
             return tempReader;
         }
 
-        public static void EditHistoricSpendingData(Expenditure expen)
+        public static void EditHistoricSpendingData(Expenditure expen, int year)
         {
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
-            cmd.Parameters.AddWithValue("@Year", expen.Year);
+            cmd.Parameters.AddWithValue("@YeartoEdit", year);
+            cmd.Parameters.AddWithValue("@NewYear", expen.Year);
             cmd.Parameters.AddWithValue("@InflationRate", expen.InflationRate);
             cmd.Parameters.AddWithValue("@InterestRate", expen.InterestRate);
             cmd.Parameters.AddWithValue("@PublicSafety", expen.PublicSafety);
@@ -1150,10 +1164,23 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Parameters.AddWithValue("@Other", expen.Other);
             decimal TotalExpenditure = (expen.Year + expen.InflationRate + expen.InterestRate + expen.PublicSafety + expen.School + expen.Anomaly + expen.Other);
             cmd.Parameters.AddWithValue("@TotalExpenditure", TotalExpenditure);
-            String sqlQuery2 = "UPDATE DataFile_3 SET year_=@Year, inflationRate=@InflationRate, interestRate=@InterestRate, publicSafety=@PublicSafety, school=@School, anomaly=@Anomaly, other=@Other, totalExpenditure=@TotalExpenditure WHERE year_=@Year;";
-            cmd.CommandText = sqlQuery2;
+            String sqlQuery = "UPDATE DataFile_3 SET year_=@NewYear, inflationRate=@InflationRate, interestRate=@InterestRate, publicSafety=@PublicSafety, school=@School, anomaly=@Anomaly, other=@Other, totalExpenditure=@TotalExpenditure WHERE year_=@YeartoEdit;";
+            cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
+        }
+
+        public static void DeleteHistoricalSpendData(int year)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@YeartoEdit", year);
+            String sqlQuery = "DELETE FROM DataFile_3 WHERE year_ = @YeartoEdit;";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
         }
 
         public static void AddHistoricalSpendingData(Expenditure newHistoricalSpendData)

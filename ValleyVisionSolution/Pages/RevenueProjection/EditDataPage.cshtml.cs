@@ -28,7 +28,7 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
                 RevenueToUpdate.RealEstateTax = Convert.ToDecimal(singleRevenueYear["realEstateTax"].ToString());
                 RevenueToUpdate.PersonalPropertyTax = Convert.ToDecimal(singleRevenueYear["personalPropertyTax"].ToString());
                 RevenueToUpdate.FeesLicensesTax = Convert.ToDecimal(singleRevenueYear["feesLicensesTax"].ToString());
-                RevenueToUpdate.StateFunding = Convert.ToDecimal(singleRevenueYear["stateFunding"].ToString());
+                RevenueToUpdate.StateFunding = Convert.ToDecimal(singleRevenueYear["otherRevenue"].ToString());
 
             }
             DBClass.ValleyVisionConnection.Close();

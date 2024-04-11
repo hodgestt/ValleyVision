@@ -1,0 +1,88 @@
+﻿@page
+@model ValleyVisionSolution.Pages.HistoricalSpending.EditDataPageModel
+@using Expenditure = ValleyVisionSolution.Pages.DataClasses.Expenditure;
+@{
+    ViewData["Title"] = "Historical Expenditure";
+}
+
+<!-- Editing Historical Data Form -->
+    <div class="modal fade" id="editHistoricalSpendingDataForm" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form method="post" asp-page="/HistoricalSpending/EditDataPage">
+                <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Edit Data</h5>
+                    <button type="button" id="closeButton" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Year: </div>
+                            <input asp-for="@Model.ExpenditureToUpdate.Year" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.ExpenditureToUpdate.Year"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Inflation Rate: </div>
+                            <input asp-for="@Model.ExpenditureToUpdate.InflationRate" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.ExpenditureToUpdate.InflationRate"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Interest Rate: </div>
+                            <input asp-for="@Model.ExpenditureToUpdate.InterestRate" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.ExpenditureToUpdate.InterestRate"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Public Safety: </div>
+                            <input asp-for="@Model.ExpenditureToUpdate.PublicSafety" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.ExpenditureToUpdate.PublicSafety"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>School: </div>
+                            <input asp-for="@Model.ExpenditureToUpdate.School" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.ExpenditureToUpdate.School"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Anomaly: </div>
+                            <input asp-for="@Model.ExpenditureToUpdate.Anomaly" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.ExpenditureToUpdate.Anomaly"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Other: </div>
+                            <input asp-for="@Model.ExpenditureToUpdate.Other" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.ExpenditureToUpdate.Other"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top:none">
+                    <button type="submit" class="btn btn-primary" asp-page-handler="EditData">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- End Editing Spending Data Form -->
+
+
+<script>
+    // Check if AddTaskInvalid is true on page load and reopen modal if needed
+    window.addEventListener('DOMContentLoaded', (event) => {
+        $('#editHistoricalSpendingDataForm').modal('show');
+
+    });
+</script>
+<script>
+    document.getElementById('closeButton').addEventListener('click', function () {
+        // Redirect to the specific page
+        window.location.href ='/HistoricalSpending/ViewDataPage';
+    });
+</script>    
