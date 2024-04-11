@@ -27,6 +27,7 @@ namespace ValleyVisionSolution.Pages
                     FileType = reader["FileType"].ToString(),
                     UploadedDateTime = DateTime.Parse(reader["UploadedDateTime"].ToString()),
                     userID = int.Parse(reader["userID"].ToString()),
+                    publishdate = DateTime.Parse(reader["publishdate"].ToString()),
                 };
 
                 // If a search term is provided, only add files that match the term.

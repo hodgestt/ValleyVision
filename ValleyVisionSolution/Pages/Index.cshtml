@@ -109,7 +109,7 @@
                     <tr>
                         <th>File Name</th>
                         <th>File Type</th>
-                        <th>Uploaded Date</th>
+                        <th>Date Published</th>
                         <th>Download</th>
                     </tr>
                 </thead>
@@ -119,7 +119,7 @@
                         <tr>
                             <td>@resource.FileName_</td>
                             <td>@resource.FileType</td>
-                            <td>@resource.UploadedDateTime.ToString("MM/dd/yyyy")</td>
+                            <td>@resource.publishdate.ToString("MM/dd/yyyy")</td>
                             <td class="col text-center">
                                 <a href="@Url.Content(resource.FilePath)" class="btn btn-primary" download><i class="bi bi-download"></i></a>
                             </td>

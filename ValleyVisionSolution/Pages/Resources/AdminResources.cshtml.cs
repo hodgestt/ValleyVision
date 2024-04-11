@@ -106,6 +106,12 @@ namespace ValleyVisionSolution.Pages.Resources
             return RedirectToPage(); // Redirect back to the same page to refresh the list and show the updated publish status
         }
 
+        public IActionResult OnPostUnpublishFileAsync(int fileId)
+        {
+            DBClass.UnPublishFile(fileId);
+            return RedirectToPage();
+        }
+
         public async Task<IActionResult> OnGetDownloadFileAsync(string filePath, string fileName)
         {
             // Assuming 'filePath' is the unique blob name used when the file was uploaded
