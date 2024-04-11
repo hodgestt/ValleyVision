@@ -26,7 +26,7 @@
 <div class="modal fade" id="editTaskForm" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <form method="post" asp-page="/TaskManagerPage">
+            <form method="post" asp-page="/TaskManagerPage" onsubmit="return confirm('Are you sure?')">
                 <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Task View</h5>
@@ -117,8 +117,8 @@
 
                 </div>
                 <div class="modal-footer" style="border-top:none">
-                    <button type="submit" class="btn btn-primary" asp-page-handler="UpdateTask">Update</button>
                     <button type="submit" class="btn btn-danger ml-auto" asp-page-handler="DeleteTask">Delete</button>
+                    <button type="submit" class="btn btn-primary" asp-page-handler="UpdateTask">Update</button>
                 </div>
             </form>
 

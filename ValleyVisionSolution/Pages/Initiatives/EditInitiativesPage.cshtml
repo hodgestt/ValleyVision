@@ -2,6 +2,25 @@
 @model ValleyVisionSolution.Pages.Initiatives.EditInitiativesPageModel
 @{
 }
+
+<style>
+    .btn-light {
+        background-color: white !important;
+        border-color: lightgrey;
+        color: black !important;
+    }
+
+        .btn-check:focus + .btn-light, .btn-light:focus {
+            color: #000;
+            background-color: #f9fafb;
+            border-color: #f9fafb;
+            box-shadow: 0 0 0 0.25rem rgba(211,212,213,.5);
+        }
+
+        .btn-light:hover {
+            border-color: lightgrey;
+        }
+</style>
 <!-- Edit Initiative Form -->
 <div class="modal fade" id="editInitForm" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -71,7 +90,7 @@
                         </div>
                     </div>
                     <div class="modal-footer" style="border-top:none">
-                        <button type="submit" class="btn btn-primary" asp-page-handler="DeleteInit">Delete</button>
+                        <button type="submit" class="btn btn-danger ml-auto" asp-page-handler="DeleteInit">Delete</button>
                         <button type="submit" class="btn btn-primary" asp-page-handler="EditInit">Update</button>
                     </div>
                 </div>

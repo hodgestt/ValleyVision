@@ -28,7 +28,7 @@ namespace ValleyVisionSolution.Pages.DB
         private static readonly String? AuthConnString = "Server=Localhost;Database=AUTH;Trusted_Connection=True";
 
         //Azure hosted database connection strings 
-        //private static readonly String? MainConnString = "Server=valleyvisioncapstone.database.windows.net,1433;" +
+        //private static readonly String? MainConnString = "Server=valleyvisioncapstone2.database.windows.net,1433;" +
         //"Database=ValleyVisionMain;" +
         //"User ID=ValleyVisionAdmin;" +
         //"Password=CIS484ValleyVision;" +
@@ -36,9 +36,9 @@ namespace ValleyVisionSolution.Pages.DB
         //"TrustServerCertificate=True;" +
         //"Connection Timeout=30;";
 
-        //private static readonly String? AuthConnString = "Server=valleyvisioncapstone.database.windows.net,1433;" +
+        //private static readonly String? AuthConnString = "Server=valleyvisioncapstone3.database.windows.net,1433;" +
         //"Database=ValleyVisionAuth;" +
-        //"User ID=ValleyVisionAdmin;" +
+        //"User ID=VallyVisionAdmin;" +
         //"Password=CIS484ValleyVision;" +
         //"Encrypt=True;" +
         //"TrustServerCertificate=True;" +

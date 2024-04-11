@@ -114,23 +114,20 @@
                             @if (UserType == "Admin")
 
                             {
+                                
                                 <div class="align-items-center" style="background-color:#274c77; padding-left: 8px;">
-                                    <div class="tile-text" style=" display:flex; align-items:center; height:4vw; background-color:#274C77; color:white; justify-content:space-between;">
-                                        <form method="post" onsubmit="return confirm('Are you sure you want to delete this user?')" asp-page-handler="DeleteInit">
-                                            <button type="submit" class="btn btn-danger btn-sm custom-margin-left;">
-                                                <i class="bi bi-trash"></i>
+                                    <div class="tile-text" style="display: flex; align-items: center; height: 4vw; background-color: #274C77; color: white; justify-content: center;">
+                                        <span>@initiative.InitName</span>
+                                        <form method="post" asp-page="Initiatives/InitiativesPage" style="margin-left: 8px;">
+                                            <input type="hidden" asp-for="@Model.EditedInit" value="@initiative.InitID">
+                                            <button asp-page-handler="EditInit" type="submit" class="btn btn-sm btn-light" style="background-color: #6096BA !important; border-color: #6096BA; color: white !important;">
+                                                <i class="bi bi-pencil"></i>
                                             </button>
                                         </form>
-                                @initiative.InitName
-                                <form method="post" asp-page="Initiatives/InitiativesPage">
-                                    <input type="hidden" asp-for="@Model.EditedInit" value="@initiative.InitID">
-                                    <button asp-page-handler="EditInit" type="submit" class="btn btn-sm btn-light" style="margin-right:8px; align-content: center; background-color: #6096BA !important; border-color: #6096BA; color: white !important; justify-content:center !important;">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                </form>
+                                    </div>
+                                </div>
+
                                 
-                                </div>
-                                </div>
                             }
                             else
                             {
