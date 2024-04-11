@@ -551,7 +551,7 @@ namespace ValleyVisionSolution.Pages.DB
         }
 
 
-        public static void EditDev(DataClasses.DevelopmentArea editedDev, List<int> editedDevUsers)
+        public static void EditDev(DataClasses.DevelopmentArea editedDev)
         {
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
@@ -559,9 +559,8 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Parameters.AddWithValue("@DevName", editedDev.devName);
             cmd.Parameters.AddWithValue("@DevDescription", editedDev.devDescription);
             cmd.Parameters.AddWithValue("@DevImpactLevel", editedDev.devImpactLevel);
-            cmd.Parameters.AddWithValue("@UploadedDateTime", editedDev.uploadedDateTime);
             cmd.Parameters.AddWithValue("@DevID", editedDev.devID);
-            String sqlQuery = "UPDATE DevelopmentArea SET devName = @DevName, devDescription = @DevDescription, devImpactLevel = @DevImpactLevel, uploadedDateTime = @UploadedDateTime WHERE devID = @DevID;";
+            String sqlQuery = "UPDATE DevelopmentArea SET devName = @DevName, devDescription = @DevDescription, devImpactLevel = @DevImpactLevel WHERE devID = @DevID;";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
@@ -1111,6 +1110,58 @@ namespace ValleyVisionSolution.Pages.DB
 
 
 
+        public static SqlDataReader singleExpenditureReader(int? yearid)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@Year", yearid);
+            cmd.CommandText = "SELECT * FROM DataFile_3 WHERE Year_ = @Year;";
+            cmd.Connection.Open(); // Open connection here, close in Model! 
+            SqlDataReader tempReader = cmd.ExecuteReader();
+            return tempReader;
+        }
+
+        public static void EditHistoricSpendingData(Expenditure expen)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@Year", expen.Year);
+            cmd.Parameters.AddWithValue("@InflationRate", expen.InflationRate);
+            cmd.Parameters.AddWithValue("@InterestRate", expen.InterestRate);
+            cmd.Parameters.AddWithValue("@PublicSafety", expen.PublicSafety);
+            cmd.Parameters.AddWithValue("@School", expen.School);
+            cmd.Parameters.AddWithValue("@Anomaly", expen.Anomaly);
+            cmd.Parameters.AddWithValue("@Other", expen.Other);
+            decimal TotalExpenditure = (expen.Year + expen.InflationRate + expen.InterestRate + expen.PublicSafety + expen.School + expen.Anomaly + expen.Other);
+            cmd.Parameters.AddWithValue("@TotalExpenditure", TotalExpenditure);
+            String sqlQuery2 = "UPDATE DataFile_3 SET year_=@Year, inflationRate=@InflationRate, interestRate=@InterestRate, publicSafety=@PublicSafety, school=@School, anomaly=@Anomaly, other=@Other, totalExpenditure=@TotalExpenditure WHERE year_=@Year;";
+            cmd.CommandText = sqlQuery2;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+        }
+
+        public static void AddHistoricalSpendingData(Expenditure newHistoricalSpendData)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@Year", newHistoricalSpendData.Year);
+            cmd.Parameters.AddWithValue("@InflationRate", newHistoricalSpendData.InflationRate);
+            cmd.Parameters.AddWithValue("@InterestRate", newHistoricalSpendData.InterestRate);
+            cmd.Parameters.AddWithValue("@PublicSafety", newHistoricalSpendData.PublicSafety);
+            cmd.Parameters.AddWithValue("@School", newHistoricalSpendData.School);
+            cmd.Parameters.AddWithValue("@Anomaly", newHistoricalSpendData.Anomaly);
+            cmd.Parameters.AddWithValue("@Other", newHistoricalSpendData.Other);
+            decimal TotalExpenditure = (newHistoricalSpendData.Year + newHistoricalSpendData.InflationRate + newHistoricalSpendData.InterestRate + newHistoricalSpendData.PublicSafety + newHistoricalSpendData.School + newHistoricalSpendData.Anomaly + newHistoricalSpendData.Other);
+            cmd.Parameters.AddWithValue("@TotalExpenditure", TotalExpenditure);
+            String sqlQuery = "INSERT INTO DataFile_3 (year_, inflationRate, interestRate, publicSafety, school, anomaly, other, totalExpenditure) VALUES (@Year, @InflationRate, @InterestRate, @PublicSafety, @School, @Anomaly, @Other, @TotalExpenditure);";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+        }
         //END HISTORICAL SPENDING PAGE-------------------------------------------------------------------------------------
 
         //BEGIN SPENDING PROJECTION PAGE-------------------------------------------------------------------------------------

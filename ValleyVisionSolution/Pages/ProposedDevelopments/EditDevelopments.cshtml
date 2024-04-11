@@ -37,47 +37,33 @@
                 </div>
                 <div class="modal-body">
 
-                    <input type="hidden" asp-for="@Model.EditedDev.devID" value="@Model.ViewedDev">
-                    @{
-                        DevelopmentArea DevData = new DevelopmentArea();
-                        foreach (var dev in Model.AllDevs)
-                        {
-                            if (dev.devID == Model.ViewedDev)
-                            {
-                                DevData = dev;
-                            }
-                        }
-                    }
+                    <input type="hidden" asp-for="@Model.EditedDev.devID">
 
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div>Development Name:</div>
-                            <input asp-for="@Model.EditedDev.devName" type="text" class="form-control" value="@DevData.devName">
+                            <input asp-for="@Model.EditedDev.devName" type="text" class="form-control" value="@Model.EditedDev.devName">
                             <span class="text-danger" asp-validation-for="@Model.EditedDev.devName"></span>
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div>Due Date:</div>
-                            <input asp-for="@Model.EditedDev.uploadedDateTime" type="date" class="form-control" value="@DevData.uploadedDateTime.ToString("yyyy-MM-dd")">
-                            <span class="text-danger" asp-validation-for="@Model.EditedDev.uploadedDateTime"></span>
-                        </div>
+                    <div class="row mb-2">
+                        
                         <div class="col-md-6">
                             <div>Impact Level:</div>
                             <select class="form-select" asp-for="@Model.EditedDev.devImpactLevel" id="devImpactLevel">
-                                @if (DevData.devImpactLevel == "Low")
+                                @if (Model.EditedDev.devImpactLevel == "Low")
                                 {
                                     <option value="Low" selected>Low</option>
                                     <option value="Medium">Medium</option>
                                     <option value="High">High</option>
                                 }
-                                @if (DevData.devImpactLevel == "Medium")
+                                @if (Model.EditedDev.devImpactLevel == "Medium")
                                 {
                                     <option value="Low">Low</option>
                                     <option value="Medium" selected>Medium</option>
                                     <option value="High">High</option>
                                 }
-                                @if (DevData.devImpactLevel == "High")
+                                @if (Model.EditedDev.devImpactLevel == "High")
                                 {
                                     <option value="Low">Low</option>
                                     <option value="Medium">Medium</option>
@@ -96,15 +82,14 @@
                     <div class="row mb-3">
                         <div class="col-12">
                             <div>Description:</div>
-                            <textarea asp-for="@Model.TempDevDescription" class="form-control" id="devDescription" rows="3" maxlength="250"></textarea>
-                            <span class="text-danger" asp-validation-for="@Model.TempDevDescription"></span>
-                            <input type="hidden" asp-for="@Model.EditedDev.devDescription" value="tempDesc">
+                            <textarea asp-for="@Model.EditedDev.devDescription" class="form-control" id="devDescription" rows="3" maxlength="250"></textarea>
+                            <span class="text-danger" asp-validation-for="@Model.EditedDev.devDescription"></span>
                         </div>
                     </div>
 
                 </div>
                 <div class="modal-footer" style="border-top:none">
-                    <button type="submit" class="btn btn-primary" asp-page-handler="EditDev">Update</button>
+                    <button type="submit" class="btn btn-primary" asp-page-handler="UpdateDev">Update</button>
                 </div>
             </form>
 
@@ -123,6 +108,6 @@
 <script>
     document.getElementById('closeButton').addEventListener('click', function () {
         // Redirect to the specific page
-        window.location.href = '/ProposedDevelopments/DevelopmentPage';
+        window.location.href = '/ProposedDevelopments/ProposedDevelopmentsPage';
     });
 </script>
