@@ -62,11 +62,24 @@
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
 
-<div class="container">
+@* <div class="container">
     <div class="button-container">
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ecoDevFilesModal">Add Resources from Economic Development</button>
+        <a href="UploadDev">
+            <button type="button" class="btn btn-secondary">Upload File</button>
+        </a>
+    </div>
+</div> *@
+
+<div class="container">
+    <div class="button-container">
+        <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#ecoDevFilesModal">Add Resources from Economic Development</button>
+        <a href="UploadDev">
+            <button type="button" class="btn btn-secondary">Upload File</button>
+        </a>
     </div>
 </div>
+
 
 <!-- Script for redirecting remains the same -->
 <script>
@@ -135,8 +148,20 @@
                     <td>@file.FirstName @file.LastName</td>
                     <td>@file.UploadedDateTime.ToString("MM/dd/yyyy")</td>
                     <td class="text-center">
-                        <a href="@Url.Content(file.FilePath)" class="btn btn-secondary btn-sm" download><i class="bi bi-download"></i></a>
+                        <a href="@Url.Content(file.FilePath)" class="btn btn-secondary btn-sm d-inline-block action-form" download><i class="bi bi-download"></i></a>
+                        <form method="post" asp-page-handler="DeleteDevelopmentFiles" class="d-inline action-form" onsubmit="return confirm('Are you sure you want to remove @file.FileName_ from this development area?')">
+                            <input type="hidden" name="FileMetaID" value="@file.FileMetaID" />
+                            <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-x"></i></button>
+                        </form>
                     </td>
+
+@*                     <td class="text-center col">
+                        <a href="@Url.Content(file.FilePath)" class="btn btn-secondary btn-sm action-form" download><i class="bi bi-download"></i></a>
+                        <form method="post" asp-page-handler="DeleteDevelopmentFiles" class="action-form" onsubmit="return confirm('Are you sure you want to remove @file.FileName_ from this development area?')">
+                            <input type="hidden" name="FileMetaID" value="@file.FileMetaID" />
+                            <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-x"></i></button>
+                        </form>
+                    </td> *@
                 </tr>
             }
         </tbody>

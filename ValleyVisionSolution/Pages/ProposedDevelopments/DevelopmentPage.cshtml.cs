@@ -128,7 +128,7 @@ namespace ValleyVisionSolution.Pages.ProposedDevelopments
             var devID = HttpContext.Session.GetInt32("devID");
             DBClass.DeleteDevelopmentFiles((int)devID, fileMetaID);
             loadData();
-            ModelState.Clear();
+            //ModelState.Clear();
             return RedirectToPage("/ProposedDevelopments/ProposedDevelopmentsPage");
 
         }
