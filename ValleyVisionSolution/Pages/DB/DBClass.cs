@@ -384,6 +384,21 @@ namespace ValleyVisionSolution.Pages.DB
 
             return tempReader;
         }
+
+        public static SqlDataReader AllDevsReader(int? devID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@DevID", devID);
+            cmd.CommandText = "SELECT DISTINCT * FROM DevelopmentArea;";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+
         //reads all tasks associated with a specific user in the specific initiative
         public static SqlDataReader MyTasksReader(int? userID, int? initID)
         {
@@ -469,6 +484,30 @@ namespace ValleyVisionSolution.Pages.DB
 
             return ViewedTaskUsers;
         }
+
+        public static List<int> ViewedDevUsersReader(int? devID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@DevID", devID);
+            cmd.CommandText = "SELECT U.userID FROM User_ U JOIN DevelopmentArea D ON U.userID = D.userID WHERE D.devID = @devID;";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            List<int> ViewedDevUsers = new List<int>();
+
+            while (tempReader.Read())
+            {
+                ViewedDevUsers.Add(Int32.Parse(tempReader["UserID"].ToString()));
+            }
+
+            cmd.Connection.Close();
+
+            return ViewedDevUsers;
+        }
+
         //edit a task
         public static void EditTask(DataClasses.Task editedTask, List<int> editedTaskUsers)
         {
@@ -512,6 +551,22 @@ namespace ValleyVisionSolution.Pages.DB
         }
 
 
+        public static void EditDev(DataClasses.DevelopmentArea editedDev, List<int> editedDevUsers)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@DevName", editedDev.devName);
+            cmd.Parameters.AddWithValue("@DevDescription", editedDev.devDescription);
+            cmd.Parameters.AddWithValue("@DevImpactLevel", editedDev.devImpactLevel);
+            cmd.Parameters.AddWithValue("@UploadedDateTime", editedDev.uploadedDateTime);
+            cmd.Parameters.AddWithValue("@DevID", editedDev.devID);
+            String sqlQuery = "UPDATE DevelopmentArea SET devName = @DevName, devDescription = @DevDescription, devImpactLevel = @DevImpactLevel, uploadedDateTime = @UploadedDateTime WHERE devID = @DevID;";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+        }
 
 
 

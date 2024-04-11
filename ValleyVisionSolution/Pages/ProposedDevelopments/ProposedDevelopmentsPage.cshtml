@@ -11,6 +11,12 @@
         vertical-align: middle !important;
     }
 
+    .otherHeader {
+        background-color: lightgray;
+        color: #274c77;
+        vertical-align: middle !important;
+    }
+
     /* Fixed column widths */
     .col-name {
         width: 20%;
@@ -56,16 +62,27 @@
         color: white; /* Matching table header text color */
         padding: 10px; /* Adequate padding around the text */
         border-radius: 5px; /* Slightly rounded corners for a modern look */
-        margin-bottom: 20px; /* Space between title and table */
+/*         margin-bottom: 20px; /* Space between title and table */ */
     }
+
+    .droptop{
+        margin-bottom: 10px;
+    }
+
+    .coleur{
+        color: #6096ba;
+    }
+
 </style>
 
-<div class="text-end">
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProposedDevelopment">Create Proposed Development</button>
-
-</div>
 
 <div class="container mt-4">
+
+    <div class="text-end droptop">
+        <button class="btn btn-outline-primary coleur" data-bs-toggle="modal" data-bs-target="#addProposedDevelopment">Create Proposed Development</button>
+    </div>
+
+
     <!-- High Impact Section -->
     @if (Model.HighImpact.Any())
     {
@@ -73,7 +90,7 @@
             <div class="col-12">
                 <h2 class="section-title">High Impact Proposed Developments</h2>
                 <table class="table table-bordered table-hover">
-                    <thead class="tableHeader">
+                    <thead class="otherHeader">
                         <tr>
                             <th scope="col" class="col-name">Name</th>
                             <th scope="col" class="col-description">Description</th>
@@ -90,10 +107,10 @@
                                 <td>@dev.devDescription</td>
                                 <td>@dev.devImpactLevel</td>
                                 <td>@dev.uploadedDateTime.ToString("MM/dd/yyyy")</td>
-                                <td>
+                                <td class="text-center col">
                                     <form method="post" asp-page-handler="ViewDetails" class="action-form">
                                         <input type="hidden" name="devID" value="@dev.devID" />
-                                        <button type="submit" class="btn btn-outline-secondary btn-sm trash"><i class="bi bi-info-lg"></i></button>
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm trash"><i class="bi bi-zoom-in"></i></button>
                                     </form>
                                     <form method="post" asp-page-handler="Delete" class="action-form" onsubmit="return confirm('Are you sure you want to delete this dev area?')">
                                         <!-- Assuming Delete handler is present -->
@@ -113,14 +130,14 @@
         <p>No high impact proposed developments found.</p>
     }
 
-    <!-- Medium Impact Section -->
+    <!-- Medium Impact Section Hi -->
     @if (Model.MidImpact.Any())
     {
         <div class="row mt-4">
             <div class="col-12">
                 <h2 class="section-title">Medium Impact Proposed Developments</h2>
                 <table class="table table-bordered table-hover">
-                    <thead class="tableHeader">
+                    <thead class="otherHeader">
                         <tr>
                             <th scope="col" class="col-name">Name</th>
                             <th scope="col" class="col-description">Description</th>
@@ -138,10 +155,10 @@
                                 <td>@dev.devDescription</td>
                                 <td>@dev.devImpactLevel</td>
                                 <td>@dev.uploadedDateTime.ToString("MM/dd/yyyy")</td>
-                                <td>
+                                <td class="text-center col">
                                     <form method="post" asp-page-handler="ViewDetails" class="action-form">
                                         <input type="hidden" name="devID" value="@dev.devID" />
-                                        <button type="submit" class="btn btn-outline-secondary btn-sm trash"><i class="bi bi-info-lg"></i></button>
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm trash"><i class="bi bi-zoom-in"></i></button>
                                     </form>
                                     <form method="post" asp-page-handler="Delete" class="action-form" onsubmit="return confirm('Are you sure you want to delete this dev area?')">
                                         <!-- Assuming Delete handler is present -->
@@ -168,7 +185,7 @@
             <div class="col-12">
                 <h2 class="section-title">Low Impact Proposed Developments</h2>
                 <table class="table table-bordered table-hover">
-                    <thead class="tableHeader">
+                    <thead class="otherHeader">
                         <tr>
                             <th scope="col" class="col-name">Name</th>
                             <th scope="col" class="col-description">Description</th>
@@ -186,10 +203,10 @@
                                 <td>@dev.devDescription</td>
                                 <td>@dev.devImpactLevel</td>
                                 <td>@dev.uploadedDateTime.ToString("MM/dd/yyyy")</td>
-                                <td>
+                                <td class="text-center col">
                                     <form method="post" asp-page-handler="ViewDetails" class="action-form">
                                         <input type="hidden" name="devID" value="@dev.devID" />
-                                        <button type="submit" class="btn btn-outline-secondary trash"><i class="bi bi-info-lg"></i></button>
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm trash"><i class="bi bi-zoom-in"></i></button>
                                     </form>
                                     <form method="post" asp-page-handler="Delete" class="action-form" onsubmit="return confirm('Are you sure you want to delete this dev area?')">
                                         <!-- Assuming Delete handler is present -->
@@ -210,7 +227,6 @@
     }
 </div>
 
-<!--CONNOR LOOK HERE. IT CALLS THE DB CLASS AND THEN THE ERROR HAPPENS-->
 <!-- Add New Proposed Development Form -->
 <div class="modal fade" id="addProposedDevelopment" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
