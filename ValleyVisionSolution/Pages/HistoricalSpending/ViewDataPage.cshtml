@@ -1,0 +1,142 @@
+﻿@page
+@model ValleyVisionSolution.Pages.HistoricalSpending.ViewDataPageModel
+@{
+    ViewData["Title"] = "View Data";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+
+<style>
+    .tableHeader {
+        background-color: #274c77;
+        color: white;
+        vertical-align: middle !important;
+    }
+</style>
+
+<h2 style="color:#274c77">Historical Spending Data</h2>
+<br />
+<table class="table table-bordered table-striped table-responsive table-hover">
+    <thead class="tableHeader">
+        <tr>
+            <th>Year</th>
+            <th>Inflation Rate</th>
+            <th>Interest Rate</th>
+            <th>Public Safety</th>
+            <th>School</th>
+            <th>Anomaly</th>
+            <th>Other</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach (var year in Model.HistoricalExpenditureDataList)
+            {
+                <tr>
+                    <td>@year.Year</td>
+                    <td>@year.InflationRate</td>
+                    <td>@year.InterestRate</td>
+                    <td>@year.PublicSafety</td>
+                    <td>@year.School</td>
+                    <td>@year.Anomaly</td>
+                    <td>@year.Other</td>
+                    <td class="text-center">
+                        <div style="display: inline-block;">
+                            <a href="@Url.Page("/HistoricalSpending/EditDataPage", new { year = @year.Year })" class="btn btn-sm btn-light" style="margin-right: 5px;">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <form method="post" asp-page-handler="Delete" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this data record?')">
+                                <input type="hidden" name="Year" value="@year.Year" />
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+</table>
+<div style="display:flex; justify-content:right;">
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addHistoricalSpendingDataForm">Add Historical Data</button>
+</div>
+
+
+<!-- Add New Data Form -->
+<div class="modal fade" id="addHistoricalSpendingDataForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form method="post" asp-page="/HistoricalSpending/ViewDataPage">
+                <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add Current Year</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Year: </div>
+                            <input asp-for="@Model.NewHistoricalSpendingData.Year" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewHistoricalSpendingData.Year"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Inflation Rate: </div>
+                            <input asp-for="@Model.NewHistoricalSpendingData.InflationRate" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewHistoricalSpendingData.InflationRate"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Interest Rate: </div>
+                            <input asp-for="@Model.NewHistoricalSpendingData.InterestRate" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewHistoricalSpendingData.InterestRate"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Public Safety: </div>
+                            <input asp-for="@Model.NewHistoricalSpendingData.PublicSafety" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewHistoricalSpendingData.PublicSafety"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>School: </div>
+                            <input asp-for="@Model.NewHistoricalSpendingData.School" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewHistoricalSpendingData.School"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Anomaly: </div>
+                            <input asp-for="@Model.NewHistoricalSpendingData.Anomaly" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewHistoricalSpendingData.Anomaly"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Other: </div>
+                            <input asp-for="@Model.NewHistoricalSpendingData.Other" type="int" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.NewHistoricalSpendingData.Other"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top:none">
+                    <button type="submit" class="btn btn-primary" asp-page-handler="NewData">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- End New Data Form -->
+
+<script>
+    // Check if AddDataInvalid is true on page load and reopen modal if needed
+    window.addEventListener('DOMContentLoaded', (event) => {
+        if (@Model.OpenAddDataModal.ToString().ToLower()) {
+            $('#addDataForm').modal('show');
+        }
+    });
+</script>

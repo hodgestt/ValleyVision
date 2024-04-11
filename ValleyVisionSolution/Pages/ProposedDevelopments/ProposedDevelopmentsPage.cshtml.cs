@@ -114,6 +114,12 @@ namespace ValleyVisionSolution.Pages.ProposedDev
             return RedirectToPage("/ProposedDevelopments/DevelopmentPage");
         }
 
+        public IActionResult OnPostEdit(int devID) 
+        {
+            HttpContext.Session.SetInt32("devID", devID);
+            return RedirectToPage("/ProposedDevelopments/EditDevelopments");
+        }
+
 
         public IActionResult OnPostDelete(int devid)
         {

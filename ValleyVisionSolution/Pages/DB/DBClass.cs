@@ -121,7 +121,7 @@ namespace ValleyVisionSolution.Pages.DB
 
             using (SqlConnection connection = new SqlConnection(MainConnString))
             {
-                string sqlQuery = "SELECT year_, realEstateTax, personalPropertyTax, feesLicensesTax, stateFunding, totalRevenue FROM DataFile_2;";
+                string sqlQuery = "SELECT year_, realEstateTax, personalPropertyTax, feesLicensesTax, otherRevenue, totalRevenue FROM DataFile_2;";
                 SqlCommand command = new SqlCommand(sqlQuery, connection);
                 connection.Open();
 
@@ -133,7 +133,7 @@ namespace ValleyVisionSolution.Pages.DB
                     dataItem.RealEstateTax = Convert.ToDecimal(reader["realEstateTax"]);
                     dataItem.PersonalPropertyTax = Convert.ToDecimal(reader["personalPropertyTax"]);
                     dataItem.FeesLicensesTax = Convert.ToDecimal(reader["feesLicensesTax"]);
-                    dataItem.StateFunding = Convert.ToDecimal(reader["stateFunding"]);
+                    dataItem.StateFunding = Convert.ToDecimal(reader["otherRevenue"]);
                     dataItem.TotalRevenue = Convert.ToDecimal(reader["totalRevenue"]);
                     dataList.Add(dataItem);
                 }
@@ -306,7 +306,21 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@fileID", fileID);
-            String sqlQuery = "UPDATE FileMeta SET published = 'yes' WHERE FileMetaID = @fileID";
+            cmd.Parameters.AddWithValue("@publishdate", DateTime.Now);
+            String sqlQuery = "UPDATE FileMeta SET published = 'yes', publishdate = @publishdate WHERE FileMetaID = @fileID";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+        }
+
+        public static void UnPublishFile(int fileID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@fileID", fileID);
+            String sqlQuery = "UPDATE FileMeta SET published = 'no' WHERE FileMetaID = @fileID";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
@@ -385,13 +399,13 @@ namespace ValleyVisionSolution.Pages.DB
             return tempReader;
         }
 
-        public static SqlDataReader AllDevsReader(int? userID)
+        public static SqlDataReader AllDevsReader(int? devID)
         {
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
-            cmd.Parameters.AddWithValue("@UserID", userID);
-            cmd.CommandText = "SELECT DISTINCT * FROM DevelopmentArea D JOIN User_ U ON D.userID = U.userID WHERE U.userID = @UserID;";
+            cmd.Parameters.AddWithValue("@DevID", devID);
+            cmd.CommandText = "SELECT DISTINCT * FROM DevelopmentArea;";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -551,7 +565,7 @@ namespace ValleyVisionSolution.Pages.DB
         }
 
 
-        public static void EditDev(DataClasses.DevelopmentArea editedDev, List<int> editedDevUsers)
+        public static void EditDev(DataClasses.DevelopmentArea editedDev)
         {
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
@@ -559,9 +573,8 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Parameters.AddWithValue("@DevName", editedDev.devName);
             cmd.Parameters.AddWithValue("@DevDescription", editedDev.devDescription);
             cmd.Parameters.AddWithValue("@DevImpactLevel", editedDev.devImpactLevel);
-            cmd.Parameters.AddWithValue("@UploadedDateTime", editedDev.uploadedDateTime);
             cmd.Parameters.AddWithValue("@DevID", editedDev.devID);
-            String sqlQuery = "UPDATE DevelopmentArea SET devName = @DevName, devDescription = @DevDescription, devImpactLevel = @DevImpactLevel, uploadedDateTime = @UploadedDateTime WHERE devID = @DevID;";
+            String sqlQuery = "UPDATE DevelopmentArea SET devName = @DevName, devDescription = @DevDescription, devImpactLevel = @DevImpactLevel WHERE devID = @DevID;";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
@@ -999,7 +1012,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Parameters.AddWithValue("@StateFunding", newRevenueData.StateFunding);
             decimal TotalRevenue = (newRevenueData.RealEstateTax + newRevenueData.PersonalPropertyTax + newRevenueData.FeesLicensesTax + newRevenueData.StateFunding);
             cmd.Parameters.AddWithValue("@TotalRevenue", TotalRevenue);
-            String sqlQuery = "INSERT INTO DataFile_2 (year_, realEstateTax, personalPropertyTax,feesLicensesTax,stateFunding,totalRevenue) VALUES (@Year, @RealEstateTax, @PersonalPropertyTax, @FeesLicensesTax, @StateFunding, @TotalRevenue);";
+            String sqlQuery = "INSERT INTO DataFile_2 (year_, realEstateTax, personalPropertyTax,feesLicensesTax,otherRevenue,totalRevenue) VALUES (@Year, @RealEstateTax, @PersonalPropertyTax, @FeesLicensesTax, @StateFunding, @TotalRevenue);";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
@@ -1019,10 +1032,23 @@ namespace ValleyVisionSolution.Pages.DB
             cmd2.Parameters.AddWithValue("@StateFunding", rev.StateFunding);
             decimal TotalRevenue = (rev.RealEstateTax + rev.PersonalPropertyTax + rev.FeesLicensesTax + rev.StateFunding);
             cmd2.Parameters.AddWithValue("@TotalRevenue", TotalRevenue);
-            String sqlQuery2 = "UPDATE DataFile_2 SET realEstateTax=@RealEstateTax, personalPropertyTax=@PersonalPropertyTax, feesLicensesTax=@FeesLicensesTax, stateFunding=@StateFunding, totalRevenue=@TotalRevenue WHERE year_=@Year;";
+            String sqlQuery2 = "UPDATE DataFile_2 SET realEstateTax=@RealEstateTax, personalPropertyTax=@PersonalPropertyTax, feesLicensesTax=@FeesLicensesTax, otherRevenue=@StateFunding, totalRevenue=@TotalRevenue WHERE year_=@Year;";
             cmd2.CommandText = sqlQuery2;
             cmd2.Connection.Open();
             cmd2.ExecuteNonQuery();
+        }
+
+        public static void DeleteRevenueData(int year)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@YeartoEdit", year);
+            String sqlQuery = "DELETE FROM DataFile_2 WHERE year_ = @YeartoEdit;";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
         }
 
         public static SqlDataReader SingleRevenueDataReader(int? year)
@@ -1111,6 +1137,72 @@ namespace ValleyVisionSolution.Pages.DB
 
 
 
+        public static SqlDataReader singleExpenditureReader(int? yearid)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@Year", yearid);
+            cmd.CommandText = "SELECT * FROM DataFile_3 WHERE Year_ = @Year;";
+            cmd.Connection.Open(); // Open connection here, close in Model! 
+            SqlDataReader tempReader = cmd.ExecuteReader();
+            return tempReader;
+        }
+
+        public static void EditHistoricSpendingData(Expenditure expen, int year)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@YeartoEdit", year);
+            cmd.Parameters.AddWithValue("@NewYear", expen.Year);
+            cmd.Parameters.AddWithValue("@InflationRate", expen.InflationRate);
+            cmd.Parameters.AddWithValue("@InterestRate", expen.InterestRate);
+            cmd.Parameters.AddWithValue("@PublicSafety", expen.PublicSafety);
+            cmd.Parameters.AddWithValue("@School", expen.School);
+            cmd.Parameters.AddWithValue("@Anomaly", expen.Anomaly);
+            cmd.Parameters.AddWithValue("@Other", expen.Other);
+            decimal TotalExpenditure = (expen.Year + expen.InflationRate + expen.InterestRate + expen.PublicSafety + expen.School + expen.Anomaly + expen.Other);
+            cmd.Parameters.AddWithValue("@TotalExpenditure", TotalExpenditure);
+            String sqlQuery = "UPDATE DataFile_3 SET year_=@NewYear, inflationRate=@InflationRate, interestRate=@InterestRate, publicSafety=@PublicSafety, school=@School, anomaly=@Anomaly, other=@Other, totalExpenditure=@TotalExpenditure WHERE year_=@YeartoEdit;";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+        }
+
+        public static void DeleteHistoricalSpendData(int year)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@YeartoEdit", year);
+            String sqlQuery = "DELETE FROM DataFile_3 WHERE year_ = @YeartoEdit;";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+        }
+
+        public static void AddHistoricalSpendingData(Expenditure newHistoricalSpendData)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@Year", newHistoricalSpendData.Year);
+            cmd.Parameters.AddWithValue("@InflationRate", newHistoricalSpendData.InflationRate);
+            cmd.Parameters.AddWithValue("@InterestRate", newHistoricalSpendData.InterestRate);
+            cmd.Parameters.AddWithValue("@PublicSafety", newHistoricalSpendData.PublicSafety);
+            cmd.Parameters.AddWithValue("@School", newHistoricalSpendData.School);
+            cmd.Parameters.AddWithValue("@Anomaly", newHistoricalSpendData.Anomaly);
+            cmd.Parameters.AddWithValue("@Other", newHistoricalSpendData.Other);
+            decimal TotalExpenditure = (newHistoricalSpendData.Year + newHistoricalSpendData.InflationRate + newHistoricalSpendData.InterestRate + newHistoricalSpendData.PublicSafety + newHistoricalSpendData.School + newHistoricalSpendData.Anomaly + newHistoricalSpendData.Other);
+            cmd.Parameters.AddWithValue("@TotalExpenditure", TotalExpenditure);
+            String sqlQuery = "INSERT INTO DataFile_3 (year_, inflationRate, interestRate, publicSafety, school, anomaly, other, totalExpenditure) VALUES (@Year, @InflationRate, @InterestRate, @PublicSafety, @School, @Anomaly, @Other, @TotalExpenditure);";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+        }
         //END HISTORICAL SPENDING PAGE-------------------------------------------------------------------------------------
 
         //BEGIN SPENDING PROJECTION PAGE-------------------------------------------------------------------------------------

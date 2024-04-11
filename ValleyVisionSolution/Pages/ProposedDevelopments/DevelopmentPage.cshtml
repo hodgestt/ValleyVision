@@ -7,6 +7,143 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
 
 <style>
+    /* Extended theme and consistent styling */
+    :root {
+        --primary-color: #274c77; /* Navy blue */
+        --light-gray: #d3d4d5;
+        --hover-light-gray: #eaeaea;
+        --focus-ring-color: rgba(39, 76, 119, 0.5);
+    }
+
+    .btn-primary, .btn-secondary {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+        border-color: var(--primary-color);
+    }
+
+        .btn-primary:hover, .btn-secondary:hover {
+            background-color: var(--hover-light-gray) !important;
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color);
+        }
+
+    /* Adjusting the card header to match the theme */
+    .card-header, .coleur {
+        background-color: var(--primary-color); /* Ensuring the card header matches the theme */
+        color: white; /* White text for readability */
+    }
+
+    /* Button alignment and spacing */
+    .button-container {
+        display: flex;
+        justify-content: end; /* Aligns buttons to the right */
+        margin-bottom: 20px;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: var(--hover-light-gray);
+    }
+
+    .table {
+        border-collapse: collapse; /* Ensure borders collapse into a single line */
+    }
+
+        .table th, .table td {
+            border: 1px solid #dee2e6; /* Bootstrap’s default border color for tables */
+        }
+
+        .table .text-center {
+            text-align: center; /* Centering content in the 'Actions' column */
+        }
+
+    .table-hover thead tr, .table-hover tbody tr {
+        border-bottom: 1px solid #dee2e6; /* Adds a bottom border to each row for clarity */
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+
+<div class="container">
+    <div class="button-container">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ecoDevFilesModal">Add Resources from Economic Development</button>
+    </div>
+</div>
+
+<!-- Script for redirecting remains the same -->
+<script>
+    function redirectToDevelopmentPage() {
+        window.location.href = '/ProposedDevelopments/EditDevelopments';
+    }
+</script>
+
+<!-- Ensuring the main content is wrapped in a 'container' for consistency -->
+<div class="container my-4">
+    <div class="card">
+        <div class="card-header">
+            <!-- Adjusted to use .card-header for clarity -->
+            <h3>@Model.DevName Proposed Development Information</h3>
+        </div>
+        <div class="card-body">
+            <p class="card-text">@Model.DevDescription</p>
+            <p class="card-text">Impact Level: <strong>@Model.DevImpactLevel</strong></p>
+            <p class="card-text">Date Founded: @Model.UploadTime.ToString("MM/dd/yyyy")</p>
+        </div>
+    </div>
+</div>
+<style>
+    .table {
+        border-collapse: collapse; /* Ensure borders collapse into a single line */
+    }
+
+        .table th, .table td {
+            border: 1px solid #dee2e6; /* Bootstrap’s default border color for tables */
+        }
+
+        /* Centering content in the 'Actions' column */
+        .table .text-center {
+            text-align: center;
+        }
+
+    /* Adjusting table header background and text color */
+    .coleur {
+        background-color: #274c77; /* Your primary color */
+        color: white;
+    }
+
+    /* Ensuring all table rows and headers have borders */
+    .table-hover thead tr, .table-hover tbody tr {
+        border-bottom: 1px solid #dee2e6; /* Adds a bottom border to each row */
+    }
+</style>
+
+<div class="container mt-3">
+    <table class="table table-hover">
+        <thead class="coleur">
+            <tr>
+                <th scope="col">File Name</th>
+                <th scope="col">File Type</th>
+                <th scope="col">Uploaded By</th>
+                <th scope="col">Uploaded Date</th>
+                <th scope="col" class="text-center">Actions</th> <!-- Ensure header is also centered -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var file in Model.DevFilesList)
+            {
+                <tr>
+                    <td>@file.FileName_</td>
+                    <td>@file.FileType</td>
+                    <td>@file.FirstName @file.LastName</td>
+                    <td>@file.UploadedDateTime.ToString("MM/dd/yyyy")</td>
+                    <td class="text-center">
+                        <a href="@Url.Content(file.FilePath)" class="btn btn-secondary btn-sm" download><i class="bi bi-download"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<style>
     .btn-light {
         background-color: white !important;
         border-color: lightgrey;
@@ -24,129 +161,6 @@
             border-color: lightgrey;
         }
 </style>
-
-
-
-<div class="container mt-4 mb-4">
-    <div class="card bg-dark text-white">
-        <div class="card-header">
-            <h3>@Model.DevName Proposed Development Information</h3>
-        </div>
-        <div class="card-body">
-            <p class="card-text">@Model.DevDescription</p>
-            <p class="card-text">Impact Level: <strong>@Model.DevImpactLevel</strong></p>
-            <p class="card-text">Date Uploaded: @Model.UploadTime.ToString("MM/dd/yyyy")</p>
-        </div>
-    </div>
-</div>
-
-
-@* @if (Model.DevFilesList.Any())
-{
-    <form method="post" asp-page="/DevelopmentPage">
-        <div class="modal-body">
-            <div class="col-md-6">
-                <div>Select Files</div>
-                <select asp-for="NewDevelopmentFiles" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
-                    @foreach (var file in Model.EconFileList)
-                    {
-                        <option value="@file.FileMetaID">@file.FileName_ </option>
-                    }
-                </select>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="submit" class="btn btn-primary" asp-page-handler="AddDevelopmentFiles">Add Selected File</button>
-        </div>
-    </form>
-
-    <div class="container mt-3">
-        <table class="table table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th scope="col">File Name</th>
-                    <th scope="col">File Type</th>
-                    <th scope="col">Uploaded By</th>
-                    <th scope="col">Uploaded Date</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var file in Model.DevFilesList)
-                {
-                    <tr>
-                        <td>@file.FileName_</td>
-                        <td>@file.FileType</td>
-                        <td>@file.FirstName @file.LastName</td>
-                        <td>@file.UploadedDateTime.ToString("MM/dd/yyyy")</td>
-                        <td>
-                            <a href="@Url.Content(file.FilePath)" class="btn btn-primary btn-sm" download>Download</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-    <div >
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ecoDevFilesModal">Add Resources from Economic Development</button>
-    </div>
-    <div>
-        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#ecoDevFilesModal">Edit Development Area</button>
-    </div>
-    
-}
-else
-{ *@
-    <div class="text-center">
-        <!-- Center the content when no files are found -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ecoDevFilesModal">Add Resources from Economic Development</button>
-    </div>
-    <br />
-<div class="text-center">
-    <button type="button" class="btn btn-secondary" onclick="redirectToDevelopmentPage()">Edit Development Area</button>
-</div>
-
-<script>
-    function redirectToDevelopmentPage() {
-        window.location.href = '/ProposedDevelopments/EditDevelopments';
-    }
-</script>
-<div class="container mt-3">
-    <table class="table table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th scope="col">File Name</th>
-                <th scope="col">File Type</th>
-                <th scope="col">Uploaded By</th>
-                <th scope="col">Uploaded Date</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var file in Model.DevFilesList)
-            {
-                <tr>
-                    <td>@file.FileName_</td>
-                    <td>@file.FileType</td>
-                    <td>@file.FirstName @file.LastName</td>
-                    <td>@file.UploadedDateTime.ToString("MM/dd/yyyy")</td>
-                    <td>
-                        <a href="@Url.Content(file.FilePath)" class="btn btn-primary btn-sm" download> <i class="bi bi-download"></i></a>
-                        <form method="post" style="display: inline-block;"
-                              asp-page-handler="DeleteDevelopmentFiles"
-                              asp-route-fileMetaID="@file.FileMetaID"
-                              onsubmit="return confirm('Are you sure you want to delete this file?');">
-                            <button type="submit" class="btn btn-danger btn-sm custom-margin-left">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
-
 
 
 <!-- Modal for adding files to the proposed development -->
