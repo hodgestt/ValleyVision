@@ -28,6 +28,9 @@ namespace ValleyVisionSolution.Pages.Initiatives
         [BindProperty]
         public List<int> NewTiles { get; set; }
 
+        [BindProperty]
+        public int EditedInit { get; set; }
+
         public bool OpenModal { get; set; }
 
         public InitiativesPageModel()
@@ -126,6 +129,11 @@ namespace ValleyVisionSolution.Pages.Initiatives
             return Page();
         }
 
+        public IActionResult OnPostEditInit()
+        {
+            HttpContext.Session.SetInt32("EditedInitID", EditedInit);
+            return RedirectToPage("EditInitiativesPage");
+        }
 
         public IActionResult OnPostLogoutHandler()
         {
