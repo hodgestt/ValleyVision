@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.VisualBasic;
 using System.Data.SqlClient;
 using System.Net;
 using ValleyVisionSolution.Pages.DataClasses;
 using ValleyVisionSolution.Pages.DB;
+using ValleyVisionSolution.Services;
 
 namespace ValleyVisionSolution.Pages.Initiatives
 {
@@ -22,15 +24,22 @@ namespace ValleyVisionSolution.Pages.Initiatives
         [BindProperty]
         public List<int> EditedTiles { get; set; }
 
+        [BindProperty]
+        public IFormFile BackgroundFile { get; set; }
 
 
-        public EditInitiativesPageModel()
+        private readonly IBlobService _blobService;
+
+        public EditInitiativesPageModel(IBlobService blobService)
         {
             EditedInitiative = new Initiative();
             InitUsers = new List<User>();
             SelectedInitUsers = new List<int>();
             Tiles = new List<Tile>();
             SelectedTiles = new List<int>();
+
+            _blobService = blobService;
+
         }
 
         public void loadData()
@@ -55,6 +64,8 @@ namespace ValleyVisionSolution.Pages.Initiatives
             }
             DBClass.ValleyVisionConnection.Close();
             // Close your connection in DBClass
+
+            
 
             //Populate Users list
             SqlDataReader reader2 = DBClass.UsersReader(HttpContext.Session.GetInt32("UserID"));
@@ -115,9 +126,36 @@ namespace ValleyVisionSolution.Pages.Initiatives
             return RedirectToPage("/Initiatives/InitiativesPage");
         }
 
-        public IActionResult OnPostEditInit()
+        public async Task<IActionResult> OnPostEditInitAsync()
         {
-            
+            if (EditedInitiative.InitName == null)
+            {
+                loadData();
+                return Page();
+            }
+
+            if (BackgroundFile != null && BackgroundFile.Length > 0)
+            {
+                // Generate a unique file name to avoid overwriting existing files
+                var fileName = Path.GetFileNameWithoutExtension(BackgroundFile.FileName);
+                var fileExtension = Path.GetExtension(BackgroundFile.FileName);
+                var uniqueFileName = $"{fileName}{DateTime.Now:yyyyMMddHHmmss}{fileExtension}";
+
+                // Upload the file to Azure Blob Storage
+                string blobUrl;
+                using (var fileStream = BackgroundFile.OpenReadStream())
+                {
+                    // Assuming UploadFileBlobAsync uploads the file and returns the full Blob URL
+                    await _blobService.UploadFileBlobAsync(uniqueFileName, fileStream, BackgroundFile.ContentType);
+                }
+
+                // If the _blobService.UploadFileBlobAsync method doesn't return a URL, construct it manually
+                string storageAccountUrl = "https://valleyvisionstorage2.blob.core.windows.net/";
+                string containerName = "uploads";
+                blobUrl = $"{storageAccountUrl}{containerName}/{uniqueFileName}";
+
+                EditedInitiative.FilePath = blobUrl;
+            }
             DBClass.EditInit(EditedInitiative, EditedInitUsers, EditedTiles, HttpContext.Session.GetInt32("UserID"));
             loadData();
             return RedirectToPage("/Initiatives/InitiativesPage");

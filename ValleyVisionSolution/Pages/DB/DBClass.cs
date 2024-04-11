@@ -150,7 +150,8 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Parameters.AddWithValue("@InitID", EditedInit.InitID);
             cmd.Parameters.AddWithValue("@InitName", EditedInit.InitName);
             cmd.Parameters.AddWithValue("@InitDateTime", EditedInit.InitDateTime);
-            String sqlQuery = "UPDATE Initiative SET InitName = @InitName, InitDateTime = @InitDateTime WHERE initID = @InitID;";
+            cmd.Parameters.AddWithValue("@FilePath", EditedInit.FilePath);
+            String sqlQuery = "UPDATE Initiative SET InitName = @InitName, filePath = @FilePath, InitDateTime = @InitDateTime WHERE initID = @InitID;";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
