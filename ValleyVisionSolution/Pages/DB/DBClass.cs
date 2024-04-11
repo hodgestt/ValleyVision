@@ -113,6 +113,101 @@ namespace ValleyVisionSolution.Pages.DB
             return tempReader;
         }
 
+        //delete initiative 
+        public static void DeleteInitiative(int? initID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@InitID", initID);
+            String sqlQuery = "DELETE FROM TaskUsers WHERE TaskID IN (SELECT TaskID FROM Task WHERE InitID = @InitID) " + "DELETE FROM Task WHERE initID = @InitID " + "DELETE FROM Message_ WHERE initID = @InitID " + "DELETE FROM InitiativeUsers WHERE initID=@InitID " + "DELETE FROM Initiativefiles WHERE initID=@InitID " + "DELETE FROM InitiativeTiles WHERE initID=@InitID " + "DELETE FROM Initiative WHERE initID=@InitID;";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+
+        }
+
+        public static SqlDataReader EditedInitiativeReader(int initID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@InitID", initID);
+            cmd.CommandText = "SELECT DISTINCT I.initID, I.initName, I.filePath, I.initDateTime FROM Initiative I WHERE I.initID = @InitID;";
+            cmd.Connection.Open(); // Open connection here, close in Model! 
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+        //adds a new initiative with selected tiles and users with the current user as a default
+        public static void EditInit(Initiative EditedInit, List<int> EditedInitUsers, List<int> EditedTiles, int? CurrentUserID)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@InitID", EditedInit.InitID);
+            cmd.Parameters.AddWithValue("@InitName", EditedInit.InitName);
+            cmd.Parameters.AddWithValue("@InitDateTime", EditedInit.InitDateTime);
+            String sqlQuery = "UPDATE Initiative SET InitName = @InitName, InitDateTime = @InitDateTime WHERE initID = @InitID;";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Connection.Close();
+
+            SqlCommand cmd2 = new SqlCommand();
+            cmd2.Connection = ValleyVisionConnection;
+            cmd2.Connection.ConnectionString = MainConnString;
+            cmd2.Parameters.AddWithValue("@InitID", EditedInit.InitID);
+            String sqlQuery2 = "DELETE FROM InitiativeUsers WHERE initID = @InitID;";
+            cmd2.CommandText = sqlQuery2;
+            cmd2.Connection.Open();
+            cmd2.ExecuteNonQuery();
+            cmd2.Connection.Close();
+
+            EditedInitUsers.Add((int)CurrentUserID); //adds the admin ID into each init by default
+
+            foreach (var userID in EditedInitUsers)
+            {
+                SqlCommand cmd3 = new SqlCommand();
+                cmd3.Connection = ValleyVisionConnection;
+                cmd3.Connection.ConnectionString = MainConnString;
+                cmd3.Parameters.AddWithValue("@InitID", EditedInit.InitID);
+                cmd3.Parameters.AddWithValue("@UserID", userID);
+                String sqlQuery3 = "INSERT INTO InitiativeUsers (initID, userID) VALUES (@InitID, @UserID);";
+                cmd3.CommandText = sqlQuery3;
+                cmd3.Connection.Open();
+                cmd3.ExecuteNonQuery();
+                cmd3.Connection.Close();
+            }
+
+            SqlCommand cmd4 = new SqlCommand();
+            cmd4.Connection = ValleyVisionConnection;
+            cmd4.Connection.ConnectionString = MainConnString;
+            cmd4.Parameters.AddWithValue("@InitID", EditedInit.InitID);
+            String sqlQuery4 = "DELETE FROM InitiativeTiles WHERE initID = @InitID;";
+            cmd4.CommandText = sqlQuery4;
+            cmd4.Connection.Open();
+            cmd4.ExecuteNonQuery();
+            cmd4.Connection.Close();
+
+            foreach (var tile in EditedTiles)
+            {
+                SqlCommand cmd3 = new SqlCommand();
+                cmd3.Connection = ValleyVisionConnection;
+                cmd3.Connection.ConnectionString = MainConnString;
+                cmd3.Parameters.AddWithValue("@TileID", tile);
+                cmd3.Parameters.AddWithValue("@InitID", EditedInit.InitID);
+                String sqlQuery5 = "INSERT INTO InitiativeTiles (tileID, initID) VALUES (@TileID, @InitID);";
+                cmd3.CommandText = sqlQuery5;
+                cmd3.Connection.Open();
+                cmd3.ExecuteNonQuery();
+                cmd3.Connection.Close();
+            }
+
+        }
+
 
 
         public static List<Revenue> GetChartDataFromDatabase()
