@@ -19,7 +19,7 @@
         grid-template-rows: auto auto;
         grid-template-areas:
             "ChartA ChartB"
-            "ChartC ChartC";
+            "ChartC ChartD";
         gap: 2vw;
     }
 
@@ -33,6 +33,10 @@
 
     #chartC {
         grid-area: ChartC;
+    }
+
+    #chartD {
+        grid-area: ChartD;
     }
 
     .dashboard-tile {
@@ -54,7 +58,7 @@
         transform: translateX(-50%);
         margin: 0;
         color: #fff;
-        /*font-size:1vw;*/
+        font-size:1vw;
     }
 
     .dashboard-tile-contents {
@@ -111,10 +115,18 @@
     </div>
     <div class="dashboard-tile" id="chartC">
         <div class="dashboard-tile-title-bar">
-            <div class="dashboard-tile-title">Total Expenditure and Tax Category Projection </div>
+            <div class="dashboard-tile-title">Total Projected Expenditure + Rates</div>
         </div>
         <div class="dashboard-tile-contents">
             <canvas id="expenditureChartC"></canvas>
+        </div>
+    </div>
+    <div class="dashboard-tile" id="chartD">
+        <div class="dashboard-tile-title-bar">
+            <div class="dashboard-tile-title">Projected Expenditure by Category + Rates</div>
+        </div>
+        <div class="dashboard-tile-contents">
+            <canvas id="expenditureChartD"></canvas>
         </div>
     </div>
 </div>
@@ -176,7 +188,10 @@
 
         createChart('expenditureChartA', 'bar', ['TotalExpenditure'], { y: { beginAtZero: true, title: { display: true, text: 'Total Expenditure ($)' } } });
         createChart('expenditureChartB', 'bar', expenditureLabels, { y: { beginAtZero: true, title: { display: true, text: 'Category Expenditure ($)' } } });
-        createChart('expenditureChartC', 'line', [...expenditureLabels, 'InflationRate', 'InterestRate'], yAxisExpenditureSettings);
+        createChart('expenditureChartC', 'line', ['TotalExpenditure', 'InflationRate', 'InterestRate'], yAxisExpenditureSettings);
+        createChart('expenditureChartD', 'line', [...expenditureLabels, 'InflationRate', 'InterestRate'], yAxisExpenditureSettings);
+
+
     });
 </script>
 <script>
