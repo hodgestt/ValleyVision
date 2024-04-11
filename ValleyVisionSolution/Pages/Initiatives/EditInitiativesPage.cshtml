@@ -25,7 +25,7 @@
 <div class="modal fade" id="editInitForm" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <form method="post" asp-page="/EditInitiativesPage" onsubmit="return confirm('Are you sure?')">
+            <form method="post" asp-page="/EditInitiativesPage" onsubmit="return confirm('Are you sure?')" enctype="multipart/form-data">
                 <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Edit Initiative</h5>
@@ -42,7 +42,7 @@
                         </div>
                         <div class="col-md-6">
                             <div>Upload Image:</div>
-                            <input type="file" class="form-control" id="imageUploadInput">
+                            <input asp-for="@Model.BackgroundFile" type="file" class="form-control" id="imageUploadInput">
                         </div>
                         <br />
                         <br />

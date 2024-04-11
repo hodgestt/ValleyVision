@@ -111,11 +111,10 @@ namespace ValleyVisionSolution.Pages.Initiatives
             
         }
 
-        public async Task<IActionResult> OnPostAddNewInit()
+        public async Task<IActionResult> OnPostAddNewInitAsync(IFormFile BackgroundFile)
         {
             if (!ModelState.IsValid)
             {
-                // Model state is not valid, return the page with validation errors
                 loadData();
                 OpenModal = true;
                 return Page();
@@ -126,17 +125,28 @@ namespace ValleyVisionSolution.Pages.Initiatives
                 // Generate a unique file name to avoid overwriting existing files
                 var fileName = Path.GetFileNameWithoutExtension(BackgroundFile.FileName);
                 var fileExtension = Path.GetExtension(BackgroundFile.FileName);
-                var uniqueFileName = fileName + DateTime.Now.ToString("yyyyMMddHHmmss") + fileExtension;
+                var uniqueFileName = $"{fileName}{DateTime.Now:yyyyMMddHHmmss}{fileExtension}";
 
-                // Use the IBlobService to upload the file
+                // Upload the file to Azure Blob Storage
+                string blobUrl;
                 using (var fileStream = BackgroundFile.OpenReadStream())
                 {
+                    // Assuming UploadFileBlobAsync uploads the file and returns the full Blob URL
                     await _blobService.UploadFileBlobAsync(uniqueFileName, fileStream, BackgroundFile.ContentType);
                 }
 
-                // Model state is valid, continue with processing
-                NewInit.FilePath = uniqueFileName;
+                // If the _blobService.UploadFileBlobAsync method doesn't return a URL, construct it manually
+                string storageAccountUrl = "https://valleyvisionstorage2.blob.core.windows.net/";
+                string containerName = "uploads";
+                blobUrl = $"{storageAccountUrl}{containerName}/{uniqueFileName}";
+
+                // Set the file URL in your model to be saved in the database
+                NewInit.FilePath = blobUrl;
+
+                // Add the new initiative to the database
                 DBClass.AddInit(NewInit, NewInitUsers, NewTiles, HttpContext.Session.GetInt32("UserID"));
+
+                // Reset model state and data for the next input
                 loadData();
                 ModelState.Clear();
                 NewInit = new Initiative();
@@ -145,24 +155,33 @@ namespace ValleyVisionSolution.Pages.Initiatives
 
                 return Page();
             }
+
+            // Return the same page with an error message if no file was uploaded
+            ViewData["ErrorMessage"] = "You must select a file to upload.";
             return Page();
         }
 
-
-        //public async Task<IActionResult> OnPostAsync(IFormFile file)
+        //public async Task<IActionResult> OnPostAddNewInit()
         //{
-            
-        //    if (file != null && file.Length > 0)
+        //    if (!ModelState.IsValid)
+        //    {
+        //        // Model state is not valid, return the page with validation errors
+        //        loadData();
+        //        OpenModal = true;
+        //        return Page();
+        //    }
+
+        //    if (BackgroundFile != null && BackgroundFile.Length > 0)
         //    {
         //        // Generate a unique file name to avoid overwriting existing files
-        //        var fileName = Path.GetFileNameWithoutExtension(file.FileName);
-        //        var fileExtension = Path.GetExtension(file.FileName);
+        //        var fileName = Path.GetFileNameWithoutExtension(BackgroundFile.FileName);
+        //        var fileExtension = Path.GetExtension(BackgroundFile.FileName);
         //        var uniqueFileName = fileName + DateTime.Now.ToString("yyyyMMddHHmmss") + fileExtension;
 
         //        // Use the IBlobService to upload the file
-        //        using (var fileStream = file.OpenReadStream())
+        //        using (var fileStream = BackgroundFile.OpenReadStream())
         //        {
-        //            await _blobService.UploadFileBlobAsync(uniqueFileName, fileStream, file.ContentType);
+        //            await _blobService.UploadFileBlobAsync(uniqueFileName, fileStream, BackgroundFile.ContentType);
         //        }
 
         //        // Model state is valid, continue with processing
@@ -176,10 +195,11 @@ namespace ValleyVisionSolution.Pages.Initiatives
 
         //        return Page();
         //    }
-
-        //    ViewData["ErrorMessage"] = "You must select a file.";
         //    return Page();
         //}
+
+
+
 
         public IActionResult OnPostEditInit()
         {
