@@ -241,7 +241,14 @@
                             }
                         }
                     </div>
-                    <h1>Madison County Government</h1>
+                    @if (ViewData["Title"] == "Home")
+                    {
+                        <h1 style="-webkit-text-fill-color:#274c77">Madison County Government</h1>
+                    }
+                    else
+                    {
+                        <h1>Madison County Government</h1>
+                    }
 
                     @{
                         if (Context.Session.GetInt32("UserID").HasValue)
