@@ -1429,6 +1429,46 @@ namespace ValleyVisionSolution.Pages.DB
 
         //END DASHBOARD "DETAILS" PAGE
 
+        public static void UploadDevFile(int? initID, FileMeta fileMeta, int? devID)
+        {
+            int fileID;
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.Parameters.AddWithValue("@FileName", fileMeta.FileName_);
+            cmd.Parameters.AddWithValue("@FilePath", fileMeta.FilePath);
+            cmd.Parameters.AddWithValue("@FileType", fileMeta.FileType);
+            cmd.Parameters.AddWithValue("@Date", fileMeta.UploadedDateTime);
+            cmd.Parameters.AddWithValue("@UserID", fileMeta.userID);
+            String sqlQuery = "INSERT INTO FileMeta (fileName_, filePath, fileType, uploadedDateTime, userID) VALUES (@FileName, @FilePath, @FileType, @Date, @UserID)" + "SELECT SCOPE_IDENTITY();";
+            cmd.CommandText = sqlQuery;
+            cmd.Connection.Open();
+            fileID = Convert.ToInt32(cmd.ExecuteScalar());
+            cmd.Connection.Close();
+
+            SqlCommand cmd2 = new SqlCommand();
+            cmd2.Connection = ValleyVisionConnection;
+            cmd2.Connection.ConnectionString = MainConnString;
+            cmd2.Parameters.AddWithValue("@initID", initID);
+            cmd2.Parameters.AddWithValue("@fileID", fileID);
+            String sqlQuery2 = "INSERT INTO InitiativeFiles (fileMetaID, initID) VALUES (@fileID, @initID)";
+            cmd2.CommandText = sqlQuery2;
+            cmd.Connection.Open();
+            cmd2.ExecuteNonQuery();
+            cmd2.Connection.Close();
+
+            SqlCommand cmd3 = new SqlCommand();
+            cmd3.Connection = ValleyVisionConnection;
+            cmd3.Connection.ConnectionString = MainConnString;
+            cmd3.Parameters.AddWithValue("@devID", devID);
+            cmd3.Parameters.AddWithValue("@fileID", fileID);
+            String sqlQuery3 = "INSERT INTO DevAreaFiles(fileMetaID, devID)VALUES (@fileID, @devID);";
+            cmd3.CommandText = sqlQuery3;
+            cmd3.Connection.Open();
+            cmd3.ExecuteNonQuery();
+            cmd3.Connection.Close();
+
+        }
 
 
 
