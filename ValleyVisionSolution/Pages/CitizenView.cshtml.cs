@@ -1,4 +1,4 @@
-﻿using System.Data.SqlClient;
+using System.Data.SqlClient;
 using System.Net.NetworkInformation;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ValleyVisionSolution.Pages.DataClasses;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ValleyVisionSolution.Pages
 {
-    public class IndexModel : PageModel
+    public class CitizenViewModel : PageModel
     {
         public List<FileMeta> PublishedResources { get; set; } = new List<FileMeta>();
 
