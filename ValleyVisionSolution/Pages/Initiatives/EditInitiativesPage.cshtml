@@ -1,0 +1,97 @@
+﻿@page
+@model ValleyVisionSolution.Pages.Initiatives.EditInitiativesPageModel
+@{
+}
+<!-- Edit Initiative Form -->
+<div class="modal fade" id="editInitForm" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form method="post" asp-page="/EditInitiativesPage" onsubmit="return confirm('Are you sure?')">
+                <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Edit Initiative</h5>
+                    <button type="button" id="closeButton" class="btn-close" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div>Initiative Name:</div>
+                            <input type="hidden" asp-for="@Model.EditedInitiative.InitID" value="@HttpContext.Session.GetInt32("EditedInitID")" />
+                            <input asp-for="@Model.EditedInitiative.InitName" type="text" class="form-control">
+                            <span class="text-danger" asp-validation-for="@Model.EditedInitiative.InitName"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Upload Image:</div>
+                            <input type="file" class="form-control" id="imageUploadInput">
+                        </div>
+                        <br />
+                        <br />
+                        <br />
+                        <div class="form-group">
+                            <input type="hidden" class="form-control" asp-for="@Model.EditedInitiative.InitDateTime" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" required />
+                            <span class="validity" />
+                        </div>
+                        <div class="col-md-6">
+                            <div>Assign to:</div>
+                            <select asp-for="@Model.EditedInitUsers" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
+                                @{
+                                    foreach (var user in Model.InitUsers)
+                                    {
+                                        if (Model.SelectedInitUsers.Contains(user.UserID))
+                                        {
+                                            <option value="@user.UserID" selected>@user.FirstName @user.LastName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@user.UserID">@user.FirstName @user.LastName</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <div>Activate Pages:</div>
+                            <select asp-for="@Model.EditedTiles" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
+                                @{
+                                    foreach (var tile in Model.Tiles)
+                                    {
+                                        if(Model.SelectedTiles.Contains((int)tile.TileID))
+                                        {
+                                            <option value="@tile.TileID" selected> @tile.TileName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@tile.TileID"> @tile.TileName</option>
+                                        }
+
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-top:none">
+                        <button type="submit" class="btn btn-primary" asp-page-handler="DeleteInit">Delete</button>
+                        <button type="submit" class="btn btn-primary" asp-page-handler="EditInit">Update</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-- Edit Initiative Form -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Check if AddTaskInvalid is true on page load and reopen modal if needed
+    window.addEventListener('DOMContentLoaded', (event) => {
+        $('#editInitForm').modal('show');
+
+    });
+</script>
+<script>
+    document.getElementById('closeButton').addEventListener('click', function () {
+        // Redirect to the specific page
+        window.location.href = '/Initiatives/InitiativesPage';
+    });
+</script>

@@ -122,9 +122,13 @@
                                             </button>
                                         </form>
                                 @initiative.InitName
-                                <button type="submit" class="btn btn-sm btn-light" style="margin-right:8px; align-content: center; background-color: #6096BA !important; border-color: #6096BA; color: white !important; justify-content:center !important;">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
+                                <form method="post" asp-page="Initiatives/InitiativesPage">
+                                    <input type="hidden" asp-for="@Model.EditedInit" value="@initiative.InitID">
+                                    <button asp-page-handler="EditInit" type="submit" class="btn btn-sm btn-light" style="margin-right:8px; align-content: center; background-color: #6096BA !important; border-color: #6096BA; color: white !important; justify-content:center !important;">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </form>
+                                
                                 </div>
                                 </div>
                             }
