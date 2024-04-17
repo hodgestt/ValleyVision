@@ -18,6 +18,7 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
         public List<Expenditure> HistoricalExpenditures { get; set; } = new List<Expenditure>();
         public Expenditure LatestHistoricalExpenditure { get; set; } = new Expenditure();
         public List<Expenditure> ProjectedExpenditures { get; set; } = new List<Expenditure>();
+        List<decimal> HistoricalInflationRates { get; set; } = new List<decimal>();
         public decimal LastTotal = 0;
         public decimal ChangeInTotal = 0;
         public decimal SumChangeInTotal = 0;
@@ -94,9 +95,16 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
                     TotalExpenditure = Decimal.Parse(reader2["TotalExpenditure"].ToString())
                 };
             }
-            // Close your connection in DBClass
+            
             DBClass.ValleyVisionConnection.Close();
 
+
+            SqlDataReader reader3 = DBClass.InflationRatesReader();
+            while (reader3.Read()) 
+            { 
+                HistoricalInflationRates.Add(Decimal.Parse(reader3["InflationRate"].ToString()));
+            }
+            DBClass.ValleyVisionConnection.Close();
 
         }
 
@@ -111,6 +119,58 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
             {
                 return RedirectToPage("/Index");
             }
+        }
+
+        public IActionResult OnPostProjectExpenditures2()
+        {
+            int elements = HistoricalInflationRates.Count;
+            Random rnd = new Random();
+            int randomIndex;
+            List<decimal> PublicSafetySimulations1 = new List<decimal>();
+            decimal PublicSafety;
+
+            for (int i = 0; i < 1000; i++)
+            {
+                
+
+                randomIndex = rnd.Next(0, elements - 1);
+                PublicSafety = LatestHistoricalExpenditure.PublicSafety * (1 + HistoricalInflationRates[randomIndex]);
+                PublicSafetySimulations1.Add(PublicSafety);
+
+                randomIndex = rnd.Next(0, elements - 1);
+                decimal School = LatestHistoricalExpenditure.School * (1 + HistoricalInflationRates[randomIndex]);
+
+                randomIndex = rnd.Next(0, elements - 1);
+                decimal Anomoly = ParameterAnomaly * (1 + HistoricalInflationRates[randomIndex]);
+
+                randomIndex = rnd.Next(0, elements - 1);
+                decimal Other = LatestHistoricalExpenditure.School * (1 + HistoricalInflationRates[randomIndex]);
+
+                for (int j = 1; j < NumProjectionYears; i++)
+                {
+                    randomIndex = rnd.Next(0, elements - 1);
+                    PublicSafety = PublicSafety * (1 + HistoricalInflationRates[randomIndex]);
+
+                    randomIndex = rnd.Next(0, elements - 1);
+                    School = School * (1 + HistoricalInflationRates[randomIndex]);
+
+                    randomIndex = rnd.Next(0, elements - 1);
+                    Anomoly = Anomoly * (1 + HistoricalInflationRates[randomIndex]);
+
+                    randomIndex = rnd.Next(0, elements - 1);
+                    Other = Other * (1 + HistoricalInflationRates[randomIndex]);
+
+
+
+                }
+                
+
+                
+
+
+            }
+
+            return Page();
         }
 
         public IActionResult OnPostProjectExpenditures()

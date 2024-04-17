@@ -1316,6 +1316,20 @@ namespace ValleyVisionSolution.Pages.DB
 
             return tempReader;
         }
+        public static SqlDataReader InflationRatesReader()
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = ValleyVisionConnection;
+            cmd.Connection.ConnectionString = MainConnString;
+            cmd.CommandText = "SELECT inflationRate FROM DataFile_4;";
+            cmd.Connection.Open(); // Open connection here, close in Model!
+
+            SqlDataReader tempReader = cmd.ExecuteReader();
+
+            return tempReader;
+        }
+
+
         //END SPENDING PROJECTION PAGE-------------------------------------------------------------------------------------
 
         //BEGIN PROPOSED DEVELOPMENT PAGE_________________________________________________________________________________________
