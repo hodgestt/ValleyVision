@@ -10,6 +10,7 @@ using System.Text.Json;
 using MathNet.Numerics.LinearAlgebra;
 using ClosedXML.Excel;
 using ValleyVisionSolution.Services;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace ValleyVisionSolution.Pages.SpendingProjection
 {
@@ -18,6 +19,7 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
         public List<Expenditure> HistoricalExpenditures { get; set; } = new List<Expenditure>();
         public Expenditure LatestHistoricalExpenditure { get; set; } = new Expenditure();
         public List<Expenditure> ProjectedExpenditures { get; set; } = new List<Expenditure>();
+        public List<ExpenditureProjection> ProjectedExpenditures2 { get; set; } = new List<ExpenditureProjection>();
         List<decimal> HistoricalInflationRates { get; set; } = new List<decimal>();
         public decimal LastTotal = 0;
         public decimal ChangeInTotal = 0;
@@ -29,8 +31,6 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
         public int NumProjectionYears { get; set; }
         [BindProperty]
         public decimal ParameterInflationRate { get; set; }
-        [BindProperty]
-        public decimal ParameterInterestRate { get; set; }
         [BindProperty]
         public decimal ParameterAnomaly { get; set; }
 
@@ -61,23 +61,10 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
                     Other = Decimal.Parse(reader["Other"].ToString()),
                     TotalExpenditure = Decimal.Parse(reader["TotalExpenditure"].ToString())
                 });
-                //InflationAdjustment = Decimal.Parse(reader["InflationRate"].ToString()) + InflationAdjustment;
-                //InterestAdjustment = Decimal.Parse(reader["InterestRate"].ToString()) + InterestAdjustment;
+                
             }
             // Close your connection in DBClass
             DBClass.ValleyVisionConnection.Close();
-
-            LastTotal = HistoricalExpenditures[0].TotalExpenditure;
-
-            foreach (var e in HistoricalExpenditures)
-            {
-                ChangeInTotal = e.TotalExpenditure - LastTotal;
-                SumChangeInTotal += ChangeInTotal;
-                Counter++;
-                LastTotal = e.TotalExpenditure;
-            }
-
-            AverageExpenditureChange = SumChangeInTotal / Counter;
 
             //Populate current year revenue data
             SqlDataReader reader2 = DBClass.LatestHistoricalExpenditureReader();
@@ -123,158 +110,320 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
 
         public IActionResult OnPostProjectExpenditures2()
         {
+            loadData();
+            ProjectedExpenditures2.Add(new ExpenditureProjection
+            { 
+                Year = LatestHistoricalExpenditure.Year,
+                InflationRate = LatestHistoricalExpenditure.InflationRate,
+                PublicSafetyUCL = LatestHistoricalExpenditure.PublicSafety,
+                PublicSafety = LatestHistoricalExpenditure.PublicSafety,
+                PublicSafetyLCL = LatestHistoricalExpenditure.PublicSafety,
+                SchoolUCL = LatestHistoricalExpenditure.School,
+                School = LatestHistoricalExpenditure.School,
+                SchoolLCL = LatestHistoricalExpenditure.School,
+                AnomalyUCL = LatestHistoricalExpenditure.Anomaly,
+                Anomaly = LatestHistoricalExpenditure.Anomaly,
+                AnomalyLCL = LatestHistoricalExpenditure.Anomaly,
+                OtherUCL = LatestHistoricalExpenditure.Other,
+                Other = LatestHistoricalExpenditure.Other,
+                OtherLCL = LatestHistoricalExpenditure.Other,
+                TotalExpenditureUCL = LatestHistoricalExpenditure.TotalExpenditure,
+                TotalExpenditure = LatestHistoricalExpenditure.TotalExpenditure,
+                TotalExpenditureLCL = LatestHistoricalExpenditure.TotalExpenditure
+            });
+                        
+
+            int nextYear = LatestHistoricalExpenditure.Year + 1;
+            
             int elements = HistoricalInflationRates.Count;
             Random rnd = new Random();
             int randomIndex;
-            List<decimal> PublicSafetySimulations1 = new List<decimal>();
-            decimal PublicSafety;
+            int n = 24;
 
-            for (int i = 0; i < 1000; i++)
+            List<decimal> InflationSimulations = new List<decimal>();
+            List<decimal> InflationAverages = new List<decimal>();
+            
+
+            decimal PublicSafety = 0;
+            List<decimal> PublicSafetySimulations = new List<decimal>();
+            List<decimal> PublicSafetyUCLs = new List<decimal>();
+            List<decimal> PublicSafetyAverages = new List<decimal>();
+            List<decimal> PublicSafetyLCLs = new List<decimal>();
+
+            decimal School = 0;
+            List<decimal> SchoolSimulations = new List<decimal>();
+            List<decimal> SchoolUCLs = new List<decimal>();
+            List<decimal> SchoolAverages = new List<decimal>();
+            List<decimal> SchoolLCLs = new List<decimal>();
+
+            decimal Anomaly = 0;
+            List<decimal> AnomalySimulations = new List<decimal>();
+            List<decimal> AnomalyUCLs = new List<decimal>();
+            List<decimal> AnomalyAverages = new List<decimal>();
+            List<decimal> AnomalyLCLs = new List<decimal>();
+
+            decimal Other = 0;
+            List<decimal> OtherSimulations = new List<decimal>();
+            List<decimal> OtherUCLs = new List<decimal>();
+            List<decimal> OtherAverages = new List<decimal>();
+            List<decimal> OtherLCLs = new List<decimal>();
+
+            List<decimal> TotalExpenditureSimulations = new List<decimal>();
+            List<decimal> TotalExpenditureUCLs = new List<decimal>();
+            List<decimal> TotalExpenditureAverages = new List<decimal>();
+            List<decimal> TotalExpenditureLCLs = new List<decimal>();
+
+
+
+            for (int i = 0; i < NumProjectionYears; i++)
             {
-                
-
-                randomIndex = rnd.Next(0, elements - 1);
-                PublicSafety = LatestHistoricalExpenditure.PublicSafety * (1 + HistoricalInflationRates[randomIndex]);
-                PublicSafetySimulations1.Add(PublicSafety);
-
-                randomIndex = rnd.Next(0, elements - 1);
-                decimal School = LatestHistoricalExpenditure.School * (1 + HistoricalInflationRates[randomIndex]);
-
-                randomIndex = rnd.Next(0, elements - 1);
-                decimal Anomoly = ParameterAnomaly * (1 + HistoricalInflationRates[randomIndex]);
-
-                randomIndex = rnd.Next(0, elements - 1);
-                decimal Other = LatestHistoricalExpenditure.School * (1 + HistoricalInflationRates[randomIndex]);
-
-                for (int j = 1; j < NumProjectionYears; i++)
+                if (i == 0)
                 {
-                    randomIndex = rnd.Next(0, elements - 1);
-                    PublicSafety = PublicSafety * (1 + HistoricalInflationRates[randomIndex]);
+                 
+                    for (int j = 0; j < 1000; j++)
+                    {
+                        randomIndex = rnd.Next(0, elements - 1);
+                        InflationSimulations.Add(HistoricalInflationRates[randomIndex]);
 
-                    randomIndex = rnd.Next(0, elements - 1);
-                    School = School * (1 + HistoricalInflationRates[randomIndex]);
+                        
+                        PublicSafety = LatestHistoricalExpenditure.PublicSafety * (1 + HistoricalInflationRates[randomIndex]);
+                        PublicSafetySimulations.Add(PublicSafety);
 
-                    randomIndex = rnd.Next(0, elements - 1);
-                    Anomoly = Anomoly * (1 + HistoricalInflationRates[randomIndex]);
+                        
+                        School = LatestHistoricalExpenditure.School * (1 + HistoricalInflationRates[randomIndex]);
+                        SchoolSimulations.Add(School);
 
-                    randomIndex = rnd.Next(0, elements - 1);
-                    Other = Other * (1 + HistoricalInflationRates[randomIndex]);
+                        
+                        Anomaly = ParameterAnomaly;
+                        AnomalySimulations.Add(Anomaly);
 
+                        
+                        Other = LatestHistoricalExpenditure.Other * (1 + HistoricalInflationRates[randomIndex]);
+                        OtherSimulations.Add(Other);
+
+                        TotalExpenditureSimulations.Add(PublicSafety + School + Anomaly + Other);
+                    }
+
+                    InflationAverages.Add(InflationSimulations.Average());
+
+                    PublicSafetyUCLs.Add(PublicSafetySimulations.OrderByDescending(num => num).Skip(n).First());
+                    PublicSafetyAverages.Add(PublicSafetySimulations.Average());
+                    PublicSafetyLCLs.Add(PublicSafetySimulations.OrderBy(num => num).Skip(n).First());
+
+                    SchoolUCLs.Add(SchoolSimulations.OrderByDescending(num => num).Skip(n).First());
+                    SchoolAverages.Add(SchoolSimulations.Average());
+                    SchoolLCLs.Add(SchoolSimulations.OrderBy(num => num).Skip(n).First());
+
+                    AnomalyUCLs.Add(AnomalySimulations.OrderByDescending(num => num).Skip(n).First());
+                    AnomalyAverages.Add(AnomalySimulations.Average());
+                    AnomalyLCLs.Add(AnomalySimulations.OrderBy(num => num).Skip(n).First());
+
+                    OtherUCLs.Add(OtherSimulations.OrderByDescending(num => num).Skip(n).First());
+                    OtherAverages.Add(OtherSimulations.Average());
+                    OtherLCLs.Add(OtherSimulations.OrderBy(num => num).Skip(n).First());
+
+                    TotalExpenditureUCLs.Add(TotalExpenditureSimulations.OrderByDescending(num => num).Skip(n).First());
+                    TotalExpenditureAverages.Add(TotalExpenditureSimulations.Average());
+                    TotalExpenditureLCLs.Add(TotalExpenditureSimulations.OrderBy(num => num).Skip(n).First());
+
+                    ProjectedExpenditures2.Add(new ExpenditureProjection
+                    {
+                        Year = nextYear,
+                        InflationRate = InflationAverages[i],
+                        PublicSafetyUCL = PublicSafetyUCLs[i],
+                        PublicSafety = PublicSafetyAverages[i],
+                        PublicSafetyLCL = PublicSafetyLCLs[i],
+                        SchoolUCL = SchoolUCLs[i],
+                        School = SchoolAverages[i],
+                        SchoolLCL = SchoolLCLs[i],
+                        AnomalyUCL = AnomalyUCLs[i],
+                        Anomaly = AnomalyAverages[i],
+                        AnomalyLCL = AnomalyLCLs[i],
+                        OtherUCL = OtherUCLs[i],
+                        Other = OtherAverages[i],
+                        OtherLCL = OtherLCLs[i],
+                        TotalExpenditureUCL = TotalExpenditureUCLs[i],
+                        TotalExpenditure = TotalExpenditureAverages[i],
+                        TotalExpenditureLCL = TotalExpenditureLCLs[i]
+                    });
+
+                    nextYear++;
 
 
                 }
+                else 
+                {
+                   
+                    for (int j = 0; j < 1000; j++)
+                    {
+                        randomIndex = rnd.Next(0, elements - 1);
+                        InflationSimulations[j] = HistoricalInflationRates[randomIndex];
+
+                        PublicSafetySimulations[j] = PublicSafetySimulations[j] * (1 + HistoricalInflationRates[randomIndex]);
+                        
+                        SchoolSimulations[j] = SchoolSimulations[j] * (1 + HistoricalInflationRates[randomIndex]);
+                        
+                        AnomalySimulations[j] = AnomalySimulations[j] * (1 + HistoricalInflationRates[randomIndex]);
+
+                        OtherSimulations[j] = OtherSimulations[j] * (1 + HistoricalInflationRates[randomIndex]);
+
+                        TotalExpenditureSimulations[j] = (PublicSafetySimulations[j] + SchoolSimulations[j] + AnomalySimulations[j] + OtherSimulations[j]);
+                    }
+
+                    InflationAverages.Add(InflationSimulations.Average());
+
+                    PublicSafetyUCLs.Add(PublicSafetySimulations.OrderByDescending(num => num).Skip(n).First());
+                    PublicSafetyAverages.Add(PublicSafetySimulations.Average());
+                    PublicSafetyLCLs.Add(PublicSafetySimulations.OrderBy(num => num).Skip(n).First());
+
+                    SchoolUCLs.Add(SchoolSimulations.OrderByDescending(num => num).Skip(n).First());
+                    SchoolAverages.Add(SchoolSimulations.Average());
+                    SchoolLCLs.Add(SchoolSimulations.OrderBy(num => num).Skip(n).First());
+
+                    AnomalyUCLs.Add(AnomalySimulations.OrderByDescending(num => num).Skip(n).First());
+                    AnomalyAverages.Add(AnomalySimulations.Average());
+                    AnomalyLCLs.Add(AnomalySimulations.OrderBy(num => num).Skip(n).First());
+
+                    OtherUCLs.Add(OtherSimulations.OrderByDescending(num => num).Skip(n).First());
+                    OtherAverages.Add(OtherSimulations.Average());
+                    OtherLCLs.Add(OtherSimulations.OrderBy(num => num).Skip(n).First());
+
+                    TotalExpenditureUCLs.Add(TotalExpenditureSimulations.OrderByDescending(num => num).Skip(n).First());
+                    TotalExpenditureAverages.Add(TotalExpenditureSimulations.Average());
+                    TotalExpenditureLCLs.Add(TotalExpenditureSimulations.OrderBy(num => num).Skip(n).First());
+
+                    ProjectedExpenditures2.Add(new ExpenditureProjection
+                    {
+                        Year = nextYear,
+                        InflationRate = InflationAverages[i],
+                        PublicSafetyUCL = PublicSafetyUCLs[i],
+                        PublicSafety = PublicSafetyAverages[i],
+                        PublicSafetyLCL = PublicSafetyLCLs[i],
+                        SchoolUCL = SchoolUCLs[i],
+                        School = SchoolAverages[i],
+                        SchoolLCL = SchoolLCLs[i],
+                        AnomalyUCL = AnomalyUCLs[i],
+                        Anomaly = AnomalyAverages[i],
+                        AnomalyLCL = AnomalyLCLs[i],
+                        OtherUCL = OtherUCLs[i],
+                        Other = OtherAverages[i],
+                        OtherLCL = OtherLCLs[i],
+                        TotalExpenditureUCL = TotalExpenditureUCLs[i],
+                        TotalExpenditure = TotalExpenditureAverages[i],
+                        TotalExpenditureLCL = TotalExpenditureLCLs[i]
+                    });
+
+                    nextYear++;
+
+                }
                 
-
-                
-
-
             }
-
+            HttpContext.Session.SetString("ProjectedExpenditures2", JsonSerializer.Serialize(ProjectedExpenditures2));
             return Page();
         }
 
-        public IActionResult OnPostProjectExpenditures()
-        {
-            loadData();
-            ProjectedExpenditures.Add(LatestHistoricalExpenditure);
-            ParameterInflationRate = ParameterInflationRate / 100;
-            decimal Adjustment = 0;
-            ParameterInterestRate = ParameterInterestRate / 100;
+        //public IActionResult OnPostProjectExpenditures()
+        //{
+        //    loadData();
+        //    ProjectedExpenditures.Add(LatestHistoricalExpenditure);
+        //    ParameterInflationRate = ParameterInflationRate / 100;
+        //    decimal Adjustment = 0;
+        //    ParameterInterestRate = ParameterInterestRate / 100;
 
-            int nextYear = LatestHistoricalExpenditure.Year + 1;
+        //    int nextYear = LatestHistoricalExpenditure.Year + 1;
 
-            for (int i = 1; i <= NumProjectionYears; i++)
-            {
-                // Extracting data from the list into arrays
-                double[] inflationRate = HistoricalExpenditures.Select(e => (double)e.InflationRate).ToArray();
-                double[] interestRate = HistoricalExpenditures.Select(e => (double)e.InterestRate).ToArray();
-                double[] publicSafety = HistoricalExpenditures.Select(e => (double)e.PublicSafety).ToArray();
-                double[] school = HistoricalExpenditures.Select(e => (double)e.School).ToArray();
-                double[] other = HistoricalExpenditures.Select(e => (double)e.Other).ToArray();
-
-
-                // Create the design matrix with an intercept column
-                var designMatrixPublicSafety = Matrix<double>.Build.DenseOfColumnArrays(
-                    new double[publicSafety.Length].Populate(1), // Intercept column of 1's
-                    inflationRate,
-                    interestRate
-                );
-
-                var designMatrixSchool = Matrix<double>.Build.DenseOfColumnArrays(
-                    new double[school.Length].Populate(1), // Intercept column of 1's
-                    inflationRate,
-                    interestRate
-                );
-
-                var designMatrixOther = Matrix<double>.Build.DenseOfColumnArrays(
-                    new double[other.Length].Populate(1), // Intercept column of 1's
-                    inflationRate,
-                    interestRate
-                );
-
-                // Create the vector for the dependent variable
-                var publicSafetyVector = Vector<double>.Build.Dense(publicSafety);
-                var schoolVector = Vector<double>.Build.Dense(school);
-                var otherVector = Vector<double>.Build.Dense(other);
+        //    for (int i = 1; i <= NumProjectionYears; i++)
+        //    {
+        //        // Extracting data from the list into arrays
+        //        double[] inflationRate = HistoricalExpenditures.Select(e => (double)e.InflationRate).ToArray();
+        //        double[] interestRate = HistoricalExpenditures.Select(e => (double)e.InterestRate).ToArray();
+        //        double[] publicSafety = HistoricalExpenditures.Select(e => (double)e.PublicSafety).ToArray();
+        //        double[] school = HistoricalExpenditures.Select(e => (double)e.School).ToArray();
+        //        double[] other = HistoricalExpenditures.Select(e => (double)e.Other).ToArray();
 
 
-                // Perform the multiple regression
-                var publicSafetycoefficients = MultipleRegression.NormalEquations(designMatrixPublicSafety, publicSafetyVector);
-                var schoolcoefficients = MultipleRegression.NormalEquations(designMatrixSchool, schoolVector);
-                var othercoefficients = MultipleRegression.NormalEquations(designMatrixOther, otherVector);
+        //        // Create the design matrix with an intercept column
+        //        var designMatrixPublicSafety = Matrix<double>.Build.DenseOfColumnArrays(
+        //            new double[publicSafety.Length].Populate(1), // Intercept column of 1's
+        //            inflationRate,
+        //            interestRate
+        //        );
+
+        //        var designMatrixSchool = Matrix<double>.Build.DenseOfColumnArrays(
+        //            new double[school.Length].Populate(1), // Intercept column of 1's
+        //            inflationRate,
+        //            interestRate
+        //        );
+
+        //        var designMatrixOther = Matrix<double>.Build.DenseOfColumnArrays(
+        //            new double[other.Length].Populate(1), // Intercept column of 1's
+        //            inflationRate,
+        //            interestRate
+        //        );
+
+        //        // Create the vector for the dependent variable
+        //        var publicSafetyVector = Vector<double>.Build.Dense(publicSafety);
+        //        var schoolVector = Vector<double>.Build.Dense(school);
+        //        var otherVector = Vector<double>.Build.Dense(other);
+
+
+        //        // Perform the multiple regression
+        //        var publicSafetycoefficients = MultipleRegression.NormalEquations(designMatrixPublicSafety, publicSafetyVector);
+        //        var schoolcoefficients = MultipleRegression.NormalEquations(designMatrixSchool, schoolVector);
+        //        var othercoefficients = MultipleRegression.NormalEquations(designMatrixOther, otherVector);
 
 
 
-                ProjectedExpenditures.Add(new Expenditure
-                {
-                    Year = nextYear,
-                    InflationRate = ParameterInflationRate,
-                    InterestRate = ParameterInterestRate,
-                    PublicSafety = (decimal)(publicSafetycoefficients[0] + (publicSafetycoefficients[1] * (double)ParameterInflationRate) + (publicSafetycoefficients[2] * (double)ParameterInterestRate)),
-                    School = (decimal)(schoolcoefficients[0] + (schoolcoefficients[1] * (double)ParameterInflationRate) + (schoolcoefficients[2] * (double)ParameterInterestRate)),
-                    Anomaly = ParameterAnomaly,
-                    Other = (decimal)(othercoefficients[0] + (othercoefficients[1] * (double)ParameterInflationRate) + (othercoefficients[2] * (double)ParameterInterestRate)),
-                    TotalExpenditure = (decimal)(publicSafetycoefficients[0] + (publicSafetycoefficients[1] * (double)ParameterInflationRate) + (publicSafetycoefficients[2] * (double)ParameterInterestRate))
-                                       + (decimal)(schoolcoefficients[0] + (schoolcoefficients[1] * (double)ParameterInflationRate) + (schoolcoefficients[2] * (double)ParameterInterestRate))
-                                       + ParameterAnomaly
-                                       + (decimal)(othercoefficients[0] + (othercoefficients[1] * (double)ParameterInflationRate) + (othercoefficients[2] * (double)ParameterInterestRate))
-                                       + Adjustment
-                });
+        //        ProjectedExpenditures.Add(new Expenditure
+        //        {
+        //            Year = nextYear,
+        //            InflationRate = ParameterInflationRate,
+        //            InterestRate = ParameterInterestRate,
+        //            PublicSafety = (decimal)(publicSafetycoefficients[0] + (publicSafetycoefficients[1] * (double)ParameterInflationRate) + (publicSafetycoefficients[2] * (double)ParameterInterestRate)),
+        //            School = (decimal)(schoolcoefficients[0] + (schoolcoefficients[1] * (double)ParameterInflationRate) + (schoolcoefficients[2] * (double)ParameterInterestRate)),
+        //            Anomaly = ParameterAnomaly,
+        //            Other = (decimal)(othercoefficients[0] + (othercoefficients[1] * (double)ParameterInflationRate) + (othercoefficients[2] * (double)ParameterInterestRate)),
+        //            TotalExpenditure = (decimal)(publicSafetycoefficients[0] + (publicSafetycoefficients[1] * (double)ParameterInflationRate) + (publicSafetycoefficients[2] * (double)ParameterInterestRate))
+        //                               + (decimal)(schoolcoefficients[0] + (schoolcoefficients[1] * (double)ParameterInflationRate) + (schoolcoefficients[2] * (double)ParameterInterestRate))
+        //                               + ParameterAnomaly
+        //                               + (decimal)(othercoefficients[0] + (othercoefficients[1] * (double)ParameterInflationRate) + (othercoefficients[2] * (double)ParameterInterestRate))
+        //                               + Adjustment
+        //        });
 
-                HistoricalExpenditures.Add(new Expenditure
-                {
-                    Year = nextYear,
-                    InflationRate = ParameterInflationRate,
-                    InterestRate = ParameterInterestRate,
-                    PublicSafety = (decimal)(publicSafetycoefficients[0] + (publicSafetycoefficients[1] * (double)ParameterInflationRate) + (publicSafetycoefficients[2] * (double)ParameterInterestRate)),
-                    School = (decimal)(schoolcoefficients[0] + (schoolcoefficients[1] * (double)ParameterInflationRate) + (schoolcoefficients[2] * (double)ParameterInterestRate)),
-                    Anomaly = ParameterAnomaly,
-                    Other = (decimal)(othercoefficients[0] + (othercoefficients[1] * (double)ParameterInflationRate) + (othercoefficients[2] * (double)ParameterInterestRate)),
-                    TotalExpenditure = (decimal)(publicSafetycoefficients[0] + (publicSafetycoefficients[1] * (double)ParameterInflationRate) + (publicSafetycoefficients[2] * (double)ParameterInterestRate))
-                                       + (decimal)(schoolcoefficients[0] + (schoolcoefficients[1] * (double)ParameterInflationRate) + (schoolcoefficients[2] * (double)ParameterInterestRate))
-                                       + ParameterAnomaly
-                                       + (decimal)(othercoefficients[0] + (othercoefficients[1] * (double)ParameterInflationRate) + (othercoefficients[2] * (double)ParameterInterestRate))
-                                       + Adjustment
-                });
+        //        HistoricalExpenditures.Add(new Expenditure
+        //        {
+        //            Year = nextYear,
+        //            InflationRate = ParameterInflationRate,
+        //            InterestRate = ParameterInterestRate,
+        //            PublicSafety = (decimal)(publicSafetycoefficients[0] + (publicSafetycoefficients[1] * (double)ParameterInflationRate) + (publicSafetycoefficients[2] * (double)ParameterInterestRate)),
+        //            School = (decimal)(schoolcoefficients[0] + (schoolcoefficients[1] * (double)ParameterInflationRate) + (schoolcoefficients[2] * (double)ParameterInterestRate)),
+        //            Anomaly = ParameterAnomaly,
+        //            Other = (decimal)(othercoefficients[0] + (othercoefficients[1] * (double)ParameterInflationRate) + (othercoefficients[2] * (double)ParameterInterestRate)),
+        //            TotalExpenditure = (decimal)(publicSafetycoefficients[0] + (publicSafetycoefficients[1] * (double)ParameterInflationRate) + (publicSafetycoefficients[2] * (double)ParameterInterestRate))
+        //                               + (decimal)(schoolcoefficients[0] + (schoolcoefficients[1] * (double)ParameterInflationRate) + (schoolcoefficients[2] * (double)ParameterInterestRate))
+        //                               + ParameterAnomaly
+        //                               + (decimal)(othercoefficients[0] + (othercoefficients[1] * (double)ParameterInflationRate) + (othercoefficients[2] * (double)ParameterInterestRate))
+        //                               + Adjustment
+        //        });
 
-                nextYear++;
-                Adjustment = AverageExpenditureChange * i * (1 + ParameterInflationRate);
+        //        nextYear++;
+        //        Adjustment = AverageExpenditureChange * i * (1 + ParameterInflationRate);
 
-            }
-
-
+        //    }
 
 
 
 
 
-            HttpContext.Session.SetString("ProjectedExpenditures", JsonSerializer.Serialize(ProjectedExpenditures));
-            return Page();
-        }
+
+
+        //    HttpContext.Session.SetString("ProjectedExpenditures", JsonSerializer.Serialize(ProjectedExpenditures));
+        //    return Page();
+        //}
 
         public string GetChartDataAsJson()
         {
-            return JsonSerializer.Serialize(ProjectedExpenditures);
+            return JsonSerializer.Serialize(ProjectedExpenditures2);
         }
 
         public async Task<IActionResult> OnPostDownloadExcel()
