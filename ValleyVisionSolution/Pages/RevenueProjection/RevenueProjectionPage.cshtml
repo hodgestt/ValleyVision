@@ -9,8 +9,11 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-    .parameterTitle{
-    font-size:0.8vw;
+    .parameterTitle {
+        position: relative; 
+        display: inline-block; 
+        cursor: pointer; 
+        font-size: 12.5px; 
     }
 
     .chart-grid{
@@ -62,8 +65,36 @@
 
     .dashboard-tile-contents {
         padding: 3%;
-        background-color: #f2f2f2;
-        
+        background-color: #f2f2f2;        
+    }
+
+    .parameterTitle {
+        position: relative; 
+        display: inline-block; 
+    }
+
+    .custom-tooltip {
+        visibility: hidden;
+        width: 200px;
+        background-color: white;
+        color: black;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%; 
+        left: 50%;
+        margin-left: -100px; 
+        box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1); 
+    }
+
+    .parameterTitle:hover .custom-tooltip {
+        visibility: visible; 
+    }
+
+    #runProjectionBtn {
+        font-size: 14px;
     }
 
 </style>
@@ -71,23 +102,42 @@
 <form method="post" asp-page="/RevenueProjectionPage">
     <div class="row mb-3">
         <div class="col-md-2">
-            <div class="parameterTitle">Real Estate Tax Growth %:</div>
+            <div class="parameterTitle">
+                Real Estate Tax Growth %: <span>&#x1F6C8;</span>
+                <span class="custom-tooltip">Enter the expected growth percentage for real estate taxes.</span>
+            </div>
             <input asp-for="@Model.RealEstateTaxGrowth" type="text" class="form-control">
         </div>
+
         <div class="col-md-2">
-            <div class="parameterTitle">Personal Property Tax Growth %:</div>
+            <div class="parameterTitle">
+                Personal Property Tax Growth %: <span>&#x1F6C8;</span>
+                <span class="custom-tooltip">Enter the expected growth percentage for personal property taxes.</span>
+            </div>
             <input asp-for="@Model.PersonalPropertyTaxGrowth" type="text" class="form-control">
         </div>
+
         <div class="col-md-2">
-            <div class="parameterTitle">Fees & Licenses Tax Growth %:</div>
+            <div class="parameterTitle">
+                Fees & Licenses Tax Growth %: <span>&#x1F6C8;</span>
+                <span class="custom-tooltip">Enter the expected growth percentage for fees and licenses.</span>
+            </div>
             <input asp-for="@Model.FeesLicensesTaxGrowth" type="text" class="form-control">
         </div>
+
         <div class="col-md-2">
-            <div class="parameterTitle">Total State Funding Amount $:</div>
+            <div class="parameterTitle">
+                Total State Funding Amount $: <span>&#x1F6C8;</span>
+                <span class="custom-tooltip">Enter the total amount of state funding available.</span>
+            </div>
             <input asp-for="@Model.StateFundingAmount" type="text" class="form-control">
         </div>
+
         <div class="col-md-2">
-            <div class="parameterTitle">Number of Projection Years:</div>
+            <div class="parameterTitle">
+                Number of Projection Years: <span>&#x1F6C8;</span>
+                <span class="custom-tooltip">Select the number of years for the revenue projection.</span>
+            </div>
             <select asp-for="@Model.NumProjectionYears" class="form-select form-control">
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -96,39 +146,48 @@
                 <option value="5">5</option>
             </select>
         </div>
+
         <div class="col-md-2 d-flex flex-column justify-content-end">
             <button type="submit" class="btn btn-primary" id="runProjectionBtn" asp-page-handler="RunProjection">Run Projection</button>
         </div>
     </div>
 </form>
+
+
 <div class="chart-grid">
     <div class="dashboard-tile" id="chartA">
         <div class="dashboard-tile-title-bar">
-            <div class="dashboard-tile-title">Total Revenue Projection</div>
+            <div class="dashboard-tile-title">
+                Total Revenue Projection 
+            </div>
         </div>
         <div class="dashboard-tile-contents">
             <canvas id="revenueChartA"></canvas>
         </div>
     </div>
+
+
     <div class="dashboard-tile" id="chartB">
         <div class="dashboard-tile-title-bar">
-            <div class="dashboard-tile-title">Tax Category Projection</div>
+            <div class="dashboard-tile-title">Tax Category Projection </div>
         </div>
         <div class="dashboard-tile-contents">
             <canvas id="revenueChartB"></canvas>
             </div>
     </div>
+
     <div class="dashboard-tile" id="chartC">
         <div class="dashboard-tile-title-bar">
-            <div class="dashboard-tile-title">Total Revenue Projection </div>
+            <div class="dashboard-tile-title">Total Revenue Projection</div>
         </div>
         <div class="dashboard-tile-contents">
             <canvas id="revenueChartC"></canvas>
         </div>
     </div>
+
     <div class="dashboard-tile" id="chartD">
         <div class="dashboard-tile-title-bar">
-            <div class="dashboard-tile-title">Tax Category Projection </div>
+            <div class="dashboard-tile-title">Tax Category Projection</div>
         </div>
         <div class="dashboard-tile-contents">
             <canvas id="revenueChartD"></canvas>
@@ -137,7 +196,7 @@
 </div>
 <br />
 <div style="display:flex; justify-content:flex-end; gap: 10px;">
-    <a href="/RevenueProjection/ViewDataPage" class="btn btn-primary" style="margin-right: 10px;">View Revenue Data</a>
+    <a href="/RevenueProjection/ViewDataPage" class="btn btn-primary" style="margin-right: 10px;">View Revenue Data <span>&#x1F6C8;</span></a>
     <form method="post" asp-page-handler="DownloadExcel">
         <button type="submit" class="btn btn-secondary">Download Report</button>
     </form>
