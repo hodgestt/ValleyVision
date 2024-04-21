@@ -1,0 +1,92 @@
+﻿@page
+@model ValleyVisionSolution.Pages.ManageProfiles.ProfilePageModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["HeaderTitle"] = "Profile";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+
+<style>
+    body, html {
+        height: 100%;
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4; /* Optional: adds a background color to the whole page */
+    }
+
+    .profile-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 2px solid #dee2e6; /* Light grey border */
+        object-fit: cover;
+        margin-bottom: 20px;
+    }
+
+    .profile-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .info-container, .contact-container {
+        display: flex;
+        background-color: #f8f9fa;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 20px;
+        margin-bottom: 20px;
+        width: 80%;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .title {
+        width: 50px; /* Fixed width for icon column */
+        font-size: 2rem; /* Larger icon size */
+        text-align: center; /* Center icon horizontally */
+        margin-right: 10px; /* Space between icon and text */
+    }
+
+    .details {
+        flex-grow: 1; /* Takes up remaining space */
+    }
+
+    .item {
+        margin-bottom: 5px;
+    }
+</style>
+
+<body>
+    <div class="profile-container">
+        @if (Model.profileInformation != null)
+        {
+            <img src="path_to_profile_image.jpg" alt="Profile Image" class="profile-image"> 
+            @*<img src="@Model.profileInformation.PicturePath" alt="Profile Image" class="profile-image">*@
+
+            <div class="info-container">
+                <div class="title"><i class="bi bi-person-circle"></i></div>
+                <div class="details">
+                    <div><strong>Account</strong></div>
+                    <div class="item"><strong>First Name:</strong> @Model.profileInformation.FirstName</div>
+                    <div class="item"><strong>Last Name:</strong> @Model.profileInformation.LastName</div>
+                    <div class="item"><strong>User Type:</strong> @Model.profileInformation.UserType</div>
+                    <div class="item"><strong>Username:</strong> @Model.profileInformation.UserName</div>
+                </div>
+            </div>
+
+            <div class="contact-container">
+                <div class="title"><i class="bi bi-envelope-fill"></i></div>
+                <div class="details">
+                    <div><strong>Contact</strong></div>
+                    <div class="item"><strong>Address:</strong> @Model.profileInformation.Street @Model.profileInformation.Apartment @Model.profileInformation.City @Model.profileInformation.State @Model.profileInformation.Zip @Model.profileInformation.Country</div>
+                    <div class="item"><strong>Phone:</strong> @Model.profileInformation.Phone</div>
+                    <div class="item"><strong>Email:</strong> @Model.profileInformation.Email</div>
+                </div>
+            </div>
+        }
+    </div>
+</body>
+
