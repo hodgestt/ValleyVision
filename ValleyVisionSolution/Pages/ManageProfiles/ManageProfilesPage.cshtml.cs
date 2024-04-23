@@ -100,8 +100,35 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
 
             loadData();
 
-            return Page(); 
+
+            return Page();
         }
+
+        //public IActionResult OnPostPopulateHandler()
+        //{
+        //    ModelState.Clear();
+        //    PrepareDefaultProfileData();
+        //    OpenAddProfileModal = true;
+        //    loadData();
+        //    return Page();
+        //}
+
+        //private void PrepareDefaultProfileData()
+        //{
+        //    NewProfile.UserName = "JamesMad";
+        //    NewProfile.Password = "1234!";
+        //    NewProfile.FirstName = "James";
+        //    NewProfile.LastName = "Madison";
+        //    NewProfile.Email = "maddy@dukes.edu";
+        //    NewProfile.Phone = "5034567980";
+        //    NewProfile.Street = "MLK Way";
+        //    NewProfile.Apartment = "";
+        //    NewProfile.City = "Harrisonburg";
+        //    NewProfile.State = "VA";
+        //    NewProfile.Zip = 22801;
+        //    NewProfile.Country = "U.S.A";
+        //}
+
 
     }
 }

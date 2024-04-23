@@ -20,7 +20,44 @@
     .btn-light:hover{
         border-color:lightgrey;
     }
+
+    .choices[data-type*='select-multiple'] .choices__list.choices__list--multiple .choices__item {
+        padding-left: 30px;
+        position: relative;
+        white-space: nowrap;
+        min-width: 150px;
+        border-radius: 20px;
+        padding: 4px 10px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-right: 3.75px;
+        margin-bottom: 3.75px;
+        background-color: #274c77; /* Ensuring the background color applies */
+        border: 1px solid #d3d3d3;
+        color: white; /* Text color */
+    }
+
+        .choices[data-type*='select-multiple'] .choices__list.choices__list--multiple .choices__item.is-selected::before {
+            content: "";
+            display: block;
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 15px;
+            height: 15px;
+            border: 1px solid #274c77;
+            background-color: #274c77;
+            border-radius: 3px;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"%3E%3Cpath fill="%23ffffff" d="M6.564.75l-3.59 3.612-1.538-1.55L0 4.234l2.974 3.02 5.196-5.232z"/%3E%3C/svg%3E');
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
 </style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
 <!-- Edit Task Form -->
 <div class="modal fade" id="editTaskForm" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -55,6 +92,25 @@
                         </div>
                         <div class="col-md-6">
                             <div>Assign to:</div>
+                            <select asp-for="@Model.EditedTaskUsers" class="form-control" multiple data-placeholder="Select users...">
+                                @{
+                                    foreach (var user in Model.InitUsers)
+                                    {
+                                        if (Model.ViewedTaskUsers.Contains(user.UserID))
+                                        {
+                                            <option value="@user.UserID" selected>@user.FirstName @user.LastName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@user.UserID">@user.FirstName @user.LastName</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+
+@*                         <div class="col-md-6">
+                            <div>Assign to:</div>
                             <select asp-for="@Model.EditedTaskUsers" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
                                 @{
                                     foreach (var user in Model.InitUsers)
@@ -72,7 +128,7 @@
 
                             </select>
 
-                        </div>
+                        </div> *@
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
@@ -128,15 +184,29 @@
 <!-- End Edit Task Form -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" ></script>
 <script>
-    // Check if AddTaskInvalid is true on page load and reopen modal if needed
-    window.addEventListener('DOMContentLoaded', (event) => {
-            $('#editTaskForm').modal('show');
-        
+    document.addEventListener('DOMContentLoaded', function () {
+        var editTaskForm = new bootstrap.Modal(document.getElementById('editTaskForm'), {
+            keyboard: false,
+            backdrop: 'static'
+        });
+        editTaskForm.show();
     });
-</script>
-<script>
+
     document.getElementById('closeButton').addEventListener('click', function () {
         // Redirect to the specific page
         window.location.href = '/TaskManager/TaskManagerPage';
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var elements = document.querySelectorAll('select[multiple]');
+        elements.forEach(function (el) {
+            new Choices(el, {
+                removeItemButton: true,
+                searchEnabled: true,
+                searchPlaceholderValue: 'Search here...',
+                shouldSort: false // Disable sorting to maintain server-side order
+            });
+        });
     });
 </script>

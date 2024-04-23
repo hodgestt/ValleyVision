@@ -100,16 +100,19 @@
 </div>
 <!-- End Edit Profile Form -->
 
-<script>
-    // Check if AddTaskInvalid is true on page load and reopen modal if needed
-    window.addEventListener('DOMContentLoaded', (event) => {
-        $('#editProfileForm').modal('show');
 
-    });
-</script>
 <script>
+    // This script replaces jQuery code with vanilla JS for Bootstrap 5
+    document.addEventListener('DOMContentLoaded', function () {
+        var editProfileForm = new bootstrap.Modal(document.getElementById('editProfileForm'), {
+            keyboard: false,
+            backdrop: 'static'
+        });
+        editProfileForm.show();
+    });
+
     document.getElementById('closeButton').addEventListener('click', function () {
         // Redirect to the specific page
         window.location.href = '/ManageProfiles/ManageProfilesPage';
     });
-</script>    
+</script>

@@ -3,6 +3,11 @@
 @{
 }
 
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+
 <style>
     .btn-light {
         background-color: white !important;
@@ -20,6 +25,73 @@
         .btn-light:hover {
             border-color: lightgrey;
         }
+
+    .styled-select .choices__list.choices__list--multiple .choices__item {
+        padding-left: 30px;
+        position: relative;
+        white-space: nowrap; /* Prevents wrapping and keeps text in a single line */
+        min-width: 150px; /* Adjust this value based on your content needs */
+    }
+
+        .styled-select .choices__list.choices__list--multiple .choices__item::before {
+            content: "";
+            display: block;
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 15px;
+            height: 15px;
+            border: 1px solid #aaa;
+            background-color: #fff;
+            border-radius: 3px;
+        }
+
+        .styled-select .choices__list.choices__list--multiple .choices__item.is-selected::before {
+            background-color: #274c77;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"%3E%3Cpath fill="%23ffffff" d="M6.564.75l-3.59 3.612-1.538-1.55L0 4.234l2.974 3.02 5.196-5.232z"/%3E%3C/svg%3E');
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+
+    .choices__list--multiple .choices__item {
+        display: inline-block;
+        vertical-align: middle;
+        border-radius: 20px;
+        padding: 4px 10px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-right: 3.75px;
+        margin-bottom: 3.75px;
+        background-color: #274c77;
+        border: 1px solid #d3d3d3;
+        color: #fff;
+        word-break: break-all;
+        box-sizing: border-box;
+    }
+
+
+    /* Adjust dropdown container to potentially widen it */
+    .choices[data-type*="select-multiple"] .choices__list,
+    .choices[data-type*="text"] .choices__list {
+        width: 100%; /* Ensures the dropdown tries to use all available horizontal space */
+    }
+
+    /* This style prevents wrapping and utilizes the full width */
+    .styled-select .choices__list--dropdown .choices__item {
+        white-space: nowrap; /* Prevent text wrapping */
+        overflow: hidden; /* Hide overflow */
+        text-overflow: ellipsis; /* Add ellipsis to overly long single lines */
+    }
+
+       @@media (min-width: 640px) {
+        .choices__list--dropdown .choices__item--selectable, 
+        .choices__list[aria-expanded] .choices__item--selectable {
+            padding-right: 10px; /* Adjust this value to find a suitable padding */
+        }
+    }
+
 </style>
 <!-- Edit Initiative Form -->
 <div class="modal fade" id="editInitForm" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -53,7 +125,7 @@
                         </div>
                         <div class="col-md-6">
                             <div>Assign to:</div>
-                            <select asp-for="@Model.EditedInitUsers" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
+                            <select asp-for="@Model.EditedInitUsers" class="form-control styled-select" multiple data-placeholder="Select users...">
                                 @{
                                     foreach (var user in Model.InitUsers)
                                     {
@@ -69,24 +141,25 @@
                                 }
                             </select>
                         </div>
+
                         <div class="col-md-6">
                             <div>Activate Pages:</div>
-                            <select asp-for="@Model.EditedTiles" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
+                            <select asp-for="@Model.EditedTiles" class="form-control styled-select" multiple data-placeholder="Select pages...">
                                 @{
                                     foreach (var tile in Model.Tiles)
                                     {
-                                        if(Model.SelectedTiles.Contains((int)tile.TileID))
+                                        if (Model.SelectedTiles.Contains((int)tile.TileID))
                                         {
-                                            <option value="@tile.TileID" selected> @tile.TileName</option>
+                                            <option value="@tile.TileID" selected>@tile.TileName</option>
                                         }
                                         else
                                         {
-                                            <option value="@tile.TileID"> @tile.TileName</option>
+                                            <option value="@tile.TileID">@tile.TileName</option>
                                         }
-
                                     }
                                 }
                             </select>
+
                         </div>
                     </div>
                     <div class="modal-footer" style="border-top:none">
@@ -101,13 +174,44 @@
 </div>
 <!-- Edit Initiative Form -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script>
+@* <script>
     // Check if AddTaskInvalid is true on page load and reopen modal if needed
     window.addEventListener('DOMContentLoaded', (event) => {
         $('#editInitForm').modal('show');
 
     });
+</script> *@
+<script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        var modalElement = document.getElementById('editInitForm');
+        var modalInstance = new bootstrap.Modal(modalElement);
+        modalInstance.show();
+    });
 </script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        var selects = document.querySelectorAll('.styled-select');
+        selects.forEach(function (select) {
+            var choices = new Choices(select, {
+                removeItemButton: true,
+                searchEnabled: true,
+                itemSelectText: '',
+                shouldSort: false
+            });
+
+            select.addEventListener('addItem', function (event) {
+                // When an item is added, ensure it's the only selected item if Ctrl/Cmd is not pressed
+                if (!event.detail.ctrlKey && !event.detail.metaKey) {
+                    // Deselect all other choices except the latest one
+                    choices.setChoiceByValue(event.detail.value);
+                }
+            });
+        });
+    });
+</script>
+
+
 <script>
     document.getElementById('closeButton').addEventListener('click', function () {
         // Redirect to the specific page

@@ -25,7 +25,7 @@ namespace ValleyVisionSolution.Pages.DataClasses
         public int Zip { get; set; }
         public string Country { get; set; }
 
-        public string PicturePath { get; set; }
+        
 
 
     }

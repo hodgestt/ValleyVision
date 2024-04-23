@@ -5,6 +5,9 @@
 }
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
 
 <style>
     /* Extended theme and consistent styling */
@@ -58,6 +61,22 @@
 
     .table-hover thead tr, .table-hover tbody tr {
         border-bottom: 1px solid #dee2e6; /* Adds a bottom border to each row for clarity */
+    }
+
+    .choices__list--multiple .choices__item {
+        display: inline-block;
+        vertical-align: middle;
+        border-radius: 20px;
+        padding: 4px 10px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-right: 3.75px;
+        margin-bottom: 3.75px;
+        background-color: #274c77;
+        border: 1px solid #d3d3d3;
+        color: #fff;
+        word-break: break-all;
+        box-sizing: border-box;
     }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
@@ -155,13 +174,6 @@
                         </form>
                     </td>
 
-@*                     <td class="text-center col">
-                        <a href="@Url.Content(file.FilePath)" class="btn btn-secondary btn-sm action-form" download><i class="bi bi-download"></i></a>
-                        <form method="post" asp-page-handler="DeleteDevelopmentFiles" class="action-form" onsubmit="return confirm('Are you sure you want to remove @file.FileName_ from this development area?')">
-                            <input type="hidden" name="FileMetaID" value="@file.FileMetaID" />
-                            <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-x"></i></button>
-                        </form>
-                    </td> *@
                 </tr>
             }
         </tbody>
@@ -194,30 +206,29 @@
         <div class="modal-content">
             <form method="post" asp-page="/DevelopmentPage">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="ecoDevFilesModalLabel">Select a File to Add</h5>
-                    @* <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> *@
+                    <h5 class="modal-title" id="ecoDevFilesModalLabel">Select Files to Add</h5>
                 </div>
                 <div class="modal-body">
                     <div class="col-md-6">
                         <div>Select Files</div>
-                        <select asp-for="@Model.NewDevelopmentFiles" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
+                        <select asp-for="@Model.NewDevelopmentFiles" class="form-select form-control" multiple data-live-search="true" style="height:38px">
                             @{
                                 foreach (var file in Model.EconFileList)
                                 {
-                                    <option value="@file.FileMetaID">@file.FileName_ @file.FileType</option>
+                                    <option value="@file.FileMetaID">@file.FileName_</option>
                                 }
                             }
                         </select>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" asp-page-handler="AddDevelopmentFiles">Add Selected File</button>
+                    <button type="submit" class="btn btn-primary" asp-page-handler="AddDevelopmentFiles">Add Selected Files</button>
                 </div>
             </form>
         </div>
      </div>
 </div> 
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     $(document).ready(function () {
         var filesAdded = '@TempData["FilesAdded"]';
@@ -226,6 +237,19 @@
         }
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var selectElements = document.querySelectorAll('.form-select');
+        selectElements.forEach(function (el) {
+            new Choices(el, {
+                removeItemButton: true,
+                searchEnabled: true,
+                shouldSort: false
+            });
+        });
+    });
+</script>
+
 
 
 

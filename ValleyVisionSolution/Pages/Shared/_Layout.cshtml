@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ValleyVisionSolution.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
 
     <style>
 
@@ -22,7 +23,6 @@
                 color: white;
                 background-color: #274c77;
                 font-size:x-large;
-                padding-left: 11vw;
             }
 
 
@@ -191,6 +191,46 @@
             color: #274c77;
         }
 
+        #custom-navbar {
+            color: white;
+            background-color: #274c77; /* Consistent background color */
+        }
+
+        #custom-navbar .navbar-brand.navbar-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 20px; /* Space between items */
+        }
+
+        #custom-navbar .navbar-brand.navbar-icon i {
+            color: white; /* Icon color */
+        }
+
+        #custom-navbar .navbar-brand.navbar-icon span {
+            color: white; /* Text color */
+            display: block; /* Makes text appear under the icon */
+        }
+
+        #custom-navbar .navbar-center {
+            color: white; /* Center text color */
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Your existing styles... */
+        #custom-navbar .dropdown-toggle::after {
+            color: white; /* Sets the dropdown arrow color to white */
+        }
+
+        .admin-dropdown-toggle {
+            display: flex;
+            align-items: center;
+            flex-direction: row !; /* Align items horizontally */
+        }
+
+
+
 
     </style>
 
@@ -229,84 +269,91 @@
     @if (showNavbar)
     {
         <header>
-            <nav class="navbar bg-body-secondary" style="background-color:#274c77;">
-                <div class="container-fluid">
-                    <div class="navbar-dark">
-                        @{
-                            if (Context.Session.GetInt32("UserID").HasValue)
+            <nav id="custom-navbar" class="navbar navbar-expand-lg navbar-light bg-body-secondary">
+                <div class="container-fluid d-flex justify-content-between">
+
+                    <!-- Left items for logged in users with icons and text -->
+                    @if (Context.Session.GetInt32("UserID").HasValue)
+                    {
+                        <div class="d-flex">
+                            <a href="/Index" class="navbar-brand navbar-icon">
+                                <i class="bi bi-house-door-fill"></i>
+                                <span>Home</span>
+                            </a>
+                            <a href="/Initiatives/InitiativesPage" class="navbar-brand navbar-icon">
+                                <i class="bi bi-lightbulb-fill"></i>
+                                <span>Initiatives</span>
+                            </a>
+
+                            @if (DB.DBClass.CheckUserType(Context.Session.GetInt32("UserID")) != "Admin")
                             {
-                                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-                                    <span class="navbar-toggler-icon"></span>
-                                </button>
+                                <a class="navbar-brand navbar-icon">
+                                    <i class="bi bi-lightbulb-fill" style="color:#274c77; !important"></i>
+                                    <span style="color:#274c77; !important">Initiatives</span>
+                                </a>
                             }
-                        }
-                    </div>
+                            @if (DB.DBClass.CheckUserType(Context.Session.GetInt32("UserID")) == "Admin")
+                            {
+                                <div class="dropdown navbar-item navbar-icon">
+                                    <a href="#" class="navbar-brand navbar-icon dropdown-toggle" id="navbarDropdownMenuLink" role="button"
+                                       data-bs-toggle="dropdown" aria-expanded="false">
+                                       <div>
+                                        <i class="bi bi-gear-fill"></i>
+                                        <span>Admin</span>
+                                        </div>
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"> 
+                                        <li><a class="dropdown-item" href="/Resources/AdminResources">Manage Resources</a></li>
+                                        <li><a class="dropdown-item" href="/ManageProfiles/ManageProfilesPage">Manage Users</a></li>
+                                    </ul>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <!-- Centered title -->
                     @if (ViewData["Title"] == "Home")
                     {
                         <h1 style="-webkit-text-fill-color:#274c77">Madison County Government</h1>
                     }
                     else
                     {
-                        <h1>Madison County Government</h1>
+                        <h1 class="navbar-center" style="padding-left:0 !important">
+                            Madison County Government
+                        </h1>
                     }
 
-                    @{
-                        if (Context.Session.GetInt32("UserID").HasValue)
-                        {
-                            int? UserId = (int?)Context.Session.GetInt32("UserID");
-                            String? EmpName = DB.DBClass.CheckUserName(UserId);
-                            <h4 style="-webkit-text-fill-color:white;">@EmpName</h4>
-                            <div class="button-26">
-                                <a class="nav-link" asp-area="" data-bs-toggle="modal" data-bs-target="#LogoutForm" style="text-align:left; -webkit-text-fill-color:white;">Logout</a>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="button-26">
-                                <a class="nav-link" asp-area="" asp-page="/Login/LoginPage" style="text-align:left; -webkit-text-fill-color:white;">Login</a>
-                            </div>
-                        }
+                    <!-- Right items for logged in users -->
+                    @if (Context.Session.GetInt32("UserID").HasValue)
+                    {
+                        <div class="d-flex">
+                            <a class="navbar-brand navbar-icon">
+                                <i class="bi bi-bell-fill"></i>
+                                <span>Notifications</span>
+                            </a>
+                            <a href="/ManageProfiles/SingleProfilePage" class="navbar-brand navbar-icon">
+                                <i class="bi bi-person-circle"></i>
+                                <span>Profile</span>
+                            </a>
+                            <a href="#" class="navbar-brand navbar-icon" data-bs-toggle="modal" data-bs-target="#LogoutForm">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
                     }
 
-                    @{
-                        if (Context.Session.GetInt32("UserID").HasValue)
-                        {
-                            <h2>@ViewBag.SecondHeader</h2>
-                            <a class="navbar-brand" href="#"></a>
-                            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel" style="width: 20vw;">
-                                <div class="offcanvas-header">
-                                    <h3 class="offcanvas-title" id="offcanvasNavbarLabel" style="text-align:center; font-size:35px; -webkit-text-fill-color:#274c77">Menu</h3>
-                                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                                </div>
-                                <div class="offcanvas-body" style="justify-content:left;">
-                                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-4">
-                                        @{
-                                            if (Context.Session.GetInt32("UserID").HasValue)
-                                            {
-                                                <li class="nav-item">
-                                                    <a class="nav-link" asp-area="" asp-page="/Index" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">Home</a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a class="nav-link" asp-area="" asp-page="/Initiatives/InitiativesPage" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">Initiatives</a>
-                                                </li>
-                                                if (DB.DBClass.CheckUserType(Context.Session.GetInt32("UserID")) == "Admin")
-                                                {
-                                                    <li class="nav-item">
-                                                        <a class="nav-link" asp-area="" asp-page="/ManageProfiles/ManageProfilesPage" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">Manage Users</a>
-                                                        <a class="nav-link" asp-area="" asp-page="/Resources/AdminResources" style="text-align:left; font-size:20px; -webkit-text-fill-color:#274c77;">All Resources</a>
-                                                    </li>
-                                                }
-
-                                            }
-
-                                        }
-                                    </ul>
-                                </div>
+                    <!-- Login button for guests -->
+                    @if (!Context.Session.GetInt32("UserID").HasValue)
+                    {
+                        <div class="navbar-item">
+                            <div class="button-26">
+                                <a class="nav-link" asp-area="" asp-page="/Login/LoginPage" style="color:white">Login</a>
                             </div>
-                        }
+                        </div>
                     }
                 </div>
             </nav>
+
 
 
             @{
@@ -333,15 +380,6 @@
 
                                         @await Component.InvokeAsync("Navbar", new { initID = Context.Session.GetInt32("InitID") ?? 0 })
 
-
-                                        @*
-                                    <a class="nav-link text-black inline-link" asp-area="" asp-page="/HistoricalSpending/HistoricalSpendingPage">Historical Spending</a>
-                                    <a class="nav-link text-black inline-link" asp-area="" asp-page="/SpendingProjection/SpendingProjectionPage">Spending Projection</a>
-                                    <a class="nav-link text-black inline-link" asp-area="" asp-page="/RevenueProjection/RevenueProjectionPage">Revenue Projection</a>
-                                    <a class="nav-link text-black inline-link" asp-area="" asp-page="/Resources/ResourcesPage">Resources</a>
-                                    <a class="nav-link text-black inline-link" asp-area="" asp-page="/TaskManager/TaskManagerPage">Task Manager</a>
-                                    <a class="nav-link text-black inline-link" asp-area="" asp-page="/DiscussionBoard/DiscussionBoardPage">Discussion Board</a>
-                                    *@
 
                                     </li>
 
@@ -386,33 +424,20 @@
             &copy; 2024 - ValleyVisionSolution - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-@*     <!-- Include these before your closing </body> tag -->
-    <!-- jQuery, Popper.js, and Bootstrap JS (Bootstrap Select requires them) --> *@
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4."></script>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
 
-
-@* 
 <!-- Include these before your closing </body> tag -->
-<!-- jQuery, Popper.js, and Bootstrap JS (Bootstrap Select requires them) --> *@
 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
 
 @* <!-- Bootstrap Select JavaScript --> *@
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 @await RenderSectionAsync("Scripts", required: false)
-<div id="content">
+@* <div id="content">
     @RenderBody()
-</div>
+</div> *@
+
+
 </body>
 </html>

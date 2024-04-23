@@ -185,25 +185,18 @@
         </div>
     </div>
     <!-- End New Profile Form -->
-
 <script>
-    // Check if AddProfile is true on page load and reopen modal if needed
-    window.addEventListener('DOMContentLoaded', (event) => {
-        if (@Model.OpenAddProfileModal.ToString().ToLower()) {
-            $('#addProfileForm').modal('show');
+    document.addEventListener('DOMContentLoaded', function () {
+        const shouldOpenModal = '@Model.OpenAddProfileModal'.toLowerCase() === 'true';
+        console.log("Modal should open:", shouldOpenModal); // Debug to see if the value is passed correctly
+
+        if (shouldOpenModal) {
+            var modal = new bootstrap.Modal(document.getElementById('addProfileForm'));
+            modal.show();
         }
     });
 </script>
 
-<script>
-    // Check if AddProfile is true on page load and reload page without closing the modal
-    window.addEventListener('DOMContentLoaded', (event) => {
-        if (@Model.OpenAddProfileModal.ToString().ToLower()) {
-            $('#addProfileForm').modal('show');
-            // Trigger reload after modal is shown
-            $('#addProfileForm').on('shown.bs.modal', function () {
-                
-            });
-        }
-    });
-</script>
+
+
+
