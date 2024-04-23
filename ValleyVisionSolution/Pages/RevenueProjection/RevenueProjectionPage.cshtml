@@ -214,56 +214,7 @@
 
 
 <script>
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     var rawData = @Html.Raw(Model.GetChartDataAsJson());
-    //     var allLabels = ['Real Estate Tax', 'Personal Property Tax', 'Fees Licenses Tax', 'State Funding', 'Total Revenue'];
-    //     var colors = [
-    //         'rgba(255, 190, 91, 1)',
-    //         'rgba(96, 150, 186, 1)',
-    //         'rgba(185, 209, 138, 1)',
-    //         'rgba(174, 174, 212, 1',
-    //         'rgba(39, 76, 119, 1)'
-    //     ];
-
-    //     function createChart(chartId, type, labels) {
-    //         var datasets = labels.map((label, index) => {
-    //             return {
-    //                 label: label,
-    //                 data: rawData.map(item => item[label.replace(/\s+/g, '')]),
-    //                 backgroundColor: colors[index],
-    //                 borderColor: colors[index],
-    //                 borderWidth: 2,
-    //                 fill: type !== 'line'
-    //             };
-    //         });
-
-    //         var ctx = document.getElementById(chartId).getContext('2d');
-    //         return new Chart(ctx, {
-    //             type: type,
-    //             data: {
-    //                 labels: rawData.map(item => item.Year.toString()),
-    //                 datasets: datasets
-    //             },
-    //             options: {
-    //                 scales: {
-    //                     y: {
-    //                         beginAtZero: true
-    //                     }
-    //                 },
-    //                 plugins: {
-    //                     legend: {
-    //                         position: 'bottom'
-    //                     }
-    //                 }
-    //             }
-    //         });
-    //     }
-
-    //     createChart('revenueChartA', 'bar', ['Total Revenue']);
-    //     createChart('revenueChartB', 'bar', allLabels.slice(0, -1)); // Exclude 'Total Revenue'
-    //     createChart('revenueChartC', 'line', ['Total Revenue']);
-    //     createChart('revenueChartD', 'line', allLabels.slice(0, -1)); // Exclude 'Total Revenue'
-    // });
+ 
 
     document.addEventListener('DOMContentLoaded', function () {
         var rawData = @Html.Raw(Model.GetChartDataAsJson());
