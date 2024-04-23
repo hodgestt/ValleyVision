@@ -66,13 +66,22 @@
         background-color: #f2f2f2;
     }
 
+    .manualInflationContainer{
+        display:grid;
+        grid-template-columns:0.1fr 1fr;
+        grid-template-areas:
+        "Box Title";
+    }
+    .manualInflationBox{
+        grid-area:Box;
+    }
+    .manualInflationTitle{
+        grid-area:Title;
+    }
+
 </style>
-<form method="post" asp-page="/SpendingProjectionPage">
+@* <form method="post" asp-page="/SpendingProjectionPage">
     <div class="row mb-3">
-        @* <div class="col-md-2">
-            <div class="parameterTitle">Inflation Rate %:</div>
-            <input asp-for="@Model.ParameterInflationRate" type="text" class="form-control">
-        </div> *@
         <div class="col-md-2">
             <div class="parameterTitle">Anomaly Amount:</div>
             <input asp-for="@Model.ParameterAnomaly" type="text" class="form-control">
@@ -87,11 +96,57 @@
                 <option value="5">5</option>
             </select>
         </div>
+        <div class="col-md-2">
+            <div style="display:flex">
+                <input style="margin-right:0.5vw" class="form-check-input parameterTitle" type="checkbox" id="manualInflationRate">
+                <label class="form-check-label parameterTitle" for="manualInflationRate">
+                     Manually Set Inflation Rate
+                </label>
+                <!-- Input for inflation rate, initially hidden -->
+                <input asp-for="@Model.ParameterInflationRate" type="text" class="form-control" id="inflationRateInput" style="display: none;">
+            </div>
+
+        </div>
+        <div class="col-md-2 d-flex flex-column justify-content-end">
+            <button type="submit" class="btn btn-primary" id="runProjectionBtn" asp-page-handler="ProjectExpenditures2">Run Projection</button>
+        </div>
+    </div>
+</form> *@
+
+<form method="post" asp-page="/SpendingProjectionPage">
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <div class="parameterTitle">Anomaly Amount:</div>
+            <input asp-for="@Model.ParameterAnomaly" type="text" class="form-control">
+        </div>
+        <div class="col-md-2">
+            <div class="parameterTitle">Number of Projection Years:</div>
+            <select asp-for="@Model.NumProjectionYears" class="form-select form-control">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <div class="manualInflationContainer">
+                <input style="margin-right: 0.5vw" class="form-check-input parameterTitle manualInflationBox" type="checkbox" id="manualInflationRate">
+                <label class="form-check-label parameterTitle manualInflationTitle">
+                    Manually Set Inflation Rate
+                </label>
+            </div>
+            <!-- Input for inflation rate, initially hidden -->
+            <input asp-for="@Model.ParameterInflationRate" type="text" class="form-control" id="inflationRateInput" style="display: none;">
+        </div>
+       
         <div class="col-md-2 d-flex flex-column justify-content-end">
             <button type="submit" class="btn btn-primary" id="runProjectionBtn" asp-page-handler="ProjectExpenditures2">Run Projection</button>
         </div>
     </div>
 </form>
+
+
 <div class="chart-grid">
     <div class="dashboard-tile" id="chartA">
         <div class="dashboard-tile-title-bar">
@@ -296,3 +351,47 @@
     }
         });
 </script>
+@* <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var checkbox = document.getElementById('manualInflationRate');
+        var inflationInput = document.getElementById('inflationRateInput');
+        var inflationRateTitle = document.getElementById('inflationRateTitle');
+
+        // Function to toggle visibility based on the checkbox state
+        function toggleVisibility() {
+            if (checkbox.checked) {
+                inflationRateTitle.style.display = 'block'; // Show the title
+                inflationInput.style.display = 'block';     // Show the input
+            } else {
+                inflationRateTitle.style.display = 'none';  // Hide the title
+                inflationInput.style.display = 'none';      // Hide the input
+            }
+        }
+
+        // Set initial visibility based on checkbox state at load
+        toggleVisibility();
+
+        // Event listener for changes in checkbox state
+        checkbox.addEventListener('change', toggleVisibility);
+    });
+</script> *@
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var checkbox = document.getElementById('manualInflationRate');
+        var inflationInput = document.getElementById('inflationRateInput');
+
+        // Function to toggle the visibility of the inflation rate input
+        function toggleInflationInput() {
+            inflationInput.style.display = checkbox.checked ? 'block' : 'none';  // Toggles display based on checkbox
+        }
+
+        // Initialize input visibility based on checkbox state when the page loads
+        toggleInflationInput();
+
+        // Event listener for checkbox changes
+        checkbox.addEventListener('change', toggleInflationInput);
+    });
+</script>
+
+

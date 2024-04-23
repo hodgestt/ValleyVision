@@ -18,7 +18,7 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
     {
         public List<Expenditure> HistoricalExpenditures { get; set; } = new List<Expenditure>();
         public Expenditure LatestHistoricalExpenditure { get; set; } = new Expenditure();
-        public List<Expenditure> ProjectedExpenditures { get; set; } = new List<Expenditure>();
+        //public List<Expenditure> ProjectedExpenditures { get; set; } = new List<Expenditure>();
         public List<ExpenditureProjection> ProjectedExpenditures2 { get; set; } = new List<ExpenditureProjection>();
         List<decimal> HistoricalInflationRates { get; set; } = new List<decimal>();
         public decimal LastTotal = 0;
@@ -513,7 +513,7 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
         {
             if (HttpContext.Session.GetString("ProjectedExpenditures") != null)
             {
-                ProjectedExpenditures = JsonSerializer.Deserialize<List<Expenditure>>(HttpContext.Session.GetString("ProjectedExpenditures"));
+                ProjectedExpenditures2 = JsonSerializer.Deserialize<List<ExpenditureProjection>>(HttpContext.Session.GetString("ProjectedExpenditures"));
             }
             else
             {
@@ -542,11 +542,11 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
                     int currentRow = 2; // Adjust based on your template's starting row for data
 
                     // Populate the worksheet with data from ProjectedRevenues
-                    foreach (var expenditure in ProjectedExpenditures)
+                    foreach (var expenditure in ProjectedExpenditures2)
                     {
                         worksheet.Cell(currentRow, 1).Value = expenditure.Year;
                         worksheet.Cell(currentRow, 2).Value = expenditure.InflationRate;
-                        worksheet.Cell(currentRow, 3).Value = expenditure.InterestRate;
+                        //worksheet.Cell(currentRow, 3).Value = expenditure.InterestRate;
                         worksheet.Cell(currentRow, 4).Value = expenditure.PublicSafety;
                         worksheet.Cell(currentRow, 5).Value = expenditure.School;
                         worksheet.Cell(currentRow, 6).Value = expenditure.Anomaly;
