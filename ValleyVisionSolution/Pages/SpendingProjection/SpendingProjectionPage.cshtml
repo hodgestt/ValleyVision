@@ -153,8 +153,8 @@
                     {
                         label: 'Upper Confidence Limit',
                         data: upperConfidenceData,
-                        borderColor: 'rgba(255, 190, 91, 0.25)',
-                        backgroundColor: 'rgba(255, 190, 91, 0.25)',
+                        borderColor: 'rgba(255, 190, 91, 0.4)',
+                        backgroundColor: 'rgba(255, 190, 91, 0.4)',
                         fill: +1,
                         borderWidth: 2
                     },
@@ -169,8 +169,8 @@
                     {
                         label: 'Lower Confidence Limit',
                         data: lowerConfidenceData,
-                        borderColor: 'rgba(185, 209, 138, 0.25)',
-                        backgroundColor: 'rgba(185, 209, 138, 0.25)',
+                        borderColor: 'rgba(185, 209, 138, 0.4)',
+                        backgroundColor: 'rgba(185, 209, 138, 0.4)',
                         fill: +1,
                         borderWidth: 2
                     }
@@ -191,12 +191,7 @@
             }
         });
 
-        // var expenditureLabels = [
-        //     { key: 'PublicSafety', label: 'Public Safety' },
-        //     { key: 'School', label: 'School Funding' },
-        //     { key: 'Anomaly', label: 'Anomaly' },
-        //     { key: 'Other', label: 'Other' }
-        // ];
+       
 
         var expenditureLabels = [
             { key: 'PublicSafety', label: 'Public Safety' },
@@ -204,23 +199,25 @@
             { key: 'Other', label: 'Other' },
             { key: 'Anomaly', label: 'Anomaly' }  // Moved to the last position
         ];
-        // rgba(185, 209, 138, 1),     rgba(174, 174, 212, 1),     rgba(255, 190, 91, 1),    rgba(96, 150, 186, 1)
-        var colors = ['rgba(16, 41, 80, 1)', 'rgba(39, 76, 119, 1)', 'rgba(175, 184, 202, 1)', 'rgba(183, 191, 174, 1)', 'rgba(146, 157, 133, 1)', 'rgba(199, 157, 133, 1)'];
+        
+        var colors = ['rgba(255, 190, 91, 1)', 'rgba(96, 150, 186, 1)', 'rgba(185, 209, 138, 1)', 'rgba(174, 174, 212, 1', 'rgba(39, 76, 119, 1)'];
 
         function createChart(chartId, type, labels, yAxisSettings) {
+            
             var datasets = labels.map((item, index) => {
-                // Determine the type of chart for each dataset
                 var chartType = item.key === 'InflationRate' ? 'line' : type; // Use 'line' for Inflation Rate, otherwise use the chart type passed in function
-
                 var yAxisID = item.key === 'InflationRate' ? 'y1' : 'y';
                 var datasetOrder = item.key === 'InflationRate' ? 1 : 2; // Lower order for line to bring it to front
+
+                // Apply custom color if provided, else default to colors array
+                var datasetColor = item.color ? item.color : colors[index % colors.length];
 
                 return {
                     type: chartType, // Assign type here
                     label: item.label,
                     data: rawData.map(data => data[item.key]),
-                    backgroundColor: item.key === 'InflationRate' ? 'rgba(146, 157, 133, 1)' : colors[index % colors.length], // Light red for inflation, normal color for others
-                    borderColor: item.key === 'InflationRate' ? 'rgba(146, 157, 133, 1)' : colors[index % colors.length],
+                    backgroundColor: datasetColor,
+                    borderColor: datasetColor,
                     borderWidth: 2,
                     fill: item.key === 'InflationRate' ? false : type !== 'line', // No fill for line charts
                     yAxisID: yAxisID,
@@ -263,8 +260,8 @@
         
         
         createChart('expenditureChartC', 'bar', [
-            { key: 'TotalExpenditure', label: 'Total Expenditure' },
-            { key: 'InflationRate', label: 'Inflation Rate' }
+            { key: 'TotalExpenditure', label: 'Total Expenditure', color: 'rgba(96, 150, 186, 1)' },
+            { key: 'InflationRate', label: 'Inflation Rate', color: 'rgba(39, 76, 119, 1)' }
         ], {
             y: {
                 beginAtZero: true,

@@ -145,7 +145,7 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
                     {
                         IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Use the appropriate worksheet
 
-                        int currentRow = 5; // Start populating data from this row onwards
+                        int currentRow = 2; // Start populating data from this row onwards
 
                         foreach (var revenue in ProjectedRevenues)
                         {

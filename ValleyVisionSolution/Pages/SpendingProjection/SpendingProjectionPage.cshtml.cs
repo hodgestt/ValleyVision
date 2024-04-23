@@ -322,104 +322,6 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
             return Page();
         }
 
-        //public IActionResult OnPostProjectExpenditures()
-        //{
-        //    loadData();
-        //    ProjectedExpenditures.Add(LatestHistoricalExpenditure);
-        //    ParameterInflationRate = ParameterInflationRate / 100;
-        //    decimal Adjustment = 0;
-        //    ParameterInterestRate = ParameterInterestRate / 100;
-
-        //    int nextYear = LatestHistoricalExpenditure.Year + 1;
-
-        //    for (int i = 1; i <= NumProjectionYears; i++)
-        //    {
-        //        // Extracting data from the list into arrays
-        //        double[] inflationRate = HistoricalExpenditures.Select(e => (double)e.InflationRate).ToArray();
-        //        double[] interestRate = HistoricalExpenditures.Select(e => (double)e.InterestRate).ToArray();
-        //        double[] publicSafety = HistoricalExpenditures.Select(e => (double)e.PublicSafety).ToArray();
-        //        double[] school = HistoricalExpenditures.Select(e => (double)e.School).ToArray();
-        //        double[] other = HistoricalExpenditures.Select(e => (double)e.Other).ToArray();
-
-
-        //        // Create the design matrix with an intercept column
-        //        var designMatrixPublicSafety = Matrix<double>.Build.DenseOfColumnArrays(
-        //            new double[publicSafety.Length].Populate(1), // Intercept column of 1's
-        //            inflationRate,
-        //            interestRate
-        //        );
-
-        //        var designMatrixSchool = Matrix<double>.Build.DenseOfColumnArrays(
-        //            new double[school.Length].Populate(1), // Intercept column of 1's
-        //            inflationRate,
-        //            interestRate
-        //        );
-
-        //        var designMatrixOther = Matrix<double>.Build.DenseOfColumnArrays(
-        //            new double[other.Length].Populate(1), // Intercept column of 1's
-        //            inflationRate,
-        //            interestRate
-        //        );
-
-        //        // Create the vector for the dependent variable
-        //        var publicSafetyVector = Vector<double>.Build.Dense(publicSafety);
-        //        var schoolVector = Vector<double>.Build.Dense(school);
-        //        var otherVector = Vector<double>.Build.Dense(other);
-
-
-        //        // Perform the multiple regression
-        //        var publicSafetycoefficients = MultipleRegression.NormalEquations(designMatrixPublicSafety, publicSafetyVector);
-        //        var schoolcoefficients = MultipleRegression.NormalEquations(designMatrixSchool, schoolVector);
-        //        var othercoefficients = MultipleRegression.NormalEquations(designMatrixOther, otherVector);
-
-
-
-        //        ProjectedExpenditures.Add(new Expenditure
-        //        {
-        //            Year = nextYear,
-        //            InflationRate = ParameterInflationRate,
-        //            InterestRate = ParameterInterestRate,
-        //            PublicSafety = (decimal)(publicSafetycoefficients[0] + (publicSafetycoefficients[1] * (double)ParameterInflationRate) + (publicSafetycoefficients[2] * (double)ParameterInterestRate)),
-        //            School = (decimal)(schoolcoefficients[0] + (schoolcoefficients[1] * (double)ParameterInflationRate) + (schoolcoefficients[2] * (double)ParameterInterestRate)),
-        //            Anomaly = ParameterAnomaly,
-        //            Other = (decimal)(othercoefficients[0] + (othercoefficients[1] * (double)ParameterInflationRate) + (othercoefficients[2] * (double)ParameterInterestRate)),
-        //            TotalExpenditure = (decimal)(publicSafetycoefficients[0] + (publicSafetycoefficients[1] * (double)ParameterInflationRate) + (publicSafetycoefficients[2] * (double)ParameterInterestRate))
-        //                               + (decimal)(schoolcoefficients[0] + (schoolcoefficients[1] * (double)ParameterInflationRate) + (schoolcoefficients[2] * (double)ParameterInterestRate))
-        //                               + ParameterAnomaly
-        //                               + (decimal)(othercoefficients[0] + (othercoefficients[1] * (double)ParameterInflationRate) + (othercoefficients[2] * (double)ParameterInterestRate))
-        //                               + Adjustment
-        //        });
-
-        //        HistoricalExpenditures.Add(new Expenditure
-        //        {
-        //            Year = nextYear,
-        //            InflationRate = ParameterInflationRate,
-        //            InterestRate = ParameterInterestRate,
-        //            PublicSafety = (decimal)(publicSafetycoefficients[0] + (publicSafetycoefficients[1] * (double)ParameterInflationRate) + (publicSafetycoefficients[2] * (double)ParameterInterestRate)),
-        //            School = (decimal)(schoolcoefficients[0] + (schoolcoefficients[1] * (double)ParameterInflationRate) + (schoolcoefficients[2] * (double)ParameterInterestRate)),
-        //            Anomaly = ParameterAnomaly,
-        //            Other = (decimal)(othercoefficients[0] + (othercoefficients[1] * (double)ParameterInflationRate) + (othercoefficients[2] * (double)ParameterInterestRate)),
-        //            TotalExpenditure = (decimal)(publicSafetycoefficients[0] + (publicSafetycoefficients[1] * (double)ParameterInflationRate) + (publicSafetycoefficients[2] * (double)ParameterInterestRate))
-        //                               + (decimal)(schoolcoefficients[0] + (schoolcoefficients[1] * (double)ParameterInflationRate) + (schoolcoefficients[2] * (double)ParameterInterestRate))
-        //                               + ParameterAnomaly
-        //                               + (decimal)(othercoefficients[0] + (othercoefficients[1] * (double)ParameterInflationRate) + (othercoefficients[2] * (double)ParameterInterestRate))
-        //                               + Adjustment
-        //        });
-
-        //        nextYear++;
-        //        Adjustment = AverageExpenditureChange * i * (1 + ParameterInflationRate);
-
-        //    }
-
-
-
-
-
-
-
-        //    HttpContext.Session.SetString("ProjectedExpenditures", JsonSerializer.Serialize(ProjectedExpenditures));
-        //    return Page();
-        //}
 
         public string GetChartDataAsJson()
         {
@@ -428,9 +330,9 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
 
         public async Task<IActionResult> OnPostDownloadExcel()
         {
-            if (HttpContext.Session.GetString("ProjectedExpenditures") != null)
+            if (HttpContext.Session.GetString("ProjectedExpenditures2") != null)
             {
-                ProjectedExpenditures = JsonSerializer.Deserialize<List<Expenditure>>(HttpContext.Session.GetString("ProjectedExpenditures"));
+                ProjectedExpenditures2 = JsonSerializer.Deserialize<List<ExpenditureProjection>>(HttpContext.Session.GetString("ProjectedExpenditures2"));
 
                 Stream templateStream = await _blobService.DownloadFileBlobAsync("SpendingProjectionTemplate.xlsx");
                 if (templateStream == null)
@@ -450,16 +352,25 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
 
                         int currentRow = 2; // Start populating data from this row onwards
 
-                        foreach (var expenditure in ProjectedExpenditures)
+                        foreach (var expenditure in ProjectedExpenditures2)
                         {
                             worksheet.Cell(currentRow, 1).Value = expenditure.Year;
                             worksheet.Cell(currentRow, 2).Value = expenditure.InflationRate;
-                            worksheet.Cell(currentRow, 3).Value = expenditure.InterestRate;
+                            worksheet.Cell(currentRow, 3).Value = expenditure.PublicSafetyUCL;
                             worksheet.Cell(currentRow, 4).Value = expenditure.PublicSafety;
-                            worksheet.Cell(currentRow, 5).Value = expenditure.School;
-                            worksheet.Cell(currentRow, 6).Value = expenditure.Anomaly;
-                            worksheet.Cell(currentRow, 7).Value = expenditure.Other;
-                            worksheet.Cell(currentRow, 8).Value = expenditure.TotalExpenditure;
+                            worksheet.Cell(currentRow, 5).Value = expenditure.PublicSafetyLCL;
+                            worksheet.Cell(currentRow, 6).Value = expenditure.SchoolLCL;
+                            worksheet.Cell(currentRow, 7).Value = expenditure.School;
+                            worksheet.Cell(currentRow, 8).Value = expenditure.SchoolUCL;
+                            worksheet.Cell(currentRow, 9).Value = expenditure.AnomalyUCL;
+                            worksheet.Cell(currentRow, 10).Value = expenditure.Anomaly;
+                            worksheet.Cell(currentRow, 11).Value = expenditure.AnomalyUCL;
+                            worksheet.Cell(currentRow, 12).Value = expenditure.OtherUCL;
+                            worksheet.Cell(currentRow, 13).Value = expenditure.Other;
+                            worksheet.Cell(currentRow, 14).Value = expenditure.OtherUCL;
+                            worksheet.Cell(currentRow, 15).Value = expenditure.TotalExpenditureLCL;
+                            worksheet.Cell(currentRow, 16).Value = expenditure.TotalExpenditure;
+                            worksheet.Cell(currentRow, 17).Value = expenditure.TotalExpenditureUCL;
                             currentRow++;
                         }
 
@@ -477,7 +388,7 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
             else
             {
                 TempData["ErrorMessage"] = "Please run the projection before downloading the report.";
-                return RedirectToPage("/SpendingProjectionPage");
+                return Page();
             }
         }
 
