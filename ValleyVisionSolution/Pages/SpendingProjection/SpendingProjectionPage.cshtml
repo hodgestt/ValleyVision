@@ -110,10 +110,10 @@
     <div class="row mb-3">
         <div class="col-md-2">
             <div class="parameterTitle">
-                <span>&#x1F6C8;</span> Anomaly Amount:
+                <span>&#x1F6C8;</span> Anomaly Amount $:
                 <span class="custom-tooltip">
                     Enter an expected major new expense to be applied each year
-                    Do not include symbols. (ie. 1,000,000).
+                    Do not include symbols. (ie. 1,000,000)
                 </span>
             </div>
             <input asp-for="@Model.ParameterAnomaly" type="text" class="form-control">
@@ -136,7 +136,7 @@
                 <input style="margin-right: 0.5vw" class="form-check-input parameterTitle manualInflationBox" type="checkbox" id="manualInflationRate">
                 <label class="form-check-label parameterTitle manualInflationTitle">
                     <span>&#x1F6C8;</span> Manually Set Inflation %:
-                    <span class="custom-tooltip">Enter an inflation rate. Do not include symbols. (ie. 4.50)</span>
+                    <span class="custom-tooltip">Check box to manually input inflation rate. Do not include symbols.  (ie. 0.04 = 4; for a 4% inflation rate)</span>
                 </label>
             </div>
             <!-- Input for inflation rate, initially hidden -->
