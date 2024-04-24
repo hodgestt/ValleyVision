@@ -17,6 +17,8 @@ using DocumentFormat.OpenXml.Drawing.Charts;
 using System;
 using Microsoft.AspNetCore.SignalR;
 using Task = ValleyVisionSolution.Pages.DataClasses.Task;
+using DocumentFormat.OpenXml.InkML;
+
 namespace ValleyVisionSolution.Pages.DB
 {
     public class DBClass
@@ -574,33 +576,20 @@ namespace ValleyVisionSolution.Pages.DB
             }
         }
 
-        public static List<Task> GetTasksByUserId(int userId)
+        public static SqlDataReader GetTasksByUserId(int userId)
         {
-            List<Task> tasks = new List<Task>();
-            using (var connection = new SqlConnection(MainConnString))
-            {
-                connection.Open();
-                var query = "SELECT T.taskID, T.taskName, T.taskDueDateTime FROM Task T INNER JOIN TaskUsers U on T.taskID = U.taskID WHERE U.userID = @UserID;";
-                using (var cmd = new SqlCommand(query, connection))
-                {
-                    cmd.Parameters.AddWithValue("@UserID", userId);
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Task task = new Task()
-                            {
-                                TaskID = reader.GetInt32(reader.GetOrdinal("taskID")),
-                                TaskName = reader.GetString(reader.GetOrdinal("taskName")),
-                                TaskDueDateTime = reader.GetDateTime(reader.GetOrdinal("taskDueDateTime"))
-                            };
-                            tasks.Add(task);
-                        }
-                    }
-                }
-            }
-            return tasks;
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = ValleyVisionConnection;
+                cmd.Connection.ConnectionString = MainConnString;
+                cmd.Parameters.AddWithValue("@UserID", userId);
+                cmd.CommandText = "SELECT T.taskID, T.taskName, T.taskDueDateTime, T.initID FROM Task T INNER JOIN TaskUsers U on T.taskID = U.taskID WHERE U.userID = @UserID;";
+                cmd.Connection.Open(); // Open connection here, close in Model!
+
+                SqlDataReader tempReader = cmd.ExecuteReader();
+
+                return tempReader;
         }
+            
 
 
         //reads all users that have been assigned a given task

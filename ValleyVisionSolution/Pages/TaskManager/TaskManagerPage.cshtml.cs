@@ -1,3 +1,4 @@
+using DocumentFormat.OpenXml.InkML;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Data.SqlClient;
@@ -15,13 +16,14 @@ public class TaskManagerPageModel : PageModel
     public List<User> InitUsers { get; set; }
     public bool OpenModal { get; set; }
 
-
-
+    public int initID { get; set; }
 
     [BindProperty]
     public Task NewTask { get; set; }
     [BindProperty]
     public List<int> NewTaskUsers { get; set; }
+
+    public List<Initiative> Inits { get; set; }
 
 
     public TaskManagerPageModel()
@@ -30,12 +32,14 @@ public class TaskManagerPageModel : PageModel
         MyTasks = new List<Task>();
         InitUsers = new List<User>();
         OpenModal = false;
-
-        
+        Inits = new List<Initiative>();
     }
-    public void loadData()
+
+    public void loadData(int initID)
     {
-        int? initID = HttpContext.Session.GetInt32("InitID");
+        string initName = HttpContext.Session.GetString("InitName");
+        initID = (int)HttpContext.Session.GetInt32("InitID");
+        
 
         //Populate AllTasks list
         SqlDataReader reader = DBClass.AllTasksReader(initID);
@@ -84,25 +88,52 @@ public class TaskManagerPageModel : PageModel
         }
         // Close your connection in DBClass
         DBClass.ValleyVisionConnection.Close();
+
+
     }
-    public void OnGet()
+    public void OnGet(int initID)
     {
-        loadData();
+        if (initID != null)
+        {
+            HttpContext.Session.SetInt32("InitID", initID);
+        }
+        if (HttpContext.Session.GetString("InitName") == null)
+        {
+            SqlDataReader reader4 = DBClass.EditedInitiativeReader(initID);
+            while (reader4.Read())
+            {
+                Inits.Add(new Initiative
+                {
+                    InitID = Int32.Parse(reader4["InitID"].ToString()),
+                    InitName = reader4["InitName"].ToString()
+                });
+                
+            }
+            foreach (var initiative in Inits)
+            {
+                if(initiative.InitID == initID) 
+                {
+                    HttpContext.Session.SetString("InitName", initiative.InitName);
+                }
+            }
+            DBClass.ValleyVisionConnection.Close();
+        }
+        loadData(initID);
     }
 
-    public IActionResult OnPostAddTask()
+    public IActionResult OnPostAddTask(int initID)
     {
         if (!ModelState.IsValid)
         {
             // Model state is not valid, return the page with validation errors
-            loadData();
+            loadData(initID);
             OpenModal = true;
             return Page();
         }
 
         // Model state is valid, continue with processing
         DBClass.AddTask(HttpContext.Session.GetInt32("InitID"), NewTask, NewTaskUsers);
-        loadData();
+        loadData(initID);
         ModelState.Clear();
         NewTaskUsers = new List<int>();
         NewTask = new Task();
@@ -110,9 +141,14 @@ public class TaskManagerPageModel : PageModel
     }
 
 
-    public IActionResult OnPostLogoutHandler()
+    public IActionResult OnPostLogoutHandler(int initID)
     {
         HttpContext.Session.Clear();
         return RedirectToPage("/Index");
+    }
+    public IActionResult OnPostNotification()
+    {
+        HttpContext.Session.SetInt32("InitID",initID);
+        return RedirectToPage("/TaskManager/TaskManagerPage");
     }
 }

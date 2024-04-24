@@ -347,7 +347,7 @@
                                     <span>Notifications</span>
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="notificationDropdown" id="taskDropdown">
-                                    @await Component.InvokeAsync("TasksDropdown")
+                                    @await Component.InvokeAsync("TasksDropdown",  new { initID = Context.Session.GetInt32("InitID") ?? 0 })
                                 </ul>
                             </div>
                             <a href="/ManageProfiles/SingleProfilePage" class="navbar-brand navbar-icon">

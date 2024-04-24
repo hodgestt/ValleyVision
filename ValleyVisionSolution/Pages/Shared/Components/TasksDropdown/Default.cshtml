@@ -27,6 +27,10 @@
 {
     @foreach (var task in Model)
     {
-        <li><a class="dropdown-item" href="#">@task.TaskName - Due: @task.TaskDueDateTime.ToShortDateString()</a></li>
+        <li>
+            <a class="dropdown-item" asp-page="/TaskManager/TaskManagerPage" asp-route-initID="@task.InitID">
+                @task.TaskName - Due: @task.TaskDueDateTime.ToShortDateString()
+            </a>
+        </li>
     }
 }
