@@ -28,6 +28,17 @@
         margin-bottom: 20px;
     }
 
+    .btn-unpublish {
+        background-color: #274c77; /* Dark blue background */
+        color: white; /* White text */
+        border: none; /* No border */
+    }
+
+        .btn-unpublish:hover {
+            background-color: #6096BA; /* Lighter blue on hover */
+            color: white; /* Keep text white on hover */
+        }
+
 </style>
 
 <div class="container mt-4">
@@ -91,7 +102,7 @@
                             @if (fileMeta.published == "yes")
                             {
                                 <form method="post" style="display: inline-block;" asp-page-handler="UnpublishFile" asp-route-fileId="@fileMeta.FileMetaID" onsubmit="return confirm('Are you sure you want to unpublish this file? It will no longer be accessible to the public.');">
-                                    <button type="submit" class="btn btn-light btn-sm custom-margin-left">
+                                    <button type="submit" class="btn btn-unpublish btn-sm custom-margin-left">
                                         <i class="bi bi-cloud-download"></i> Un-Publish
                                     </button>
                                 </form>
