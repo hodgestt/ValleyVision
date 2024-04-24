@@ -17,6 +17,7 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
 
         public void loadData()
         {
+            HttpContext.Session.Remove("InitName");
             profileInformation = DBClass.SingleProfilesReader(HttpContext.Session.GetInt32("UserID"));
         }
 
