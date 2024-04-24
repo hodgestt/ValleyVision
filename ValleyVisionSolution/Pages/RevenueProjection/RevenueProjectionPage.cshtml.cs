@@ -76,13 +76,6 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
         {
             loadData();
 
-            //// Generate a random number between 0.975 and 1.025
-            //Random random = new Random();
-            //double randomNum = 0.975 + (random.NextDouble() * 0.05);
-            //decimal randomNumber = (decimal)randomNum;
-
-            
-
             ProjectedRevenues.Add(new Revenue
             {
                 RealEstateTax = LatestRevenue.RealEstateTax,
@@ -149,14 +142,13 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
 
                         foreach (var revenue in ProjectedRevenues)
                         {
-                            currentRow++;
                             worksheet.Cell(currentRow, 1).Value = revenue.Year;
                             worksheet.Cell(currentRow, 2).Value = revenue.RealEstateTax;
                             worksheet.Cell(currentRow, 3).Value = revenue.PersonalPropertyTax;
                             worksheet.Cell(currentRow, 4).Value = revenue.FeesLicensesTax;
                             worksheet.Cell(currentRow, 5).Value = revenue.StateFunding;
                             worksheet.Cell(currentRow, 6).Value = revenue.TotalRevenue;
-                            
+                            currentRow++;
                         }
 
                         worksheet.Columns().AdjustToContents();
@@ -189,6 +181,7 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
             else
             {
                 loadData();
+                return Page();
             }
 
             var uniqueFileName = $"RevenueProjections_{DateTime.Now:MMdd_HHmmss}.xlsx";
@@ -210,18 +203,18 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
                 {
                     IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Use the appropriate worksheet
 
-                    int currentRow = 5; // Adjust based on your template's starting row for data
+                    int currentRow = 2; // Adjust based on your template's starting row for data
 
                     // Populate the worksheet with data from ProjectedRevenues
                     foreach (var revenue in ProjectedRevenues)
                     {
-                        currentRow++;
                         worksheet.Cell(currentRow, 1).Value = revenue.Year;
                         worksheet.Cell(currentRow, 2).Value = revenue.RealEstateTax;
                         worksheet.Cell(currentRow, 3).Value = revenue.PersonalPropertyTax;
                         worksheet.Cell(currentRow, 4).Value = revenue.FeesLicensesTax;
                         worksheet.Cell(currentRow, 5).Value = revenue.StateFunding;
                         worksheet.Cell(currentRow, 6).Value = revenue.TotalRevenue;
+                        currentRow++;
                     }
 
                     worksheet.Columns().AdjustToContents();
@@ -249,7 +242,7 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
             };
 
             DBClass.UploadFile(initID, fileMeta);
-
+            loadData();
             TempData["Message"] = $"{uniqueFileName} was Successfully Saved to Budget Process Resources";
             return Page();
         }
@@ -263,86 +256,4 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
 
     }
 
-
-    //    public async Task<IActionResult> OnPostSaveExcel()
-    //    {
-    //        // Check if ProjectedRevenues are stored in session and deserialize them
-    //        if (HttpContext.Session.GetString("ProjectedRevenues") != null)
-    //        {
-    //            ProjectedRevenues = JsonSerializer.Deserialize<Revenue[]>(HttpContext.Session.GetString("ProjectedRevenues"));
-    //        }
-    //        else
-    //        {
-    //            loadData();
-    //        }
-
-    //        // Generate a unique file name for the new Excel file
-    //        var uniqueFileName = $"RevenueProjections_{DateTime.Now:MMdd_HHmmss}.xlsx";
-
-    //        // Use a MemoryStream for the Excel package to work with
-    //        using (var stream = new MemoryStream())
-    //        {
-    //            // Path to your Excel template for Projected Revenues
-    //            //string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Pages", "RevenueProjection", "RevenueProjectionsTemplate.xlsx");
-    //            string templatePath = "Pages/RevenueProjection/RevenueProjectionsTemplate.xlsx";
-
-    //            using (var workbook = new XLWorkbook(templatePath))
-    //            {
-    //                IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming the data should be placed in the second worksheet
-
-    //                // Starting row for the data
-    //                int currentRow = 5; // Adjust based on your template
-
-    //                // Populate the worksheet with data from ProjectedRevenues
-    //                foreach (var revenue in ProjectedRevenues)
-    //                {
-    //                    currentRow++;
-    //                    worksheet.Cell(currentRow, 1).Value = revenue.Year;
-    //                    worksheet.Cell(currentRow, 2).Value = revenue.RealEstateTax;
-    //                    worksheet.Cell(currentRow, 3).Value = revenue.PersonalPropertyTax;
-    //                    worksheet.Cell(currentRow, 4).Value = revenue.FeesLicensesTax;
-    //                    worksheet.Cell(currentRow, 5).Value = revenue.StateFunding;
-    //                    worksheet.Cell(currentRow, 6).Value = revenue.TotalRevenue;
-
-    //                }
-
-    //                // Adjust column widths to content
-    //                worksheet.Columns().AdjustToContents();
-
-    //                // Write the workbook to the MemoryStream
-    //                workbook.SaveAs(stream);
-    //            }
-
-    //            // Reset the position of the MemoryStream to the beginning
-    //            stream.Position = 0;
-
-    //            // Use the IBlobService to upload the MemoryStream to Azure Blob Storage
-    //            await _blobService.UploadFileBlobAsync(uniqueFileName, stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-
-    //            // Optional: Update your database with the file's details
-    //            int initID = HttpContext.Session.GetInt32("InitID") ?? 0;
-    //            var fileMeta = new FileMeta
-    //            {
-    //                FileName_ = uniqueFileName,
-    //                FilePath = uniqueFileName, // Since this is in Blob Storage, adjust as needed
-    //                FileType = ".xlsx",
-    //                UploadedDateTime = DateTime.Now,
-    //                userID = HttpContext.Session.GetInt32("UserID")
-    //            };
-
-    //            DBClass.UploadFile(initID, fileMeta);
-    //        }
-
-    //        // Notify the user
-    //        TempData["Message"] = $"{uniqueFileName} was Successfully Saved to Budget Process Resources";
-    //        return Page();
-    //    }
-
-
-    //    public IActionResult OnPostLogoutHandler()
-    //    {
-    //        HttpContext.Session.Clear();
-    //        return RedirectToPage("/Index");
-    //    }
-    //}
 }

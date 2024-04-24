@@ -18,7 +18,6 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
     {
         public List<Expenditure> HistoricalExpenditures { get; set; } = new List<Expenditure>();
         public Expenditure LatestHistoricalExpenditure { get; set; } = new Expenditure();
-        //public List<Expenditure> ProjectedExpenditures { get; set; } = new List<Expenditure>();
         public List<ExpenditureProjection> ProjectedExpenditures2 { get; set; } = new List<ExpenditureProjection>();
         List<decimal> HistoricalInflationRates { get; set; } = new List<decimal>();
         public decimal LastTotal = 0;
@@ -27,6 +26,8 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
         public decimal Counter = -1;
         public decimal AverageExpenditureChange = 0;
 
+        [BindProperty]
+        public bool AutoInflation { get; set; } = true;
         [BindProperty]
         public int NumProjectionYears { get; set; }
         [BindProperty]
@@ -139,6 +140,14 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
             Random rnd = new Random();
             int randomIndex;
             int n = 24;
+
+            if(!AutoInflation)
+            {
+                for(int i = 0; i < elements; i++)
+                {
+                    HistoricalInflationRates[i] = (ParameterInflationRate/100);
+                }
+            }
 
             List<decimal> InflationSimulations = new List<decimal>();
             List<decimal> InflationAverages = new List<decimal>();
@@ -392,132 +401,17 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
             }
         }
 
-        //public IActionResult OnPostDownloadExcel()
-        //{
-
-        //    if (HttpContext.Session.GetString("ProjectedExpenditures") != null)
-        //    {
-        //        ProjectedExpenditures = JsonSerializer.Deserialize<List<Expenditure>>(HttpContext.Session.GetString("ProjectedExpenditures"));
-        //    }
-        //    else
-        //    {
-        //        // If not in session, load from DB (or handle as necessary)
-        //        loadData();
-        //    }
-
-        //    string templatePath = "Pages/SpendingProjection/SpendingProjectionTemplate.xlsx";
-
-        //    using (var workbook = new XLWorkbook(templatePath))
-        //    {
-        //        IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming you want to use the first worksheet
-        //        var currentRow = 2;
-
-        //        // Data Rows
-        //        foreach (var expenditure in ProjectedExpenditures)
-        //        {
-        //            worksheet.Cell(currentRow, 1).Value = expenditure.Year;
-        //            worksheet.Cell(currentRow, 2).Value = expenditure.InflationRate;
-        //            worksheet.Cell(currentRow, 3).Value = expenditure.InterestRate;
-        //            worksheet.Cell(currentRow, 4).Value = expenditure.PublicSafety;
-        //            worksheet.Cell(currentRow, 5).Value = expenditure.School;
-        //            worksheet.Cell(currentRow, 6).Value = expenditure.Anomaly;
-        //            worksheet.Cell(currentRow, 7).Value = expenditure.Other;
-        //            worksheet.Cell(currentRow, 8).Value = expenditure.TotalExpenditure;
-        //            currentRow++;
-        //        }
-
-        //        // Adjust column widths to content
-        //        worksheet.Columns().AdjustToContents();
-
-        //        // Prepare the memory stream to download
-        //        using (var stream = new MemoryStream())
-        //        {
-        //            workbook.SaveAs(stream);
-        //            var content = stream.ToArray();
-        //            return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"SpendingProjections.xlsx");
-        //        }
-        //    }
-        //}
-
-        //public IActionResult OnPostSaveExcel()
-        //{
-        //    // Check if ProjectedExpenditures are stored in session and deserialize them
-        //    if (HttpContext.Session.GetString("ProjectedExpenditures") != null)
-        //    {
-        //        ProjectedExpenditures = JsonSerializer.Deserialize<List<Expenditure>>(HttpContext.Session.GetString("ProjectedExpenditures"));
-        //    }
-        //    else
-        //    {
-        //        // If not in session, load from DB (or handle as necessary)
-        //        loadData();
-        //    }
-
-
-        //    // Path to your Excel template for Projected Revenues
-        //    string templatePath = "Pages/SpendingProjection/SpendingProjectionTemplate.xlsx";
-
-        //    // Open the template
-        //    using (var workbook = new XLWorkbook(templatePath))
-        //    {
-        //        IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2); // Assuming you want to use the first worksheet
-        //        var currentRow = 2;
-
-        //        // Data Rows
-        //        foreach (var expenditure in ProjectedExpenditures)
-        //        {
-        //            worksheet.Cell(currentRow, 1).Value = expenditure.Year;
-        //            worksheet.Cell(currentRow, 2).Value = expenditure.InflationRate;
-        //            worksheet.Cell(currentRow, 3).Value = expenditure.InterestRate;
-        //            worksheet.Cell(currentRow, 4).Value = expenditure.PublicSafety;
-        //            worksheet.Cell(currentRow, 5).Value = expenditure.School;
-        //            worksheet.Cell(currentRow, 6).Value = expenditure.Anomaly;
-        //            worksheet.Cell(currentRow, 7).Value = expenditure.Other;
-        //            worksheet.Cell(currentRow, 8).Value = expenditure.TotalExpenditure;
-        //            currentRow++;
-        //        }
-
-        //        // Adjust column widths to content
-        //        worksheet.Columns().AdjustToContents();
-
-        //        // Define a path for the server-side file
-        //        var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-        //        if (!Directory.Exists(directoryPath))
-        //        {
-        //            Directory.CreateDirectory(directoryPath);
-        //        }
-        //        var uniqueFileName = $"SpendingProjections_{DateTime.Now:MMdd_HHmmss}.xlsx";
-        //        var filePath = Path.Combine(directoryPath, uniqueFileName);
-
-        //        // Save the workbook to the specified path
-        //        workbook.SaveAs(filePath);
-
-        //        // Optional: Update your database with the file's details
-        //        int initID = HttpContext.Session.GetInt32("InitID") ?? 0;
-        //        var fileMeta = new FileMeta
-        //        {
-        //            FileName_ = uniqueFileName,
-        //            FilePath = filePath,
-        //            FileType = ".xlsx",
-        //            UploadedDateTime = DateTime.Now,
-        //            userID = HttpContext.Session.GetInt32("UserID")
-        //        };
-
-        //        DBClass.UploadFile(initID, fileMeta);
-
-        //        // Notify the user
-        //        TempData["Message"] = $"{uniqueFileName} was Succesfully Saved to Budget Process Resources";
-        //        return Page();
-        //    }
-        //}
+       
         public async Task<IActionResult> OnPostSaveExcel()
         {
-            if (HttpContext.Session.GetString("ProjectedExpenditures") != null)
+            if (HttpContext.Session.GetString("ProjectedExpenditures2") != null)
             {
-                ProjectedExpenditures2 = JsonSerializer.Deserialize<List<ExpenditureProjection>>(HttpContext.Session.GetString("ProjectedExpenditures"));
+                ProjectedExpenditures2 = JsonSerializer.Deserialize<List<ExpenditureProjection>>(HttpContext.Session.GetString("ProjectedExpenditures2"));
             }
             else
             {
                 loadData();
+                return Page();
             }
 
             var uniqueFileName = $"SpendingProjections_{DateTime.Now:MMdd_HHmmss}.xlsx";
@@ -546,12 +440,21 @@ namespace ValleyVisionSolution.Pages.SpendingProjection
                     {
                         worksheet.Cell(currentRow, 1).Value = expenditure.Year;
                         worksheet.Cell(currentRow, 2).Value = expenditure.InflationRate;
-                        //worksheet.Cell(currentRow, 3).Value = expenditure.InterestRate;
+                        worksheet.Cell(currentRow, 3).Value = expenditure.PublicSafetyUCL;
                         worksheet.Cell(currentRow, 4).Value = expenditure.PublicSafety;
-                        worksheet.Cell(currentRow, 5).Value = expenditure.School;
-                        worksheet.Cell(currentRow, 6).Value = expenditure.Anomaly;
-                        worksheet.Cell(currentRow, 7).Value = expenditure.Other;
-                        worksheet.Cell(currentRow, 8).Value = expenditure.TotalExpenditure;
+                        worksheet.Cell(currentRow, 5).Value = expenditure.PublicSafetyLCL;
+                        worksheet.Cell(currentRow, 6).Value = expenditure.SchoolLCL;
+                        worksheet.Cell(currentRow, 7).Value = expenditure.School;
+                        worksheet.Cell(currentRow, 8).Value = expenditure.SchoolUCL;
+                        worksheet.Cell(currentRow, 9).Value = expenditure.AnomalyUCL;
+                        worksheet.Cell(currentRow, 10).Value = expenditure.Anomaly;
+                        worksheet.Cell(currentRow, 11).Value = expenditure.AnomalyUCL;
+                        worksheet.Cell(currentRow, 12).Value = expenditure.OtherUCL;
+                        worksheet.Cell(currentRow, 13).Value = expenditure.Other;
+                        worksheet.Cell(currentRow, 14).Value = expenditure.OtherUCL;
+                        worksheet.Cell(currentRow, 15).Value = expenditure.TotalExpenditureLCL;
+                        worksheet.Cell(currentRow, 16).Value = expenditure.TotalExpenditure;
+                        worksheet.Cell(currentRow, 17).Value = expenditure.TotalExpenditureUCL;
                         currentRow++;
                     }
 

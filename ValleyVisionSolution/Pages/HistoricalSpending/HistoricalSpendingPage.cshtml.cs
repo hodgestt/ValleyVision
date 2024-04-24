@@ -61,6 +61,8 @@ namespace ValleyVisionSolution.Pages.HistoricalSpending
         {
             return JsonSerializer.Serialize(HistoricalExpenditures);
         }
+
+
         public async Task<IActionResult> OnPostSaveExcel()
         {
             if (HttpContext.Session.GetString("HistoricalExpenditures") != null)
@@ -70,6 +72,7 @@ namespace ValleyVisionSolution.Pages.HistoricalSpending
             else
             {
                 loadData();
+                return Page();
             }
 
             var uniqueFileName = $"HistoricalSpendingReport_{DateTime.Now:MMdd_HHmmss}.xlsx";
@@ -91,17 +94,16 @@ namespace ValleyVisionSolution.Pages.HistoricalSpending
                 {
                     IXLWorksheet worksheet = workbook.Worksheets.Worksheet(2);
 
-                    int currentRow = 6;
+                    int currentRow = 2;
                     foreach (var expenditure in HistoricalExpenditures)
                     {
-                        worksheet.Cell(currentRow, 15).Value = expenditure.Year;
-                        worksheet.Cell(currentRow, 16).Value = expenditure.InflationRate;
-                        worksheet.Cell(currentRow, 17).Value = expenditure.InterestRate;
-                        worksheet.Cell(currentRow, 18).Value = expenditure.PublicSafety;
-                        worksheet.Cell(currentRow, 19).Value = expenditure.School;
-                        worksheet.Cell(currentRow, 20).Value = expenditure.Anomaly;
-                        worksheet.Cell(currentRow, 21).Value = expenditure.Other;
-                        worksheet.Cell(currentRow, 22).Value = expenditure.TotalExpenditure;
+                        worksheet.Cell(currentRow, 1).Value = expenditure.Year;
+                        worksheet.Cell(currentRow, 2).Value = expenditure.InflationRate;
+                        worksheet.Cell(currentRow, 3).Value = expenditure.PublicSafety;
+                        worksheet.Cell(currentRow, 4).Value = expenditure.School;
+                        worksheet.Cell(currentRow, 5).Value = expenditure.Anomaly;
+                        worksheet.Cell(currentRow, 6).Value = expenditure.Other;
+                        worksheet.Cell(currentRow, 7).Value = expenditure.TotalExpenditure;
                         currentRow++;
                     }
 
@@ -131,6 +133,7 @@ namespace ValleyVisionSolution.Pages.HistoricalSpending
 
             DBClass.UploadFile(initID, fileMeta);
 
+            loadData();
             TempData["Message"] = $"{uniqueFileName} was Successfully Saved to Budget Process Resources";
             return Page();
         }
@@ -145,6 +148,7 @@ namespace ValleyVisionSolution.Pages.HistoricalSpending
             else
             {
                 loadData();
+                return Page();
             }
 
             Stream templateStream = await _blobService.DownloadFileBlobAsync("HistoricalSpendingTemplate.xlsx");
@@ -168,12 +172,11 @@ namespace ValleyVisionSolution.Pages.HistoricalSpending
                     {
                         worksheet.Cell(currentRow, 1).Value = expenditure.Year;
                         worksheet.Cell(currentRow, 2).Value = expenditure.InflationRate;
-                        worksheet.Cell(currentRow, 3).Value = expenditure.InterestRate;
-                        worksheet.Cell(currentRow, 4).Value = expenditure.PublicSafety;
-                        worksheet.Cell(currentRow, 5).Value = expenditure.School;
-                        worksheet.Cell(currentRow, 6).Value = expenditure.Anomaly;
-                        worksheet.Cell(currentRow, 7).Value = expenditure.Other;
-                        worksheet.Cell(currentRow, 8).Value = expenditure.TotalExpenditure;
+                        worksheet.Cell(currentRow, 3).Value = expenditure.PublicSafety;
+                        worksheet.Cell(currentRow, 4).Value = expenditure.School;
+                        worksheet.Cell(currentRow, 5).Value = expenditure.Anomaly;
+                        worksheet.Cell(currentRow, 6).Value = expenditure.Other;
+                        worksheet.Cell(currentRow, 7).Value = expenditure.TotalExpenditure;
                         currentRow++;
                     }
 

@@ -10,7 +10,7 @@
 
 <style>
     .parameterTitle {
-        font-size: 0.8vw;
+        font-size: 12.5px;
     }
 
     .chart-grid {
@@ -58,7 +58,7 @@
         transform: translateX(-50%);
         margin: 0;
         color: #fff;
-        font-size:1vw;
+        font-size:0.85vw;
     }
 
     .dashboard-tile-contents {
@@ -80,38 +80,6 @@
     }
 
 </style>
-@* <form method="post" asp-page="/SpendingProjectionPage">
-    <div class="row mb-3">
-        <div class="col-md-2">
-            <div class="parameterTitle">Anomaly Amount:</div>
-            <input asp-for="@Model.ParameterAnomaly" type="text" class="form-control">
-        </div>
-        <div class="col-md-2">
-            <div class="parameterTitle">Number of Projection Years:</div>
-            <select asp-for="@Model.NumProjectionYears" class="form-select form-control">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <div style="display:flex">
-                <input style="margin-right:0.5vw" class="form-check-input parameterTitle" type="checkbox" id="manualInflationRate">
-                <label class="form-check-label parameterTitle" for="manualInflationRate">
-                     Manually Set Inflation Rate
-                </label>
-                <!-- Input for inflation rate, initially hidden -->
-                <input asp-for="@Model.ParameterInflationRate" type="text" class="form-control" id="inflationRateInput" style="display: none;">
-            </div>
-
-        </div>
-        <div class="col-md-2 d-flex flex-column justify-content-end">
-            <button type="submit" class="btn btn-primary" id="runProjectionBtn" asp-page-handler="ProjectExpenditures2">Run Projection</button>
-        </div>
-    </div>
-</form> *@
 
 <form method="post" asp-page="/SpendingProjectionPage">
     <div class="row mb-3">
@@ -133,14 +101,15 @@
             <div class="manualInflationContainer">
                 <input style="margin-right: 0.5vw" class="form-check-input parameterTitle manualInflationBox" type="checkbox" id="manualInflationRate">
                 <label class="form-check-label parameterTitle manualInflationTitle">
-                    Manually Set Inflation Rate
+                    Manually Set Inflation %:
                 </label>
             </div>
             <!-- Input for inflation rate, initially hidden -->
             <input asp-for="@Model.ParameterInflationRate" type="text" class="form-control" id="inflationRateInput" style="display: none;">
         </div>
+        <input asp-for="@Model.AutoInflation" type="hidden" class="form-control" id="autoInflation" value="true">
        
-        <div class="col-md-2 d-flex flex-column justify-content-end">
+        <div class="col-md-6 d-flex flex-column justify-content-end align-items-end">
             <button type="submit" class="btn btn-primary" id="runProjectionBtn" asp-page-handler="ProjectExpenditures2">Run Projection</button>
         </div>
     </div>
@@ -246,8 +215,6 @@
             }
         });
 
-       
-
         var expenditureLabels = [
             { key: 'PublicSafety', label: 'Public Safety' },
             { key: 'School', label: 'School Funding' },
@@ -313,7 +280,7 @@
 
         createChart('expenditureChartB', 'bar', expenditureLabels, { y: { beginAtZero: false, title: { display: true, text: 'Category Expenditure ($)' } } });
         
-        
+
         createChart('expenditureChartC', 'bar', [
             { key: 'TotalExpenditure', label: 'Total Expenditure', color: 'rgba(96, 150, 186, 1)' },
             { key: 'InflationRate', label: 'Inflation Rate', color: 'rgba(39, 76, 119, 1)' }
@@ -326,12 +293,8 @@
                 beginAtZero: true,
                 position: 'right',
                 title: { display: true, text: 'Rate (%)' },
-                grid: { drawOnChartArea: false },
-                ticks: {
-                    callback: function (value) {
-                        return (value * 100).toFixed(0) + '%'; // Convert decimal to percentage
-                    }
-                }
+                grid: { drawOnChartArea: false }
+                // Removed the ticks callback that formats the values as percentages
             }
         });
         createChart('expenditureChartD', 'line', [...expenditureLabels, { key: 'InflationRate', label: 'Inflation Rate' }], yAxisExpenditureSettings);
@@ -351,47 +314,29 @@
     }
         });
 </script>
-@* <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var checkbox = document.getElementById('manualInflationRate');
-        var inflationInput = document.getElementById('inflationRateInput');
-        var inflationRateTitle = document.getElementById('inflationRateTitle');
-
-        // Function to toggle visibility based on the checkbox state
-        function toggleVisibility() {
-            if (checkbox.checked) {
-                inflationRateTitle.style.display = 'block'; // Show the title
-                inflationInput.style.display = 'block';     // Show the input
-            } else {
-                inflationRateTitle.style.display = 'none';  // Hide the title
-                inflationInput.style.display = 'none';      // Hide the input
-            }
-        }
-
-        // Set initial visibility based on checkbox state at load
-        toggleVisibility();
-
-        // Event listener for changes in checkbox state
-        checkbox.addEventListener('change', toggleVisibility);
-    });
-</script> *@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var checkbox = document.getElementById('manualInflationRate');
         var inflationInput = document.getElementById('inflationRateInput');
+        var autoInflation = document.getElementById('autoInflation');
+
+        // Check initial state of AutoInflation from server-side and set the checkbox and input visibility
+        var autoInflationState = @Html.Raw(Json.Serialize(Model.AutoInflation))
 
         // Function to toggle the visibility of the inflation rate input
+        // and update the hidden input
         function toggleInflationInput() {
-            inflationInput.style.display = checkbox.checked ? 'block' : 'none';  // Toggles display based on checkbox
+            inflationInput.style.display = checkbox.checked ? 'block' : 'none';
+            autoInflation.value = !checkbox.checked; // Sets the value based on checkbox
         }
 
         // Initialize input visibility based on checkbox state when the page loads
+        // Set the initial state of the checkbox based on the AutoInflation value
+        checkbox.checked = !JSON.parse(autoInflationState); // Checkbox is checked if AutoInflation is false
         toggleInflationInput();
 
         // Event listener for checkbox changes
         checkbox.addEventListener('change', toggleInflationInput);
     });
 </script>
-
-
