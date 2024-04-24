@@ -11,9 +11,9 @@ namespace ValleyVisionSolution.ViewComponents
         {
             int? userId = HttpContext.Session.GetInt32("UserID");
             if (!userId.HasValue)
-                return Content(""); // Return an empty string if not logged in
+                return Content("No more notifications"); // Return an empty string if not logged in
 
-            var tasks = DBClass.GetTasksByUserId(userId.Value);
+            var tasks = DBClass.GetTasksByUserId((int)userId);
             return View(tasks);
         }
         
