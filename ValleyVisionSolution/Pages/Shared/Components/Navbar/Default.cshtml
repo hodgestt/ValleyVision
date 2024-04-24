@@ -2,8 +2,6 @@
 @model (List<ValleyVisionSolution.Pages.DataClasses.Tile>, List<ValleyVisionSolution.Pages.DataClasses.Initiative>)
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-
-
 <style>
     .active-nav-link {
         text-decoration: underline;
@@ -15,6 +13,7 @@
         margin-right: 20px; /* Adds space to the right of the initiative name */
         text-decoration: none;
         color: black;
+       
     }
     /* Ensure all items align properly */
     .navbar-nav .nav-item .nav-link, .navbar-nav .nav-item .navbar-text {
@@ -24,10 +23,19 @@
         font-size: 1.2em;
     }
 
+    .navbar-nav .nav-item {
+        min-width: 120px; /* Sets a minimum width */
+        white-space: nowrap; /* Prevents text from wrapping to the next line */
+    }
+
+
+
     .nav-link:hover{
         background-color: white;
     }
 </style>
+
+
 
 <ul class="navbar-nav d-flex align-items-center" style="font-size:1vw"> <!-- This ensures all nav items are in line -->
     @{
@@ -36,6 +44,7 @@
 
     @if (Context.Session.GetString("InitName") != null)
     {
+ 
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle initiative-name" href="#" id="initiativesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 @Context.Session.GetString("InitName")
@@ -52,15 +61,20 @@
         var dashboardPath = "/Dashboard/DashboardPage"; // Ensure this path is correct
         var isDashboardActive = Context.Request.Path.StartsWithSegments(new PathString(dashboardPath), StringComparison.OrdinalIgnoreCase) ? "active-nav-link" : "";
     }
-    <li class="nav-item">
-        <a class="nav-link @isDashboardActive" href="@dashboardPath">Dashboard</a>
-    </li>
 
-    @foreach (var tile in Model.Item1)
+    @if (ViewData["Title"]?.ToString() != "Dashboard")
     {
-        var isActive = Context.Request.Path.Value.Equals(tile.PageLink, StringComparison.OrdinalIgnoreCase) ? "active-nav-link" : "";
+        
         <li class="nav-item">
-            <a class="nav-link @isActive" href="@tile.PageLink">@tile.TileName</a>
+            <a class="nav-link @isDashboardActive" href="@dashboardPath">Dashboard</a>
         </li>
+
+        @foreach (var tile in Model.Item1)
+        {
+            var isActive = Context.Request.Path.Value.Equals(tile.PageLink, StringComparison.OrdinalIgnoreCase) ? "active-nav-link" : "";
+            <li class="nav-item">
+                <a class="nav-link @isActive" href="@tile.PageLink">@tile.TileName</a>
+            </li>
+        }
     }
 </ul>

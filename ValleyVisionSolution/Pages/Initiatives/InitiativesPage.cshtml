@@ -38,6 +38,7 @@
         }
 
     .tile {
+        position: relative;
         text-decoration: none;
         color: #274c77;
         width: calc(33% - 4%);
@@ -87,6 +88,15 @@
         border-color: lightgrey;
     }
 
+    .edit-button {
+        position: absolute;
+        bottom: 14px; /* Adjust this value as needed */
+        right: 10px; /* Adjust this value as needed */
+        background-color: #274C77 !important;
+        border-color: white !important;
+        color: #6096BA !important;
+    }
+
 </style>
 
 
@@ -118,9 +128,9 @@
                                 <div class="align-items-center" style="background-color:#274c77; padding-left: 8px;">
                                     <div class="tile-text" style="display: flex; align-items: center; height: 4vw; background-color: #274C77; color: white; justify-content: center;">
                                         <span>@initiative.InitName</span>
-                                        <form method="post" asp-page="Initiatives/InitiativesPage" style="margin-left: 8px;">
+                                        <form method="post" asp-page="Initiatives/InitiativesPage" class="edit-button">
                                             <input type="hidden" asp-for="@Model.EditedInit" value="@initiative.InitID">
-                                            <button asp-page-handler="EditInit" type="submit" class="btn btn-sm btn-light" style="background-color: #6096BA !important; border-color: #6096BA; color: white !important;">
+                                            <button asp-page-handler="EditInit" type="submit" class="btn btn-sm btn-light">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
                                         </form>

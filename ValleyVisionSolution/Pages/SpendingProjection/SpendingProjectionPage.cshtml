@@ -7,6 +7,7 @@
 }
 <!-- Include Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <style>
     .parameterTitle {
@@ -79,16 +80,49 @@
         grid-area:Title;
     }
 
+     .parameterTitle {
+        position: relative; 
+        display: inline-block; 
+    }
+
+    .custom-tooltip {
+        visibility: hidden;
+        width: 200px;
+        background-color: white;
+        color: black;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -100px;
+        box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+    }
+
+    .parameterTitle:hover .custom-tooltip {
+        visibility: visible;
+    }
 </style>
 
 <form method="post" asp-page="/SpendingProjectionPage">
     <div class="row mb-3">
         <div class="col-md-2">
-            <div class="parameterTitle">Anomaly Amount:</div>
+            <div class="parameterTitle">
+                <span>&#x1F6C8;</span> Anomaly Amount $:
+                <span class="custom-tooltip">
+                    Enter an expected major new expense to be applied each year
+                    Do not include symbols. (ie. 1,000,000)
+                </span>
+            </div>
             <input asp-for="@Model.ParameterAnomaly" type="text" class="form-control">
         </div>
         <div class="col-md-2">
-            <div class="parameterTitle">Number of Projection Years:</div>
+            <div class="parameterTitle">
+                <span>&#x1F6C8;</span> Number of Projection Years:
+                <span class="custom-tooltip">Select the number of years for the spending projection.</span>
+            </div>
             <select asp-for="@Model.NumProjectionYears" class="form-select form-control">
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -101,7 +135,8 @@
             <div class="manualInflationContainer">
                 <input style="margin-right: 0.5vw" class="form-check-input parameterTitle manualInflationBox" type="checkbox" id="manualInflationRate">
                 <label class="form-check-label parameterTitle manualInflationTitle">
-                    Manually Set Inflation %:
+                    <span>&#x1F6C8;</span> Manually Set Inflation %:
+                    <span class="custom-tooltip">Check box to manually input inflation rate. Do not include symbols.  (ie. 0.04 = 4; for a 4% inflation rate)</span>
                 </label>
             </div>
             <!-- Input for inflation rate, initially hidden -->
@@ -339,4 +374,6 @@
         // Event listener for checkbox changes
         checkbox.addEventListener('change', toggleInflationInput);
     });
+
+
 </script>
