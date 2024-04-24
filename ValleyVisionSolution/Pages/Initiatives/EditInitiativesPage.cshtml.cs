@@ -27,6 +27,8 @@ namespace ValleyVisionSolution.Pages.Initiatives
         [BindProperty]
         public IFormFile BackgroundFile { get; set; }
 
+        public string OldFilePath { get; set; }
+
 
         private readonly IBlobService _blobService;
 
@@ -65,7 +67,7 @@ namespace ValleyVisionSolution.Pages.Initiatives
             DBClass.ValleyVisionConnection.Close();
             // Close your connection in DBClass
 
-            
+            OldFilePath = EditedInitiative.FilePath;
 
             //Populate Users list
             SqlDataReader reader2 = DBClass.UsersReader(HttpContext.Session.GetInt32("UserID"));
@@ -128,6 +130,7 @@ namespace ValleyVisionSolution.Pages.Initiatives
 
         public async Task<IActionResult> OnPostEditInitAsync()
         {
+            
             if (EditedInitiative.InitName == null)
             {
                 loadData();
@@ -156,6 +159,12 @@ namespace ValleyVisionSolution.Pages.Initiatives
 
                 EditedInitiative.FilePath = blobUrl;
             }
+            else
+            {
+                loadData();
+                EditedInitiative.FilePath = OldFilePath;
+            }
+
             DBClass.EditInit(EditedInitiative, EditedInitUsers, EditedTiles, HttpContext.Session.GetInt32("UserID"));
             loadData();
             return RedirectToPage("/Initiatives/InitiativesPage");
