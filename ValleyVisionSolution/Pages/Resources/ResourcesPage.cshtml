@@ -55,11 +55,14 @@
 
     @if (!string.IsNullOrEmpty(HttpContext.Request.Query["searchTerm"]))
     {
-        <div class="clear-search">
-            <a href="@Url.Page("./ResourcesPage")" class="badge bg-custom-blue text-white fs-6 p-2">
-                Clear search: @HttpContext.Request.Query["searchTerm"] <i class="bi bi-x-circle"></i>
-            </a>
-        </div>
+        @if (!string.IsNullOrEmpty(HttpContext.Request.Query["searchTerm"]))
+        {
+            <div class="clear-search">
+                <a href="@Url.Page("./ResourcesPage")" style="background-color:gray; border-radius:6px" class="text-white fs-6 p-2 position-relative !importants">
+                    Clear search: @HttpContext.Request.Query["searchTerm"] <i class="bi bi-x-circle"></i>
+                </a>
+            </div>
+        }
 
     }
 

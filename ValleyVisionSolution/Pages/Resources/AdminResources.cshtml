@@ -56,7 +56,7 @@
         @if (!string.IsNullOrEmpty(HttpContext.Request.Query["searchTerm"]))
         {
             <div class="clear-search">
-                <a href="@Url.Page("./AdminResources")" class="badge bg-custom-blue text-white fs-6 p-2">
+                <a href="@Url.Page("./AdminResources")" style="background-color:gray; border-radius:6px" class="text-white fs-6 p-2 position-relative !importants">
                     Clear search: @HttpContext.Request.Query["searchTerm"] <i class="bi bi-x-circle"></i>
                 </a>
             </div>
