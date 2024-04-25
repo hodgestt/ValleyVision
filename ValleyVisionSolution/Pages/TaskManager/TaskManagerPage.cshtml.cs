@@ -1,6 +1,7 @@
 using DocumentFormat.OpenXml.InkML;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Diagnostics.Tracing.Parsers;
 using System.Data.SqlClient;
 using System.Net;
 using ValleyVisionSolution.Pages.DataClasses;
@@ -91,54 +92,86 @@ public class TaskManagerPageModel : PageModel
 
 
     }
+
     public void OnGet(int initID)
     {
-        if (initID != null)
+        int? sessionInitID = HttpContext.Session.GetInt32("InitID");
+
+        if (sessionInitID != null)
+        {
+            if (sessionInitID == initID)
+            {
+                if (HttpContext.Session.GetString("InitName") == null)
+                {
+                    LoadInitiativeNameData();
+                }
+                else
+                {
+                    LoadInitiativeData();
+                }
+            }
+            else
+            {
+                if(initID == 0)
+                {
+                    initID = (int)sessionInitID;
+                    GetInitName(initID);
+                    loadData(initID);
+                }
+                else
+                {
+                    GetInitName(initID);
+                    loadData(initID);
+                }
+
+                
+            }
+        }
+        else
         {
             HttpContext.Session.SetInt32("InitID", initID);
-        }
-        if (HttpContext.Session.GetString("InitName") == null)
-        {
             SqlDataReader reader4 = DBClass.EditedInitiativeReader(initID);
             while (reader4.Read())
             {
                 Inits.Add(new Initiative
                 {
-                    InitID = Int32.Parse(reader4["InitID"].ToString()),
+                InitID = Int32.Parse(reader4["InitID"].ToString()),
                     InitName = reader4["InitName"].ToString()
                 });
-                
+
             }
             foreach (var initiative in Inits)
             {
-                if(initiative.InitID == initID) 
+                if (initiative.InitID == initID)
                 {
                     HttpContext.Session.SetString("InitName", initiative.InitName);
                 }
             }
             DBClass.ValleyVisionConnection.Close();
+            loadData(initID);
         }
-        loadData(initID);
+
+        
     }
 
     public IActionResult OnPostAddTask(int initID)
     {
         if (!ModelState.IsValid)
         {
-            // Model state is not valid, return the page with validation errors
+                // Model state is not valid, return the page with validation errors
             loadData(initID);
             OpenModal = true;
             return Page();
         }
 
-        // Model state is valid, continue with processing
+            // Model state is valid, continue with processing
         DBClass.AddTask(HttpContext.Session.GetInt32("InitID"), NewTask, NewTaskUsers);
         loadData(initID);
         ModelState.Clear();
         NewTaskUsers = new List<int>();
         NewTask = new Task();
         return RedirectToPage("/TaskManager/TaskManagerPage");
-    }
+        }
 
 
     public IActionResult OnPostLogoutHandler(int initID)
@@ -146,9 +179,53 @@ public class TaskManagerPageModel : PageModel
         HttpContext.Session.Clear();
         return RedirectToPage("/Index");
     }
-    public IActionResult OnPostNotification()
+
+    private void LoadInitiativeNameData()
     {
-        HttpContext.Session.SetInt32("InitID",initID);
-        return RedirectToPage("/TaskManager/TaskManagerPage");
+        int initID = (int)HttpContext.Session.GetInt32("InitID");
+        using (SqlDataReader reader4 = DBClass.EditedInitiativeReader(initID))
+        {
+            // Assuming the reader returns only one row per initiative.
+            if (reader4.Read())
+            {
+                HttpContext.Session.SetString("InitName", reader4["InitName"].ToString());
+            }
+        }
+
+            // Ensure the database connection is closed after the operation.
+        DBClass.ValleyVisionConnection.Close();
+        loadData(initID);
+    }
+    private void LoadInitiativeData()
+    {
+        int initID = (int)HttpContext.Session.GetInt32("InitID");
+
+            // Ensure the database connection is closed after the operation.
+        DBClass.ValleyVisionConnection.Close();
+        loadData(initID);
+    }
+    private void GetInitName(int initID)
+    {
+        HttpContext.Session.SetInt32("InitID", initID);
+        initID = (int)HttpContext.Session.GetInt32("InitID");
+        SqlDataReader reader4 = DBClass.EditedInitiativeReader(initID);
+        while (reader4.Read())
+        {
+            Inits.Add(new Initiative
+            {
+                InitID = Int32.Parse(reader4["InitID"].ToString()),
+                InitName = reader4["InitName"].ToString()
+            });
+
+        }
+        foreach (var initiative in Inits)
+        {
+            if (initiative.InitID == initID)
+            {
+                HttpContext.Session.SetString("InitName", initiative.InitName);
+            }
+        }
+        DBClass.ValleyVisionConnection.Close();
+
     }
 }
