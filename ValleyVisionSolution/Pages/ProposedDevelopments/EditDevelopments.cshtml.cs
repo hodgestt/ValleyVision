@@ -43,11 +43,19 @@ namespace ValleyVisionSolution.Pages.ProposedDevelopments
             DBClass.ValleyVisionConnection.Close();
         }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
-            int? devID = HttpContext.Session.GetInt32("devID");
-            HttpContext.Session.SetInt32("EditedDevID", (int)devID);
-            loadData();
+            if (HttpContext.Session.GetString("LoggedIn") == "True")
+            {
+                int? devID = HttpContext.Session.GetInt32("devID");
+                HttpContext.Session.SetInt32("EditedDevID", (int)devID);
+                loadData();
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Index");
+            }
         }
 
         public IActionResult OnPostUpdateDev()
