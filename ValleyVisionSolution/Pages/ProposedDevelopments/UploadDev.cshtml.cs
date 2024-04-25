@@ -54,7 +54,7 @@ namespace ValleyVisionSolution.Pages.ProposedDevelopments
                 DBClass.UploadDevFile(initID, fileMeta, devID);
 
 
-                return RedirectToPage("/ProposedDevelopments/ProposedDevelopmentsPage");
+                return RedirectToPage("/ProposedDevelopments/DevelopmentPage");
             }
 
             ViewData["ErrorMessage"] = "You must select a file.";

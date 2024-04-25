@@ -20,6 +20,18 @@
         background-color: #6c757d; /* Bootstrap's secondary button color for differentiation */
         color: white;
     }
+
+    .btn-unpublish {
+        background-color: #274c77; /* Dark blue background */
+        color: white; /* White text */
+        border: none; /* No border */
+    }
+
+        .btn-unpublish:hover {
+            background-color: #6096BA !important; /* Lighter blue on hover */
+            color: white; /* Keep text white on hover */
+        }
+
 </style>
 
     <br />
@@ -75,7 +87,7 @@
 
     </table>
     <br />
-    <button class="btn" style=" background-color:#2e4c74; -webkit-text-fill-color:white;" data-bs-toggle="modal" data-bs-target="#addProfileForm">Create User</button>
+    <button class="btn btn-unpublish" style=" background-color:#2e4c74; -webkit-text-fill-color:white;" data-bs-toggle="modal" data-bs-target="#addProfileForm">Add User</button>
 
 
 
@@ -176,7 +188,7 @@
 
                     </div>
                     <div class="modal-footer" style="border-top:none">
-                        <button type="submit" class="btn btn-primary" asp-page-handler="NewProfile">Create</button>
+                        <button type="submit" class="btn btn-primary" asp-page-handler="NewProfile">Add User</button>
                         <button class="btn btn-secondary" asp-page="/ManageProfiles/ManageProfilesPage" asp-page-handler="PopulateHandler" formnovalidate>Populate</button>
                     </div>
                     
