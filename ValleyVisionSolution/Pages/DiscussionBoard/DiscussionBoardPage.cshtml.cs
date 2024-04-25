@@ -34,9 +34,7 @@ namespace ValleyVisionSolution.Pages.DiscussionBoard
             Users = new List<User>();
         }
 
-
-
-        public void OnGet()
+        public void loadData()
         {
             LoggedInUser = HttpContext.Session.GetInt32("UserID");
             InitiativeArea = HttpContext.Session.GetInt32("InitID");
@@ -65,7 +63,7 @@ namespace ValleyVisionSolution.Pages.DiscussionBoard
             while (userReader.Read())
             {
                 Users.Add(new User
-                { 
+                {
                     UserID = int.Parse(userReader["userID"].ToString()),
                     FirstName = userReader["firstName"].ToString(),
                     LastName = userReader["lastName"].ToString()
@@ -73,6 +71,19 @@ namespace ValleyVisionSolution.Pages.DiscussionBoard
             }
             // Close your connection in DBClass
             DBClass.ValleyVisionConnection.Close();
+        }
+
+        public IActionResult OnGet()
+        {
+            if (HttpContext.Session.GetString("LoggedIn") == "True")
+            {
+                loadData();
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Index");
+            }
         }
 
             public IActionResult OnPostSendMessage()
