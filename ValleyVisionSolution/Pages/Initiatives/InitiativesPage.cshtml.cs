@@ -113,7 +113,7 @@ namespace ValleyVisionSolution.Pages.Initiatives
 
         public async Task<IActionResult> OnPostAddNewInitAsync(IFormFile BackgroundFile)
         {
-            if (!ModelState.IsValid)
+            if (NewInit.InitName == null)
             {
                 loadData();
                 OpenModal = true;
@@ -142,61 +142,24 @@ namespace ValleyVisionSolution.Pages.Initiatives
 
                 // Set the file URL in your model to be saved in the database
                 NewInit.FilePath = blobUrl;
-
-                // Add the new initiative to the database
-                DBClass.AddInit(NewInit, NewInitUsers, NewTiles, HttpContext.Session.GetInt32("UserID"));
-
-                // Reset model state and data for the next input
-                loadData();
-                ModelState.Clear();
-                NewInit = new Initiative();
-                NewInitUsers = new List<int>();
-                NewTiles = new List<int>();
-
-                return Page();
             }
+            else
+            {
+                NewInit.FilePath = "/images/default.png";
+            }
+            
+            // Add the new initiative to the database
+            DBClass.AddInit(NewInit, NewInitUsers, NewTiles, HttpContext.Session.GetInt32("UserID"));
+            loadData();
+            ModelState.Clear();
+            NewInit = new Initiative();
+            NewInitUsers = new List<int>();
+            NewTiles = new List<int>();
 
-            // Return the same page with an error message if no file was uploaded
-            ViewData["ErrorMessage"] = "You must select a file to upload.";
             return Page();
         }
 
-        //public async Task<IActionResult> OnPostAddNewInit()
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        // Model state is not valid, return the page with validation errors
-        //        loadData();
-        //        OpenModal = true;
-        //        return Page();
-        //    }
-
-        //    if (BackgroundFile != null && BackgroundFile.Length > 0)
-        //    {
-        //        // Generate a unique file name to avoid overwriting existing files
-        //        var fileName = Path.GetFileNameWithoutExtension(BackgroundFile.FileName);
-        //        var fileExtension = Path.GetExtension(BackgroundFile.FileName);
-        //        var uniqueFileName = fileName + DateTime.Now.ToString("yyyyMMddHHmmss") + fileExtension;
-
-        //        // Use the IBlobService to upload the file
-        //        using (var fileStream = BackgroundFile.OpenReadStream())
-        //        {
-        //            await _blobService.UploadFileBlobAsync(uniqueFileName, fileStream, BackgroundFile.ContentType);
-        //        }
-
-        //        // Model state is valid, continue with processing
-        //        NewInit.FilePath = uniqueFileName;
-        //        DBClass.AddInit(NewInit, NewInitUsers, NewTiles, HttpContext.Session.GetInt32("UserID"));
-        //        loadData();
-        //        ModelState.Clear();
-        //        NewInit = new Initiative();
-        //        NewInitUsers = new List<int>();
-        //        NewTiles = new List<int>();
-
-        //        return Page();
-        //    }
-        //    return Page();
-        //}
+        
 
 
 

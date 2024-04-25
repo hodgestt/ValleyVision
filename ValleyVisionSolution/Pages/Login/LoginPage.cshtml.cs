@@ -39,7 +39,7 @@ namespace ValleyVisionSolution.Pages.Login
                     UserCredentials.Password = "Pass";
                     break;
                 case "option2":
-                    UserCredentials.Username = "Tiffany";
+                    UserCredentials.Username = "Timothy";
                     UserCredentials.Password = "Pass";
                     break;
                 default:

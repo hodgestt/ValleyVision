@@ -22,7 +22,7 @@ public class TaskManagerPageModel : PageModel
     [BindProperty]
     public Task NewTask { get; set; }
     [BindProperty]
-    public List<int> NewTaskUsers { get; set; }
+    public List<int> NewTaskUser { get; set; }
 
     public List<Initiative> Inits { get; set; }
 
@@ -77,7 +77,7 @@ public class TaskManagerPageModel : PageModel
         DBClass.ValleyVisionConnection.Close();
 
         //Populate InitUsers list
-        SqlDataReader reader3 = DBClass.InitiativeUsersReader(initID);
+        SqlDataReader reader3 = DBClass.InitiativeUserReader(initID);
         while (reader3.Read())
         {
             InitUsers.Add(new User
@@ -168,7 +168,7 @@ public class TaskManagerPageModel : PageModel
         DBClass.AddTask(HttpContext.Session.GetInt32("InitID"), NewTask, NewTaskUsers);
         loadData(initID);
         ModelState.Clear();
-        NewTaskUsers = new List<int>();
+        NewTaskUser = new List<int>();
         NewTask = new Task();
         return RedirectToPage("/TaskManager/TaskManagerPage");
         }

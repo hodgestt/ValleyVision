@@ -18,7 +18,7 @@ namespace ValleyVisionSolution.Pages.TaskManager
         public List<Task> AllTasks { get; set; }
         public List<User> InitUsers { get; set; }
         public int? ViewedTask { get; set; }  
-        public List<int> ViewedTaskUsers { get; set; }
+        public List<int> ViewedTaskUser { get; set; }
         [Required(ErrorMessage = "The description is required")]
         [BindProperty]
         
@@ -27,14 +27,14 @@ namespace ValleyVisionSolution.Pages.TaskManager
         [BindProperty]
         public Task EditedTask { get; set; }
         [BindProperty]
-        public List<int> EditedTaskUsers { get; set; }
+        public List<int> EditedTaskUser { get; set; }
         
 
         public EditTaskPageModel() 
         {
             AllTasks = new List<Task>();
             InitUsers = new List<User>();
-            ViewedTaskUsers = new List<int>();
+            ViewedTaskUser = new List<int>();
         }
 
         public void loadData()
@@ -59,7 +59,7 @@ namespace ValleyVisionSolution.Pages.TaskManager
             DBClass.ValleyVisionConnection.Close();
 
             //Populate InitUsers list
-            SqlDataReader reader2 = DBClass.InitiativeUsersReader(initID);
+            SqlDataReader reader2 = DBClass.InitiativeUserReader(initID);
             while (reader2.Read())
             {
                 InitUsers.Add(new User
@@ -78,7 +78,7 @@ namespace ValleyVisionSolution.Pages.TaskManager
            
             HttpContext.Session.SetInt32("TaskID", taskID);
             ViewedTask = HttpContext.Session.GetInt32("TaskID");
-            ViewedTaskUsers = DBClass.ViewedTaskUsersReader(HttpContext.Session.GetInt32("TaskID"));
+            ViewedTaskUser = DBClass.ViewedTaskUserReader(HttpContext.Session.GetInt32("TaskID"));
             loadData();
             foreach(var task in AllTasks)
             {
@@ -102,7 +102,7 @@ namespace ValleyVisionSolution.Pages.TaskManager
             {
                 // Model state is not valid, return the page with validation errors
                 ViewedTask = HttpContext.Session.GetInt32("TaskID");
-                ViewedTaskUsers = DBClass.ViewedTaskUsersReader(HttpContext.Session.GetInt32("TaskID"));
+                ViewedTaskUser = DBClass.ViewedTaskUserReader(HttpContext.Session.GetInt32("TaskID"));
                 loadData();
                 foreach (var task in AllTasks)
                 {
@@ -116,7 +116,7 @@ namespace ValleyVisionSolution.Pages.TaskManager
 
             // Model state is valid, continue with processing
             EditedTask.TaskDescription = TempTaskDescription;
-            DBClass.EditTask(EditedTask, EditedTaskUsers);
+            DBClass.EditTask(EditedTask, EditedTaskUser);
             return RedirectToPage("/TaskManager/TaskManagerPage");
         }
 

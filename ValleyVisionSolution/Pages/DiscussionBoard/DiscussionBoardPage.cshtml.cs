@@ -61,7 +61,7 @@ namespace ValleyVisionSolution.Pages.DiscussionBoard
 
             InitiativeArea = HttpContext.Session.GetInt32("InitID");
             initID = (int)InitiativeArea;
-            SqlDataReader userReader = DBClass.InitiativeUsersReader(initID);
+            SqlDataReader userReader = DBClass.InitiativeUserReader(initID);
             while (userReader.Read())
             {
                 Users.Add(new User
@@ -111,7 +111,7 @@ namespace ValleyVisionSolution.Pages.DiscussionBoard
             // Close your connection in DBClass
             DBClass.ValleyVisionConnection.Close();
 
-            SqlDataReader userReader = DBClass.InitiativeUsersReader(initID);
+            SqlDataReader userReader = DBClass.InitiativeUserReader(initID);
             while (userReader.Read())
             {
                 Users.Add(new User
