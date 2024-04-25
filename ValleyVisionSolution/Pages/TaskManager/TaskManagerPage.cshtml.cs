@@ -93,63 +93,72 @@ public class TaskManagerPageModel : PageModel
 
     }
 
-    public void OnGet(int initID)
+    public IActionResult OnGet(int initID)
     {
-        int? sessionInitID = HttpContext.Session.GetInt32("InitID");
-
-        if (sessionInitID != null)
+        if(HttpContext.Session.GetString("LoggedIn") == "True")
         {
-            if (sessionInitID == initID)
+            int? sessionInitID = HttpContext.Session.GetInt32("InitID");
+
+            if (sessionInitID != null)
             {
-                if (HttpContext.Session.GetString("InitName") == null)
+                if (sessionInitID == initID)
                 {
-                    LoadInitiativeNameData();
+                    if (HttpContext.Session.GetString("InitName") == null)
+                    {
+                        LoadInitiativeNameData();
+                    }
+                    else
+                    {
+                        LoadInitiativeData();
+                    }
                 }
                 else
                 {
-                    LoadInitiativeData();
+                    if (initID == 0)
+                    {
+                        initID = (int)sessionInitID;
+                        GetInitName(initID);
+                        loadData(initID);
+                    }
+                    else
+                    {
+                        GetInitName(initID);
+                        loadData(initID);
+                    }
+
+
                 }
             }
             else
             {
-                if(initID == 0)
+                HttpContext.Session.SetInt32("InitID", initID);
+                SqlDataReader reader4 = DBClass.EditedInitiativeReader(initID);
+                while (reader4.Read())
                 {
-                    initID = (int)sessionInitID;
-                    GetInitName(initID);
-                    loadData(initID);
-                }
-                else
-                {
-                    GetInitName(initID);
-                    loadData(initID);
-                }
+                    Inits.Add(new Initiative
+                    {
+                        InitID = Int32.Parse(reader4["InitID"].ToString()),
+                        InitName = reader4["InitName"].ToString()
+                    });
 
-                
+                }
+                foreach (var initiative in Inits)
+                {
+                    if (initiative.InitID == initID)
+                    {
+                        HttpContext.Session.SetString("InitName", initiative.InitName);
+                    }
+                }
+                DBClass.ValleyVisionConnection.Close();
+                loadData(initID);
             }
+            return Page();
         }
         else
         {
-            HttpContext.Session.SetInt32("InitID", initID);
-            SqlDataReader reader4 = DBClass.EditedInitiativeReader(initID);
-            while (reader4.Read())
-            {
-                Inits.Add(new Initiative
-                {
-                InitID = Int32.Parse(reader4["InitID"].ToString()),
-                    InitName = reader4["InitName"].ToString()
-                });
-
-            }
-            foreach (var initiative in Inits)
-            {
-                if (initiative.InitID == initID)
-                {
-                    HttpContext.Session.SetString("InitName", initiative.InitName);
-                }
-            }
-            DBClass.ValleyVisionConnection.Close();
-            loadData(initID);
+            return RedirectToPage("/Index");
         }
+        
 
         
     }
