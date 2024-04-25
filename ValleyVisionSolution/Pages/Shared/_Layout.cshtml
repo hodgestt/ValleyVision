@@ -236,20 +236,24 @@
             flex-direction: row !; /* Align items horizontally */
         }
 
-        .badge {
-            position: absolute;
-            top: 0;
-            right: 0;
-            transform: translate(50%, -50%);
-            border-radius: 50%;
-        }
-
         .dropdown-toggle {
             position: relative;
         }
 
         #taskDropdown {
             transform: translateX(-63%);
+        }
+
+        .badge {
+            position: absolute;
+            top: -.3vw;
+            right: 2.2vw; 
+            border-radius: 50%;
+            background-color: #ff0000;
+            color: white;
+            padding: 3px 6px;
+            font-size: 75%;
+            display: none;
         }
 
     </style>
@@ -283,6 +287,7 @@
     </div>
     @* <!-- End Logout Form --> *@
     @{
+        int? count = Context.Session.GetInt32("NotifCount");
         string currentPath = Context.Request.Path.Value.ToLowerInvariant();
         bool showNavbar = !currentPath.Contains("/citizenview");
     }
@@ -301,7 +306,7 @@
                                 <span>Home</span>
                             </a>
                             <a href="/Initiatives/InitiativesPage" class="navbar-brand navbar-icon">
-                                <i class="bi bi-lightbulb-fill"></i>
+                                <i class="bi bi-ui-checks-grid"></i>
                                 <span>Initiatives</span>
                             </a>
 
@@ -323,8 +328,8 @@
                                         </div>
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                        <li><a class="dropdown-item" href="/Resources/AdminResources">Manage Resources</a></li>
-                                        <li><a class="dropdown-item" href="/ManageProfiles/ManageProfilesPage">Manage Users</a></li>
+                                        <li><a class="dropdown-item" href="/Resources/AdminResources" style="color:#274c77;">Manage Resources</a></li>
+                                        <li><a class="dropdown-item" href="/ManageProfiles/ManageProfilesPage" style="color:#274c77;">Manage Users</a></li>
                                     </ul>
                                 </div>
                             }
@@ -351,7 +356,9 @@
                                 <a href="#" class="navbar-brand navbar-icon dropdown-toggle" role="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-bell-fill"></i>
                                     <span>Notifications</span>
+                                    <span id="notificationBadge" class="badge bg-danger" style="display:none;"></span>
                                 </a>
+
                                 <ul class="dropdown-menu" aria-labelledby="notificationDropdown" id="taskDropdown">
                                     @await Component.InvokeAsync("TasksDropdown",  new { initID = Context.Session.GetInt32("InitID") ?? 0 })
                                 </ul>
@@ -453,8 +460,21 @@
     <!-- Include these before your closing </body> tag -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
-
+    @{
+        int notificationCount = Context.Session.GetInt32("NotifCount") ?? 0;
+    }
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var count = @notificationCount;
+            var badgeElement = document.getElementById('notificationBadge');
+            if (count > 0) {
+                badgeElement.textContent = count;
+                badgeElement.style.display = 'block';
+            } else {
+                badgeElement.style.display = 'none';
+            }
+        });
+    </script>
 
     @* <!-- Bootstrap Select JavaScript --> *@
 
