@@ -12,6 +12,9 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
 
 <style>
     .tile-container {
@@ -97,6 +100,43 @@
         color: #6096BA !important;
     }
 
+
+    .choices__list--multiple .choices__item {
+        display: inline-block;
+        vertical-align: middle;
+        border-radius: 20px;
+        padding: 4px 10px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-right: 3.75px;
+        margin-bottom: 3.75px;
+        background-color: #274c77;
+        border: 1px solid #d3d3d3;
+        color: #fff;
+        word-break: break-all;
+        box-sizing: border-box;
+    }
+
+    /* Adjust dropdown container to potentially widen it */
+    .choices[data-type*="select-multiple"] .choices__list,
+    .choices[data-type*="text"] .choices__list {
+        width: 100%; /* Ensures the dropdown tries to use all available horizontal space */
+    }
+
+    /* This style prevents wrapping and utilizes the full width */
+    .styled-select .choices__list--dropdown .choices__item {
+        white-space: nowrap; /* Prevent text wrapping */
+        overflow: hidden; /* Hide overflow */
+        text-overflow: ellipsis; /* Add ellipsis to overly long single lines */
+    }
+
+    @@media (min-width: 640px) {
+        .choices__list--dropdown .choices__item--selectable,
+        .choices__list[aria-expanded] .choices__item--selectable {
+            padding-right: 10px; /* Adjust this value to find a suitable padding */
+        }
+    }
+
 </style>
 
 
@@ -179,7 +219,7 @@
             <form method="post" asp-page="/TaskManagerPage" enctype="multipart/form-data">
                 <input type="hidden" name="triggeredBy" id="triggeredBy" value="">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Add Task</h5>
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add New Initative</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
@@ -203,23 +243,19 @@
                         </div>
                         <div class="col-md-6">
                             <div>Assign to:</div>
-                            <select asp-for="@Model.NewInitUsers" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
-                                @{
-                                    foreach (var user in Model.InitUsers)
-                                    {
-                                        <option value="@user.UserID">@user.FirstName @user.LastName</option>
-                                    }
+                            <select asp-for="@Model.NewInitUsers" class="form-control" multiple>
+                                @foreach (var user in Model.InitUsers)
+                                {
+                                    <option value="@user.UserID">@user.FirstName @user.LastName</option>
                                 }
                             </select>
                         </div>
                         <div class="col-md-6">
                             <div>Activate Pages:</div>
-                            <select asp-for="@Model.NewTiles" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
-                                @{
-                                    foreach (var tile in Model.Tiles)
-                                    {
-                                        <option value="@tile.TileID"> @tile.TileName</option>
-                                    }
+                            <select asp-for="@Model.NewTiles" class="form-control" multiple>
+                                @foreach (var tile in Model.Tiles)
+                                {
+                                    <option value="@tile.TileID">@tile.TileName</option>
                                 }
                             </select>
                         </div>
@@ -232,5 +268,45 @@
 
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var selects = document.querySelectorAll('select[multiple]');
+            selects.forEach(function (select) {
+                new Choices(select, {
+                    removeItemButton: true,
+                    searchEnabled: true,
+                    searchPlaceholderValue: 'Search here...',
+                    shouldSort: false, // Keep server-side order
+                    placeholder: true,
+                    placeholderValue: 'Select options...', // Placeholder text when no items are selected
+                    itemSelectText: '',
+                    classNames: {
+                        containerOuter: 'choices',
+                        containerInner: 'choices__inner',
+                        item: 'choices__item'
+                    }
+                });
+            });
+        });
+    </script>
+
+@*     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var selects = document.querySelectorAll('select[multiple]');
+            selects.forEach(function (select) {
+                new Choices(select, {
+                    removeItemButton: true,
+                    searchEnabled: true,
+                    searchPlaceholderValue: 'Search here...',
+                    shouldSort: false, // Keep server-side order
+                    placeholder: true,
+                    placeholderValue: 'Select options...' // Placeholder text when no items are selected
+                });
+            });
+        });
+    </script>
+ *@
 </div>
 <!-- End New Initiative Form -->
+
