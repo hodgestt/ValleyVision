@@ -161,42 +161,42 @@ namespace ValleyVisionSolution.Pages.Initiatives
             return Page();
         }
 
-        //public async Task<IActionResult> OnPostAddNewInit()
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        // Model state is not valid, return the page with validation errors
-        //        loadData();
-        //        OpenModal = true;
-        //        return Page();
-        //    }
+        public async Task<IActionResult> OnPostAddNewInit()
+        {
+            if (!ModelState.IsValid)
+            {
+                // Model state is not valid, return the page with validation errors
+                loadData();
+                OpenModal = true;
+                return Page();
+            }
 
-        //    if (BackgroundFile != null && BackgroundFile.Length > 0)
-        //    {
-        //        // Generate a unique file name to avoid overwriting existing files
-        //        var fileName = Path.GetFileNameWithoutExtension(BackgroundFile.FileName);
-        //        var fileExtension = Path.GetExtension(BackgroundFile.FileName);
-        //        var uniqueFileName = fileName + DateTime.Now.ToString("yyyyMMddHHmmss") + fileExtension;
+            if (BackgroundFile != null && BackgroundFile.Length > 0)
+            {
+                // Generate a unique file name to avoid overwriting existing files
+                var fileName = Path.GetFileNameWithoutExtension(BackgroundFile.FileName);
+                var fileExtension = Path.GetExtension(BackgroundFile.FileName);
+                var uniqueFileName = fileName + DateTime.Now.ToString("yyyyMMddHHmmss") + fileExtension;
 
-        //        // Use the IBlobService to upload the file
-        //        using (var fileStream = BackgroundFile.OpenReadStream())
-        //        {
-        //            await _blobService.UploadFileBlobAsync(uniqueFileName, fileStream, BackgroundFile.ContentType);
-        //        }
+                // Use the IBlobService to upload the file
+                using (var fileStream = BackgroundFile.OpenReadStream())
+                {
+                    await _blobService.UploadFileBlobAsync(uniqueFileName, fileStream, BackgroundFile.ContentType);
+                }
 
-        //        // Model state is valid, continue with processing
-        //        NewInit.FilePath = uniqueFileName;
-        //        DBClass.AddInit(NewInit, NewInitUsers, NewTiles, HttpContext.Session.GetInt32("UserID"));
-        //        loadData();
-        //        ModelState.Clear();
-        //        NewInit = new Initiative();
-        //        NewInitUsers = new List<int>();
-        //        NewTiles = new List<int>();
+                // Model state is valid, continue with processing
+                NewInit.FilePath = uniqueFileName;
+                DBClass.AddInit(NewInit, NewInitUsers, NewTiles, HttpContext.Session.GetInt32("UserID"));
+                loadData();
+                ModelState.Clear();
+                NewInit = new Initiative();
+                NewInitUsers = new List<int>();
+                NewTiles = new List<int>();
 
-        //        return Page();
-        //    }
-        //    return Page();
-        //}
+                return Page();
+            }
+            return Page();
+        }
 
 
 
