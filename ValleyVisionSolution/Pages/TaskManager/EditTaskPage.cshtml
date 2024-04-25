@@ -92,11 +92,11 @@
                         </div>
                         <div class="col-md-6">
                             <div>Assign to:</div>
-                            <select asp-for="@Model.EditedTaskUsers" class="form-control" multiple data-placeholder="Select users...">
+                            <select asp-for="@Model.EditedTaskUser" class="form-control" multiple data-placeholder="Select users...">
                                 @{
                                     foreach (var user in Model.InitUsers)
                                     {
-                                        if (Model.ViewedTaskUsers.Contains(user.UserID))
+                                        if (Model.ViewedTaskUser.Contains(user.UserID))
                                         {
                                             <option value="@user.UserID" selected>@user.FirstName @user.LastName</option>
                                         }
@@ -111,11 +111,11 @@
 
 @*                         <div class="col-md-6">
                             <div>Assign to:</div>
-                            <select asp-for="@Model.EditedTaskUsers" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
+                            <select asp-for="@Model.EditedTaskUser" class="selectpicker form-control" multiple data-live-search="true" style="height:38px">
                                 @{
                                     foreach (var user in Model.InitUsers)
                                     {
-                                        if(Model.ViewedTaskUsers.Contains(user.UserID))
+                                        if(Model.ViewedTaskUser.Contains(user.UserID))
                                         {
                                             <option value="@user.UserID" selected>@user.FirstName @user.LastName</option>
                                         }

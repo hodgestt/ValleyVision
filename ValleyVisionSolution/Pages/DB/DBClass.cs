@@ -82,7 +82,7 @@ namespace ValleyVisionSolution.Pages.DB
                     cmd2.Connection.ConnectionString = AuthConnString;
                     cmd2.Parameters.AddWithValue("@Username", UserCredentials.Username);
                     cmd2.Parameters.AddWithValue("@Password", correctHash);
-                    cmd2.CommandText = "SELECT HC.UserID FROM HashedCredentials HC WHERE HC.Username = @Username AND HC.Password_ = @Password;";
+                    cmd2.CommandText = "SELECT HC.UserID FROM HashedCredential HC WHERE HC.Username = @Username AND HC.Password_ = @Password;";
                     cmd2.Connection.Open(); // Open connection here, close in Model!
                     SqlDataReader tempReader2 = cmd2.ExecuteReader();
                     while (tempReader2.Read())
@@ -108,7 +108,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@UserID", userID);
-            cmd.CommandText = "SELECT DISTINCT I.initID, I.initName, I.filePath, I.initDateTime FROM Initiative I JOIN InitiativeUsers IU ON IU.initID = I.initID WHERE IU.userID = @UserID;";
+            cmd.CommandText = "SELECT DISTINCT I.initID, I.initName, I.filePath, I.initDateTime FROM Initiative I JOIN InitiativeUser IU ON IU.initID = I.initID WHERE IU.userID = @UserID;";
             cmd.Connection.Open(); // Open connection here, close in Model! 
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -123,7 +123,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@InitID", initID);
-            String sqlQuery = "DELETE FROM TaskUsers WHERE TaskID IN (SELECT TaskID FROM Task WHERE InitID = @InitID) " + "DELETE FROM Task WHERE initID = @InitID " + "DELETE FROM Message_ WHERE initID = @InitID " + "DELETE FROM InitiativeUsers WHERE initID=@InitID " + "DELETE FROM Initiativefiles WHERE initID=@InitID " + "DELETE FROM InitiativeTiles WHERE initID=@InitID " + "DELETE FROM Initiative WHERE initID=@InitID;";
+            String sqlQuery = "DELETE FROM TaskUser WHERE TaskID IN (SELECT TaskID FROM Task WHERE InitID = @InitID) " + "DELETE FROM Task WHERE initID = @InitID " + "DELETE FROM Message_ WHERE initID = @InitID " + "DELETE FROM InitiativeUser WHERE initID=@InitID " + "DELETE FROM InitiativeFile WHERE initID=@InitID " + "DELETE FROM InitiativeTile WHERE initID=@InitID " + "DELETE FROM Initiative WHERE initID=@InitID;";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
@@ -164,7 +164,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd2.Connection = ValleyVisionConnection;
             cmd2.Connection.ConnectionString = MainConnString;
             cmd2.Parameters.AddWithValue("@InitID", EditedInit.InitID);
-            String sqlQuery2 = "DELETE FROM InitiativeUsers WHERE initID = @InitID;";
+            String sqlQuery2 = "DELETE FROM InitiativeUser WHERE initID = @InitID;";
             cmd2.CommandText = sqlQuery2;
             cmd2.Connection.Open();
             cmd2.ExecuteNonQuery();
@@ -179,7 +179,7 @@ namespace ValleyVisionSolution.Pages.DB
                 cmd3.Connection.ConnectionString = MainConnString;
                 cmd3.Parameters.AddWithValue("@InitID", EditedInit.InitID);
                 cmd3.Parameters.AddWithValue("@UserID", userID);
-                String sqlQuery3 = "INSERT INTO InitiativeUsers (initID, userID) VALUES (@InitID, @UserID);";
+                String sqlQuery3 = "INSERT INTO InitiativeUser (initID, userID) VALUES (@InitID, @UserID);";
                 cmd3.CommandText = sqlQuery3;
                 cmd3.Connection.Open();
                 cmd3.ExecuteNonQuery();
@@ -190,7 +190,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd4.Connection = ValleyVisionConnection;
             cmd4.Connection.ConnectionString = MainConnString;
             cmd4.Parameters.AddWithValue("@InitID", EditedInit.InitID);
-            String sqlQuery4 = "DELETE FROM InitiativeTiles WHERE initID = @InitID;";
+            String sqlQuery4 = "DELETE FROM InitiativeTile WHERE initID = @InitID;";
             cmd4.CommandText = sqlQuery4;
             cmd4.Connection.Open();
             cmd4.ExecuteNonQuery();
@@ -203,7 +203,7 @@ namespace ValleyVisionSolution.Pages.DB
                 cmd3.Connection.ConnectionString = MainConnString;
                 cmd3.Parameters.AddWithValue("@TileID", tile);
                 cmd3.Parameters.AddWithValue("@InitID", EditedInit.InitID);
-                String sqlQuery5 = "INSERT INTO InitiativeTiles (tileID, initID) VALUES (@TileID, @InitID);";
+                String sqlQuery5 = "INSERT INTO InitiativeTile (tileID, initID) VALUES (@TileID, @InitID);";
                 cmd3.CommandText = sqlQuery5;
                 cmd3.Connection.Open();
                 cmd3.ExecuteNonQuery();
@@ -220,7 +220,7 @@ namespace ValleyVisionSolution.Pages.DB
 
             using (SqlConnection connection = new SqlConnection(MainConnString))
             {
-                string sqlQuery = "SELECT year_, realEstateTax, personalPropertyTax, feesLicensesTax, otherRevenue, totalRevenue FROM DataFile_2;";
+                string sqlQuery = "SELECT year_, realEstateTax, personalPropertyTax, feesLicensesTax, otherRevenue, totalRevenue FROM HistoricalRevenue;";
                 SqlCommand command = new SqlCommand(sqlQuery, connection);
                 connection.Open();
 
@@ -293,7 +293,7 @@ namespace ValleyVisionSolution.Pages.DB
                 cmd2.Connection.ConnectionString = MainConnString;
                 cmd2.Parameters.AddWithValue("@InitID", NewInit.InitID);
                 cmd2.Parameters.AddWithValue("@UserID", user);
-                String sqlQuery2 = "INSERT INTO InitiativeUsers (initID, userID) VALUES (@InitID, @UserID);";
+                String sqlQuery2 = "INSERT INTO InitiativeUser (initID, userID) VALUES (@InitID, @UserID);";
                 cmd2.CommandText = sqlQuery2;
                 cmd2.Connection.Open();
                 cmd2.ExecuteNonQuery();
@@ -307,7 +307,7 @@ namespace ValleyVisionSolution.Pages.DB
                 cmd3.Connection.ConnectionString = MainConnString;
                 cmd3.Parameters.AddWithValue("@TileID", tile);
                 cmd3.Parameters.AddWithValue("@InitID", NewInit.InitID);
-                String sqlQuery3 = "INSERT INTO InitiativeTiles (tileID, initID) VALUES (@TileID, @InitID);";
+                String sqlQuery3 = "INSERT INTO InitiativeTile (tileID, initID) VALUES (@TileID, @InitID);";
                 cmd3.CommandText = sqlQuery3;
                 cmd3.Connection.Open();
                 cmd3.ExecuteNonQuery();
@@ -323,7 +323,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@InitID", initID);
-            String sqlQuery = "DELETE FROM TaskUsers WHERE TaskID IN (SELECT TaskID FROM Task WHERE InitID = @InitID;" + "DELETE FROM Task WHERE initID = @InitID;" + "DELETE FROM Message_ WHERE initID = @InitID;" + "DELETE FROM InitiativeUsers WHERE initID=@InitID;" + "DELETE FROM Initiativefiles WHERE initID=@InitID;" + "DELETE FROM Initiativetiles WHERE initID=@InitID;" + "DELETE FROM Initiative WHERE initID=@InitID;";
+            String sqlQuery = "DELETE FROM TaskUser WHERE TaskID IN (SELECT TaskID FROM Task WHERE InitID = @InitID;" + "DELETE FROM Task WHERE initID = @InitID;" + "DELETE FROM Message_ WHERE initID = @InitID;" + "DELETE FROM InitiativeUser WHERE initID=@InitID;" + "DELETE FROM InitiativeFile WHERE initID=@InitID;" + "DELETE FROM InitiativeTile WHERE initID=@InitID;" + "DELETE FROM Initiative WHERE initID=@InitID;";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
@@ -343,7 +343,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@InitID", initID);
-            cmd.CommandText = "SELECT DISTINCT T.tileID, T.tileName, T.iconPath, T.pageLink FROM Tile T JOIN InitiativeTiles IT ON T.tileID = IT.tileID WHERE IT.initID = @InitID;";
+            cmd.CommandText = "SELECT DISTINCT T.tileID, T.tileName, T.iconPath, T.pageLink FROM Tile T JOIN InitiativeTile IT ON T.tileID = IT.tileID WHERE IT.initID = @InitID;";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -359,7 +359,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@InitID", initID);
-            cmd.CommandText = "SELECT DISTINCT F.fileMetaID, F.fileName_, F.filePath, F.fileType, F.uploadedDateTime, F.userID, F.published, U.firstName, U.lastName FROM FileMeta F JOIN InitiativeFiles IT ON F.fileMetaID = IT.fileMetaID JOIN User_ U ON F.userID = U.userID WHERE IT.initID = @InitID;";
+            cmd.CommandText = "SELECT DISTINCT F.fileMetaID, F.fileName_, F.filePath, F.fileType, F.uploadedDateTime, F.userID, F.published, U.firstName, U.lastName FROM FileMeta F JOIN InitiativeFile IT ON F.fileMetaID = IT.fileMetaID JOIN User_ U ON F.userID = U.userID WHERE IT.initID = @InitID;";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -449,7 +449,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd2.Connection.ConnectionString = MainConnString;
             cmd2.Parameters.AddWithValue("@initID", initID);
             cmd2.Parameters.AddWithValue("@fileID", fileID);
-            String sqlQuery2 = "INSERT INTO InitiativeFiles (fileMetaID, initID) VALUES (@fileID, @initID)";
+            String sqlQuery2 = "INSERT INTO InitiativeFile (fileMetaID, initID) VALUES (@fileID, @initID)";
             cmd2.CommandText = sqlQuery2;
             cmd.Connection.Open();
             cmd2.ExecuteNonQuery();
@@ -463,7 +463,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd2.Connection = ValleyVisionConnection;
             cmd2.Connection.ConnectionString = MainConnString;
             cmd2.Parameters.AddWithValue("@FileID", fileID);
-            String sqlQuery2 = "DELETE FROM InitiativeFiles WHERE FileMetaID = @FileID";
+            String sqlQuery2 = "DELETE FROM InitiativeFile WHERE FileMetaID = @FileID";
             cmd2.CommandText = sqlQuery2;
             cmd2.Connection.Open();
             cmd2.ExecuteNonQuery();
@@ -521,7 +521,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@UserID", userID);
             cmd.Parameters.AddWithValue("@InitID", initID);
-            cmd.CommandText = "SELECT DISTINCT T.taskID, T.taskName, T.taskStatus, T.taskDescription, T.taskDueDateTime, T.initID FROM Task T JOIN Initiative I ON T.initID = I.initID JOIN TaskUsers TU ON TU.taskID = T.taskID JOIN User_ U ON U.userID = TU.userID WHERE I.initID = @InitID AND U.userID = @UserID;";
+            cmd.CommandText = "SELECT DISTINCT T.taskID, T.taskName, T.taskStatus, T.taskDescription, T.taskDueDateTime, T.initID FROM Task T JOIN Initiative I ON T.initID = I.initID JOIN TaskUser TU ON TU.taskID = T.taskID JOIN User_ U ON U.userID = TU.userID WHERE I.initID = @InitID AND U.userID = @UserID;";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -529,13 +529,13 @@ namespace ValleyVisionSolution.Pages.DB
             return tempReader;
         }
         //reads all users that are part of a given initiative
-        public static SqlDataReader InitiativeUsersReader(int? initID)
+        public static SqlDataReader InitiativeUserReader(int? initID)
         {
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@InitID", initID);
-            cmd.CommandText = "SELECT U.userID, U.firstName, U.lastName FROM User_ U JOIN InitiativeUsers IU ON U.userID = IU.userID WHERE IU.initID = @InitID;";
+            cmd.CommandText = "SELECT U.userID, U.firstName, U.lastName FROM User_ U JOIN InitiativeUser IU ON U.userID = IU.userID WHERE IU.initID = @InitID;";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -544,7 +544,7 @@ namespace ValleyVisionSolution.Pages.DB
         }
 
         //adds a new task in a specific initiative and assigns it to the specified users
-        public static void AddTask(int? initID, DataClasses.Task newTask, List<int> newTaskUsers)
+        public static void AddTask(int? initID, DataClasses.Task newTask, List<int> newTaskUser)
         {
             int taskID;
             SqlCommand cmd = new SqlCommand();
@@ -561,14 +561,14 @@ namespace ValleyVisionSolution.Pages.DB
             taskID = Convert.ToInt32(cmd.ExecuteScalar());
             cmd.Connection.Close();
 
-            foreach (var user in newTaskUsers)
+            foreach (var user in newTaskUser)
             {
                 SqlCommand cmd2 = new SqlCommand();
                 cmd2.Connection = ValleyVisionConnection;
                 cmd2.Connection.ConnectionString = MainConnString;
                 cmd2.Parameters.AddWithValue("@TaskID", taskID);
                 cmd2.Parameters.AddWithValue("@UserID", user);
-                String sqlQuery2 = "INSERT INTO TaskUsers (taskID, userID) VALUES (@TaskID, @UserID);";
+                String sqlQuery2 = "INSERT INTO TaskUser (taskID, userID) VALUES (@TaskID, @UserID);";
                 cmd2.CommandText = sqlQuery2;
                 cmd2.Connection.Open();
                 cmd2.ExecuteNonQuery();
@@ -582,7 +582,7 @@ namespace ValleyVisionSolution.Pages.DB
                 cmd.Connection = ValleyVisionConnection;
                 cmd.Connection.ConnectionString = MainConnString;
                 cmd.Parameters.AddWithValue("@UserID", userId);
-                cmd.CommandText = "SELECT T.taskID, T.taskName, T.taskDueDateTime, T.initID FROM Task T INNER JOIN TaskUsers U on T.taskID = U.taskID WHERE U.userID = @UserID;";
+                cmd.CommandText = "SELECT T.taskID, T.taskName, T.taskDueDateTime, T.initID FROM Task T INNER JOIN TaskUser U on T.taskID = U.taskID WHERE U.userID = @UserID;";
                 cmd.Connection.Open(); // Open connection here, close in Model!
 
                 SqlDataReader tempReader = cmd.ExecuteReader();
@@ -593,27 +593,27 @@ namespace ValleyVisionSolution.Pages.DB
 
 
         //reads all users that have been assigned a given task
-        public static List<int> ViewedTaskUsersReader(int? taskID)
+        public static List<int> ViewedTaskUserReader(int? taskID)
         {
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@TaskID", taskID);
-            cmd.CommandText = "SELECT U.userID FROM User_ U JOIN TaskUsers TU ON U.userID = TU.userID WHERE TU.taskID = @TaskID;";
+            cmd.CommandText = "SELECT U.userID FROM User_ U JOIN TaskUser TU ON U.userID = TU.userID WHERE TU.taskID = @TaskID;";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
 
-            List<int> ViewedTaskUsers = new List<int>();
+            List<int> ViewedTaskUser = new List<int>();
 
             while (tempReader.Read())
             {
-                ViewedTaskUsers.Add(Int32.Parse(tempReader["UserID"].ToString()));
+                ViewedTaskUser.Add(Int32.Parse(tempReader["UserID"].ToString()));
             }
 
             cmd.Connection.Close();
 
-            return ViewedTaskUsers;
+            return ViewedTaskUser;
         }
 
         public static List<int> ViewedDevUsersReader(int? devID)
@@ -640,7 +640,7 @@ namespace ValleyVisionSolution.Pages.DB
         }
 
         //edit a task
-        public static void EditTask(DataClasses.Task editedTask, List<int> editedTaskUsers)
+        public static void EditTask(DataClasses.Task editedTask, List<int> editedTaskUser)
         {
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
@@ -660,20 +660,20 @@ namespace ValleyVisionSolution.Pages.DB
             cmd2.Connection = ValleyVisionConnection;
             cmd2.Connection.ConnectionString = MainConnString;
             cmd2.Parameters.AddWithValue("@TaskID", editedTask.TaskID);
-            String sqlQuery2 = "DELETE FROM TaskUsers WHERE taskID = @TaskID;";
+            String sqlQuery2 = "DELETE FROM TaskUser WHERE taskID = @TaskID;";
             cmd2.CommandText = sqlQuery2;
             cmd2.Connection.Open();
             cmd2.ExecuteNonQuery();
             cmd2.Connection.Close();
 
-            foreach (var user in editedTaskUsers)
+            foreach (var user in editedTaskUser)
             {
                 SqlCommand cmd3 = new SqlCommand();
                 cmd3.Connection = ValleyVisionConnection;
                 cmd3.Connection.ConnectionString = MainConnString;
                 cmd3.Parameters.AddWithValue("@TaskID", editedTask.TaskID);
                 cmd3.Parameters.AddWithValue("@UserID", user);
-                String sqlQuery3 = "INSERT INTO TaskUsers (taskID, userID) VALUES (@TaskID, @UserID);";
+                String sqlQuery3 = "INSERT INTO TaskUser (taskID, userID) VALUES (@TaskID, @UserID);";
                 cmd3.CommandText = sqlQuery3;
                 cmd3.Connection.Open();
                 cmd3.ExecuteNonQuery();
@@ -776,7 +776,7 @@ namespace ValleyVisionSolution.Pages.DB
             SqlCommand cmd2 = new SqlCommand();
             cmd2.Connection = ValleyVisionConnection;
             cmd2.Connection.ConnectionString = AuthConnString;
-            cmd2.CommandText = "SELECT * FROM HashedCredentials;";
+            cmd2.CommandText = "SELECT * FROM HashedCredential;";
             cmd2.Connection.Open(); 
 
             SqlDataReader tempReader2 = cmd2.ExecuteReader();
@@ -861,7 +861,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd2.Connection = ValleyVisionConnection;
             cmd2.Connection.ConnectionString = AuthConnString;
             cmd2.Parameters.AddWithValue("@UserID", UserID);
-            cmd2.CommandText = "SELECT * FROM HashedCredentials WHERE UserID = @UserID;";
+            cmd2.CommandText = "SELECT * FROM HashedCredential WHERE UserID = @UserID;";
             cmd2.Connection.Open();
 
             SqlDataReader tempReader2 = cmd2.ExecuteReader();
@@ -899,7 +899,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = AuthConnString;
             cmd.Parameters.AddWithValue("@UserID", userid);
-            String sqlQuery = "DELETE FROM HashedCredentials WHERE UserID = @UserID;";
+            String sqlQuery = "DELETE FROM HashedCredential WHERE UserID = @UserID;";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
@@ -920,7 +920,7 @@ namespace ValleyVisionSolution.Pages.DB
 
             cmd.Parameters.AddWithValue("@fileMetaID", fileMetaID);
 
-            String sqlQuery = "DELETE FROM DevAreaFiles WHERE fileMetaID = @fileMetaID AND devID = @DevID;";
+            String sqlQuery = "DELETE FROM DevAreaFile WHERE fileMetaID = @fileMetaID AND devID = @DevID;";
 
             cmd.CommandText = sqlQuery;
 
@@ -938,7 +938,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@TaskID", taskID);
-            String sqlQuery = "DELETE FROM TaskUsers WHERE taskID = @TaskID;" + "DELETE FROM Task WHERE taskID = @TaskID;";
+            String sqlQuery = "DELETE FROM TaskUser WHERE taskID = @TaskID;" + "DELETE FROM Task WHERE taskID = @TaskID;";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
@@ -1004,7 +1004,7 @@ namespace ValleyVisionSolution.Pages.DB
 
             cmdLogin.Parameters.AddWithValue("@UserID", profiletoedit.UserID);
             cmdLogin.Parameters.AddWithValue("@Username", profiletoedit.UserName);
-            string loginQuery = "UPDATE HashedCredentials SET UserID=@UserID, UserName=@Username WHERE UserID=@UserID;";
+            string loginQuery = "UPDATE HashedCredential SET UserID=@UserID, UserName=@Username WHERE UserID=@UserID;";
             cmdLogin.CommandText = loginQuery;
             cmdLogin.Connection.Open();
             cmdLogin.ExecuteNonQuery();
@@ -1052,7 +1052,7 @@ namespace ValleyVisionSolution.Pages.DB
 
             cmd.Parameters.AddWithValue("@UserID", userid);
 
-            cmd.CommandText = "SELECT UserName FROM HashedCredentials WHERE UserID = @UserID;";
+            cmd.CommandText = "SELECT UserName FROM HashedCredential WHERE UserID = @UserID;";
 
             cmd.Connection.Open(); // Open connection here, close in Model! 
 
@@ -1095,7 +1095,7 @@ namespace ValleyVisionSolution.Pages.DB
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
-            cmd.CommandText = "SELECT * FROM DataFile_2 WHERE year_ = (SELECT MAX(year_) FROM DataFile_2);";
+            cmd.CommandText = "SELECT * FROM HistoricalRevenue WHERE year_ = (SELECT MAX(year_) FROM HistoricalRevenue);";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -1109,7 +1109,7 @@ namespace ValleyVisionSolution.Pages.DB
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
-            cmd.CommandText = "SELECT * FROM DataFile_2;";
+            cmd.CommandText = "SELECT * FROM HistoricalRevenue;";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -1129,7 +1129,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Parameters.AddWithValue("@StateFunding", newRevenueData.StateFunding);
             decimal TotalRevenue = (newRevenueData.RealEstateTax + newRevenueData.PersonalPropertyTax + newRevenueData.FeesLicensesTax + newRevenueData.StateFunding);
             cmd.Parameters.AddWithValue("@TotalRevenue", TotalRevenue);
-            String sqlQuery = "INSERT INTO DataFile_2 (year_, realEstateTax, personalPropertyTax,feesLicensesTax,otherRevenue,totalRevenue) VALUES (@Year, @RealEstateTax, @PersonalPropertyTax, @FeesLicensesTax, @StateFunding, @TotalRevenue);";
+            String sqlQuery = "INSERT INTO HistoricalRevenue (year_, realEstateTax, personalPropertyTax,feesLicensesTax,otherRevenue,totalRevenue) VALUES (@Year, @RealEstateTax, @PersonalPropertyTax, @FeesLicensesTax, @StateFunding, @TotalRevenue);";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
@@ -1149,7 +1149,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd2.Parameters.AddWithValue("@StateFunding", rev.StateFunding);
             decimal TotalRevenue = (rev.RealEstateTax + rev.PersonalPropertyTax + rev.FeesLicensesTax + rev.StateFunding);
             cmd2.Parameters.AddWithValue("@TotalRevenue", TotalRevenue);
-            String sqlQuery2 = "UPDATE DataFile_2 SET realEstateTax=@RealEstateTax, personalPropertyTax=@PersonalPropertyTax, feesLicensesTax=@FeesLicensesTax, otherRevenue=@StateFunding, totalRevenue=@TotalRevenue WHERE year_=@Year;";
+            String sqlQuery2 = "UPDATE HistoricalRevenue SET realEstateTax=@RealEstateTax, personalPropertyTax=@PersonalPropertyTax, feesLicensesTax=@FeesLicensesTax, otherRevenue=@StateFunding, totalRevenue=@TotalRevenue WHERE year_=@Year;";
             cmd2.CommandText = sqlQuery2;
             cmd2.Connection.Open();
             cmd2.ExecuteNonQuery();
@@ -1161,7 +1161,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@YeartoEdit", year);
-            String sqlQuery = "DELETE FROM DataFile_2 WHERE year_ = @YeartoEdit;";
+            String sqlQuery = "DELETE FROM HistoricalRevenue WHERE year_ = @YeartoEdit;";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
@@ -1174,7 +1174,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@Year", year);
-            cmd.CommandText = "SELECT * FROM DataFile_2 WHERE DataFile_2.year_ = @Year;";
+            cmd.CommandText = "SELECT * FROM HistoricalRevenue WHERE HistoricalRevenue.year_ = @Year;";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -1229,7 +1229,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmdLogin.Parameters.AddWithValue("@UserID", userID);
             cmdLogin.Parameters.AddWithValue("@Username", newfullProfile.UserName);
             cmdLogin.Parameters.AddWithValue("@Password", PasswordHash.HashPassword(newfullProfile.Password));
-            string loginQuery = "INSERT INTO HashedCredentials (UserID,UserName,Password_) VALUES (@UserID, @Username, @Password)";
+            string loginQuery = "INSERT INTO HashedCredential (UserID,UserName,Password_) VALUES (@UserID, @Username, @Password)";
             cmdLogin.CommandText = loginQuery;
             cmdLogin.Connection.Open();
             cmdLogin.ExecuteNonQuery();
@@ -1244,7 +1244,7 @@ namespace ValleyVisionSolution.Pages.DB
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
-            cmd.CommandText = "SELECT * FROM DataFile_3;";
+            cmd.CommandText = "SELECT * FROM HistoricalExpenditure;";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -1260,7 +1260,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@Year", yearid);
-            cmd.CommandText = "SELECT * FROM DataFile_3 WHERE Year_ = @Year;";
+            cmd.CommandText = "SELECT * FROM HistoricalExpenditure WHERE Year_ = @Year;";
             cmd.Connection.Open(); // Open connection here, close in Model! 
             SqlDataReader tempReader = cmd.ExecuteReader();
             return tempReader;
@@ -1281,7 +1281,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Parameters.AddWithValue("@Other", expen.Other);
             decimal TotalExpenditure = (expen.Year + expen.InflationRate + expen.InterestRate + expen.PublicSafety + expen.School + expen.Anomaly + expen.Other);
             cmd.Parameters.AddWithValue("@TotalExpenditure", TotalExpenditure);
-            String sqlQuery = "UPDATE DataFile_3 SET year_=@NewYear, inflationRate=@InflationRate, interestRate=@InterestRate, publicSafety=@PublicSafety, school=@School, anomaly=@Anomaly, other=@Other, totalExpenditure=@TotalExpenditure WHERE year_=@YeartoEdit;";
+            String sqlQuery = "UPDATE HistoricalExpenditure SET year_=@NewYear, inflationRate=@InflationRate, interestRate=@InterestRate, publicSafety=@PublicSafety, school=@School, anomaly=@Anomaly, other=@Other, totalExpenditure=@TotalExpenditure WHERE year_=@YeartoEdit;";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
@@ -1293,7 +1293,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@YeartoEdit", year);
-            String sqlQuery = "DELETE FROM DataFile_3 WHERE year_ = @YeartoEdit;";
+            String sqlQuery = "DELETE FROM HistoricalExpenditure WHERE year_ = @YeartoEdit;";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
@@ -1314,7 +1314,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Parameters.AddWithValue("@Other", newHistoricalSpendData.Other);
             decimal TotalExpenditure = (newHistoricalSpendData.Year + newHistoricalSpendData.InflationRate + newHistoricalSpendData.InterestRate + newHistoricalSpendData.PublicSafety + newHistoricalSpendData.School + newHistoricalSpendData.Anomaly + newHistoricalSpendData.Other);
             cmd.Parameters.AddWithValue("@TotalExpenditure", TotalExpenditure);
-            String sqlQuery = "INSERT INTO DataFile_3 (year_, inflationRate, interestRate, publicSafety, school, anomaly, other, totalExpenditure) VALUES (@Year, @InflationRate, @InterestRate, @PublicSafety, @School, @Anomaly, @Other, @TotalExpenditure);";
+            String sqlQuery = "INSERT INTO HistoricalExpenditure (year_, inflationRate, interestRate, publicSafety, school, anomaly, other, totalExpenditure) VALUES (@Year, @InflationRate, @InterestRate, @PublicSafety, @School, @Anomaly, @Other, @TotalExpenditure);";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
@@ -1329,7 +1329,7 @@ namespace ValleyVisionSolution.Pages.DB
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
-            cmd.CommandText = "SELECT * FROM DataFile_3 WHERE year_ = (SELECT MAX(year_) FROM DataFile_3);";
+            cmd.CommandText = "SELECT * FROM HistoricalExpenditure WHERE year_ = (SELECT MAX(year_) FROM HistoricalExpenditure);";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -1341,7 +1341,7 @@ namespace ValleyVisionSolution.Pages.DB
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
-            cmd.CommandText = "SELECT inflationRate FROM DataFile_4;";
+            cmd.CommandText = "SELECT inflationRate FROM HistoricalInflation;";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -1380,7 +1380,7 @@ namespace ValleyVisionSolution.Pages.DB
                 cmd.Connection.ConnectionString = MainConnString;
                 cmd.Parameters.AddWithValue("@FileMetaID", fileMetaID);
                 cmd.Parameters.AddWithValue("@DevID", devID);
-                String sqlQuery = "INSERT INTO DevAreaFiles(fileMetaID, devID)VALUES (@FileMetaID, @DevID);";
+                String sqlQuery = "INSERT INTO DevAreaFile(fileMetaID, devID)VALUES (@FileMetaID, @DevID);";
                 cmd.CommandText = sqlQuery;
                 cmd.Connection.Open();
                 cmd.ExecuteNonQuery();
@@ -1422,7 +1422,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@DevID", devID);
-            String sqlQuery = "DELETE FROM DevAreaFiles WHERE devID = @DevID;" + "DELETE FROM DevelopmentArea WHERE devID = @DevID;";
+            String sqlQuery = "DELETE FROM DevAreaFile WHERE devID = @DevID;" + "DELETE FROM DevelopmentArea WHERE devID = @DevID;";
             cmd.CommandText = sqlQuery;
             cmd.Connection.Open();
             cmd.ExecuteNonQuery();
@@ -1437,7 +1437,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection = ValleyVisionConnection;
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@devID", devID);
-            cmd.CommandText = "SELECT F.fileMetaID, F.fileName_, F.filePath, F.fileType, F.uploadedDateTime, U.firstName, U.lastName FROM DevelopmentArea D LEFT JOIN DevAreaFiles A ON A.devID = D.devID LEFT JOIN FileMeta F ON F.fileMetaID = A.fileMetaID JOIN User_ U ON U.userID = F.userID WHERE D.devID = @devID; ";
+            cmd.CommandText = "SELECT F.fileMetaID, F.fileName_, F.filePath, F.fileType, F.uploadedDateTime, U.firstName, U.lastName FROM DevelopmentArea D LEFT JOIN DevAreaFile A ON A.devID = D.devID LEFT JOIN FileMeta F ON F.fileMetaID = A.fileMetaID JOIN User_ U ON U.userID = F.userID WHERE D.devID = @devID; ";
             cmd.Connection.Open(); // Open connection here, close in Model! 
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -1452,7 +1452,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd.Connection.ConnectionString = MainConnString;
             cmd.Parameters.AddWithValue("@DevID", devid);
             cmd.Parameters.AddWithValue("@InitID", initid);
-            cmd.CommandText = "SELECT DISTINCT F.fileMetaID, F.fileName_, F.filePath, F.fileType, F.uploadedDateTime, F.userID, F.published, U.firstName, U.lastName FROM FileMeta F JOIN InitiativeFiles IT ON F.fileMetaID = IT.fileMetaID JOIN User_ U ON F.userID = U.userID WHERE IT.initID = @InitID AND F.fileMetaID NOT IN (SELECT fileMetaID FROM DevAreaFiles WHERE devID = @DevID);";
+            cmd.CommandText = "SELECT DISTINCT F.fileMetaID, F.fileName_, F.filePath, F.fileType, F.uploadedDateTime, F.userID, F.published, U.firstName, U.lastName FROM FileMeta F JOIN InitiativeFile IT ON F.fileMetaID = IT.fileMetaID JOIN User_ U ON F.userID = U.userID WHERE IT.initID = @InitID AND F.fileMetaID NOT IN (SELECT fileMetaID FROM DevAreaFile WHERE devID = @DevID);";
             cmd.Connection.Open(); // Open connection here, close in Model!
 
             SqlDataReader tempReader = cmd.ExecuteReader();
@@ -1485,7 +1485,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd2.Connection.ConnectionString = MainConnString;
             cmd2.Parameters.AddWithValue("@initID", initID);
             cmd2.Parameters.AddWithValue("@fileID", fileID);
-            String sqlQuery2 = "INSERT INTO InitiativeFiles (fileMetaID, initID) VALUES (@fileID, @initID)";
+            String sqlQuery2 = "INSERT INTO InitiativeFile (fileMetaID, initID) VALUES (@fileID, @initID)";
             cmd2.CommandText = sqlQuery2;
             cmd.Connection.Open();
             cmd2.ExecuteNonQuery();
@@ -1496,7 +1496,7 @@ namespace ValleyVisionSolution.Pages.DB
             cmd3.Connection.ConnectionString = MainConnString;
             cmd3.Parameters.AddWithValue("@devID", devID);
             cmd3.Parameters.AddWithValue("@fileID", fileID);
-            String sqlQuery3 = "INSERT INTO DevAreaFiles(fileMetaID, devID)VALUES (@fileID, @devID);";
+            String sqlQuery3 = "INSERT INTO DevAreaFile(fileMetaID, devID)VALUES (@fileID, @devID);";
             cmd3.CommandText = sqlQuery3;
             cmd3.Connection.Open();
             cmd3.ExecuteNonQuery();

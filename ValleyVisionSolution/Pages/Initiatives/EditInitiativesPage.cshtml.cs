@@ -84,7 +84,7 @@ namespace ValleyVisionSolution.Pages.Initiatives
             // Close your connection in DBClass
 
             //Populate Users list
-            SqlDataReader reader3 = DBClass.InitiativeUsersReader(initID);
+            SqlDataReader reader3 = DBClass.InitiativeUserReader(initID);
             while (reader3.Read())
             {
                 SelectedInitUsers.Add(Int32.Parse(reader3["UserID"].ToString()));
