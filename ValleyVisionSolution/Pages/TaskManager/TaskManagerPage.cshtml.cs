@@ -165,7 +165,7 @@ public class TaskManagerPageModel : PageModel
         }
 
             // Model state is valid, continue with processing
-        DBClass.AddTask(HttpContext.Session.GetInt32("InitID"), NewTask, NewTaskUsers);
+        DBClass.AddTask(HttpContext.Session.GetInt32("InitID"), NewTask, NewTaskUser);
         loadData(initID);
         ModelState.Clear();
         NewTaskUser = new List<int>();
