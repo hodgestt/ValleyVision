@@ -268,45 +268,41 @@
 
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var selects = document.querySelectorAll('select[multiple]');
-            selects.forEach(function (select) {
-                new Choices(select, {
-                    removeItemButton: true,
-                    searchEnabled: true,
-                    searchPlaceholderValue: 'Search here...',
-                    shouldSort: false, // Keep server-side order
-                    placeholder: true,
-                    placeholderValue: 'Select options...', // Placeholder text when no items are selected
-                    itemSelectText: '',
-                    classNames: {
-                        containerOuter: 'choices',
-                        containerInner: 'choices__inner',
-                        item: 'choices__item'
-                    }
-                });
-            });
-        });
-    </script>
-
-@*     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var selects = document.querySelectorAll('select[multiple]');
-            selects.forEach(function (select) {
-                new Choices(select, {
-                    removeItemButton: true,
-                    searchEnabled: true,
-                    searchPlaceholderValue: 'Search here...',
-                    shouldSort: false, // Keep server-side order
-                    placeholder: true,
-                    placeholderValue: 'Select options...' // Placeholder text when no items are selected
-                });
-            });
-        });
-    </script>
- *@
+   
 </div>
 <!-- End New Initiative Form -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var selects = document.querySelectorAll('select[multiple]');
+        selects.forEach(function (select) {
+            new Choices(select, {
+                removeItemButton: true,
+                searchEnabled: true,
+                searchPlaceholderValue: 'Search here...',
+                shouldSort: false, // Keep server-side order
+                placeholder: true,
+                placeholderValue: 'Select options...', // Placeholder text when no items are selected
+                itemSelectText: '',
+                classNames: {
+                    containerOuter: 'choices',
+                    containerInner: 'choices__inner',
+                    item: 'choices__item'
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    // Check if AddInitInvalid is true on page load and reopen modal if needed
+    window.addEventListener('DOMContentLoaded', (event) => {
+        // Convert the server-side value to a JavaScript string explicitly
+        var openModal = '@Model.OpenModal'.toLowerCase(); // Ensures lowercase comparison
+        if (openModal === 'true') {
+            var modal = new bootstrap.Modal(document.getElementById('addInitForm'));
+            modal.show();
+        }
+    });
+</script>
 

@@ -572,8 +572,11 @@
     <script>
         // Check if AddTaskInvalid is true on page load and reopen modal if needed
         window.addEventListener('DOMContentLoaded', (event) => {
-            if (@Model.OpenModal.ToString().ToLower()) {
-                $('#addTaskForm').modal('show');
+            // Convert the server-side value to a JavaScript string explicitly
+            var openModal = '@Model.OpenModal'.toLowerCase(); // Ensures lowercase comparison
+            if (openModal === 'true') {
+                var modal = new bootstrap.Modal(document.getElementById('addTaskForm'));
+                modal.show();
             }
         });
     </script>
