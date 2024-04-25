@@ -23,11 +23,19 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
         {
             ProfileToUpdate = DBClass.SingleProfilesReader(HttpContext.Session.GetInt32("EditedUserID"));
         }
-        public void OnGet (int userid)
+
+        public IActionResult OnGet(int userid)
         {
-            HttpContext.Session.SetInt32("EditedUserID", userid);
-            
-            loadData();
+            if (HttpContext.Session.GetString("LoggedIn") == "True")
+            {
+                HttpContext.Session.SetInt32("EditedUserID", userid);
+                loadData();
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Index");
+            }
         }
 
         public IActionResult OnPostUpdateProfile()

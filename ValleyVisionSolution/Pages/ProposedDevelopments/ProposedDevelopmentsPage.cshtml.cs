@@ -17,14 +17,14 @@ namespace ValleyVisionSolution.Pages.ProposedDev
         [BindProperty]
         public DevelopmentArea NewDevelopmentArea { get; set; }
 
-  
+        public bool openaddProposedDevelopment { get; set; }
 
         public ProposedDevPageModel() 
         {
             HighImpact = new List<DevelopmentArea>();
             MidImpact = new List<DevelopmentArea>();
             LowImpact = new List<DevelopmentArea>();
-           
+            openaddProposedDevelopment = false;
         }
 
         public IActionResult OnGet()
@@ -93,6 +93,7 @@ namespace ValleyVisionSolution.Pages.ProposedDev
             if (!ModelState.IsValid)
             {
                 // Model state is not valid, return the page with validation errors
+                openaddProposedDevelopment = true;
                 loadData();
                 return Page();
             }

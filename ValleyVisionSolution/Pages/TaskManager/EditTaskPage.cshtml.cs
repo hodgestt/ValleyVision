@@ -73,19 +73,26 @@ namespace ValleyVisionSolution.Pages.TaskManager
             DBClass.ValleyVisionConnection.Close();
         }
 
-        public void OnGet(int taskID)
+        public IActionResult OnGet(int taskID)
         {
-           
-            HttpContext.Session.SetInt32("TaskID", taskID);
-            ViewedTask = HttpContext.Session.GetInt32("TaskID");
-            ViewedTaskUser = DBClass.ViewedTaskUserReader(HttpContext.Session.GetInt32("TaskID"));
-            loadData();
-            foreach(var task in AllTasks)
+            if (HttpContext.Session.GetString("LoggedIn") == "True")
             {
-                if(task.TaskID == taskID) 
+                HttpContext.Session.SetInt32("TaskID", taskID);
+                ViewedTask = HttpContext.Session.GetInt32("TaskID");
+                ViewedTaskUser = DBClass.ViewedTaskUserReader(HttpContext.Session.GetInt32("TaskID"));
+                loadData();
+                foreach (var task in AllTasks)
                 {
-                    TempTaskDescription = task.TaskDescription;
+                    if (task.TaskID == taskID)
+                    {
+                        TempTaskDescription = task.TaskDescription;
+                    }
                 }
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Index");
             }
         }
 
