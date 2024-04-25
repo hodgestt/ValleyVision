@@ -1,12 +1,11 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 using System.Data.SqlClient;
+using Microsoft.AspNetCore.Http;
 using ValleyVisionSolution.Pages.DataClasses;
 using ValleyVisionSolution.Pages.DB;
 using Task = ValleyVisionSolution.Pages.DataClasses.Task;
-using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace ValleyVisionSolution.ViewComponents
 {
@@ -14,16 +13,52 @@ namespace ValleyVisionSolution.ViewComponents
     {
         public IViewComponentResult Invoke(int initID)
         {
-            var task = new List<Task>();
-            var inits = new List<Initiative>();
+            var tasks = FetchTasks();
+            int counters = GetNotificationCount();
+           
+
+            return View(tasks);
+        }
+
+        private List<Task> FetchTasks()
+        {
+            List<Task> tasks = new List<Task>();
             int? userId = HttpContext.Session.GetInt32("UserID");
+
             if (!userId.HasValue)
-                return Content("No more notifications"); // Return an empty string if not logged in
+            {
+                return tasks; // Return an empty list if not logged in
+            }
 
             SqlDataReader reader = DBClass.GetTasksByUserId((int)userId);
             while (reader.Read())
             {
-                task.Add( new Task()
+                tasks.Add(new Task
+                {
+                    TaskID = reader.GetInt32(reader.GetOrdinal("taskID")),
+                    TaskName = reader.GetString(reader.GetOrdinal("taskName")),
+                    TaskDueDateTime = reader.GetDateTime(reader.GetOrdinal("taskDueDateTime")),
+                    InitID = reader.GetInt32(reader.GetOrdinal("initID"))
+                });
+            }
+            reader.Close(); // Don't forget to close the reader
+            DBClass.ValleyVisionConnection.Close(); // Close connection if it's not managed elsewhere
+
+            return tasks;
+        }
+
+        private int GetNotificationCount()
+        {
+            var task = new List<Task>();
+            int? count = 0;
+            int? userId = HttpContext.Session.GetInt32("UserID");
+            if (!userId.HasValue)
+                return 0;// Return an empty string if not logged in
+
+            SqlDataReader reader = DBClass.GetTasksByUserId((int)userId);
+            while (reader.Read())
+            {
+                task.Add(new Task()
                 {
                     TaskID = reader.GetInt32(reader.GetOrdinal("taskID")),
                     TaskName = reader.GetString(reader.GetOrdinal("taskName")),
@@ -31,15 +66,25 @@ namespace ValleyVisionSolution.ViewComponents
                     InitID = reader.GetInt32(reader.GetOrdinal("initID"))
                 }
                 );
-
             }
+            foreach (var tasks in task)
+            {
+                count++;
+            }
+            HttpContext.Session.SetInt32("NotifCount", (int)count);
             reader.Close(); // Don't forget to close the reader
             DBClass.ValleyVisionConnection.Close(); // Close connection if it's not managed elsewhere
 
-
-            return View(task);
+            if (count > 0)
+            {
+                HttpContext.Session.SetInt32("NotifCount", (int)count);
+                return (int)count;
+            }
+            else
+            { 
+                return 0; 
+            }
         }
-
     }
-
+    
 }

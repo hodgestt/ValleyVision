@@ -108,6 +108,7 @@
 
 <form method="post" asp-page="/SpendingProjectionPage">
     <div class="row mb-3">
+        <input asp-for="@Model.AutoInflation" type="hidden" class="form-control" id="autoInflation" value="true">
         <div class="col-md-2">
             <div class="parameterTitle">
                 <span><i class="bi bi-question-circle"></i></span> Anomaly Amount $:
@@ -132,7 +133,7 @@
             </select>
         </div>
         <div class="col-md-2">
-            <div class="manualInflationContainer">
+            <div class=" parameterTitle manualInflationContainer">
                 <input style="margin-right: 0.5vw" class="form-check-input parameterTitle manualInflationBox" type="checkbox" id="manualInflationRate">
                 <label class="form-check-label parameterTitle manualInflationTitle">
                     <span><i class="bi bi-question-circle"></i></span> Manually Set Inflation %:
@@ -142,15 +143,11 @@
             <!-- Input for inflation rate, initially hidden -->
             <input asp-for="@Model.ParameterInflationRate" type="text" class="form-control" id="inflationRateInput" style="display: none;">
         </div>
-        <input asp-for="@Model.AutoInflation" type="hidden" class="form-control" id="autoInflation" value="true">
-       
         <div class="col-md-6 d-flex flex-column justify-content-end align-items-end">
             <button type="submit" class="btn btn-primary" id="runProjectionBtn" asp-page-handler="ProjectExpenditures2">Run Projection</button>
         </div>
     </div>
 </form>
-
-
 <div class="chart-grid">
     <div class="dashboard-tile" id="chartA">
         <div class="dashboard-tile-title-bar">
