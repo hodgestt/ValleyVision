@@ -21,9 +21,17 @@ namespace ValleyVisionSolution.Pages.ManageProfiles
             profileInformation = DBClass.SingleProfilesReader(HttpContext.Session.GetInt32("UserID"));
         }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
-            loadData();
+            if (HttpContext.Session.GetString("LoggedIn") == "True")
+            {
+                loadData();
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Index");
+            }
         }
 
         //Need a get Picture Path method in DB to get it from DB

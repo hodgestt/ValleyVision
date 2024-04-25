@@ -207,6 +207,7 @@
             <form method="post" asp-page="/DevelopmentPage">
                 <div class="modal-header">
                     <h5 class="modal-title" id="ecoDevFilesModalLabel">Select Files to Add</h5>
+                    <button type="button" class="btn-close" id="closebutton" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="col-md-6">
@@ -249,7 +250,12 @@
         });
     });
 </script>
-
+<script>
+    // JavaScript to handle redirection on modal close
+    document.getElementById('closebutton').addEventListener('click', function () {
+        window.location.href = '/ProposedDevelopments/DevelopmentPage';
+    });
+</script>
 
 
 

@@ -38,11 +38,20 @@ namespace ValleyVisionSolution.Pages.HistoricalSpending
             DBClass.ValleyVisionConnection.Close();
         }
 
-        public void OnGet(int Year)
+        public IActionResult OnGet(int Year)
         {
-            HttpContext.Session.SetInt32("Year", Year);
-            loadData();
+            if (HttpContext.Session.GetString("LoggedIn") == "True")
+            {
+                HttpContext.Session.SetInt32("Year", Year);
+                loadData();
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Index");
+            }
         }
+
         public IActionResult OnPostEditData()
         {
             int? year = HttpContext.Session.GetInt32("Year");

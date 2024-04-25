@@ -115,9 +115,17 @@ namespace ValleyVisionSolution.Pages.Initiatives
             DBClass.ValleyVisionConnection.Close();
         }
 
-        public void OnGet(int EditedInit)
+        public IActionResult OnGet()
         {
-            loadData();
+            if (HttpContext.Session.GetString("LoggedIn") == "True")
+            {
+                loadData();
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Index");
+            }
         }
 
         public IActionResult OnPostDeleteInit()

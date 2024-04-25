@@ -165,7 +165,7 @@ namespace ValleyVisionSolution.Pages.RevenueProjection
             else
             {
                 TempData["ErrorMessage"] = "Please run the projection before downloading the report.";
-                return RedirectToPage("/RevenueProjection");
+                return RedirectToPage("/RevenueProjection/RevenueProjectionPage");
             }
         }
 

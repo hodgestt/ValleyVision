@@ -106,7 +106,7 @@ namespace ValleyVisionSolution.Pages.ProposedDevelopments
             loadData();
             ModelState.Clear();
             NewDevelopmentFiles = new List<int>();
-            return RedirectToPage("/ProposedDevelopments/ProposedDevelopmentsPage");
+            return RedirectToPage("/ProposedDevelopments/DevelopmentPage");
 
 
 
@@ -129,7 +129,7 @@ namespace ValleyVisionSolution.Pages.ProposedDevelopments
             DBClass.DeleteDevelopmentFiles((int)devID, fileMetaID);
             loadData();
             //ModelState.Clear();
-            return RedirectToPage("/ProposedDevelopments/ProposedDevelopmentsPage");
+            return RedirectToPage("/ProposedDevelopments/DevelopmentPage");
 
         }
 
