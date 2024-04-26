@@ -49,7 +49,7 @@
     }
 
     .search-bar-container {
-        position: absolute;
+        position: relative;
         top: 46%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -67,24 +67,26 @@
 <div class="grid-container">
     <div class="top-section" id="bkgImage">
         <div>
-            <h3>MADISON COUNTY</h3>
-            <h4>V I R G I N I A</h4>
-        </div>
-        <div class="search-bar-container">
-            <form method="get" class="mb-4">
-                <div class="input-group">
-                    <input type="text" name="searchTerm" class="form-control" placeholder="Search published files..." value="@HttpContext.Request.Query["searchTerm"]">
-                    <button class="btn btn-primary" type="submit">Search</button>
-                </div>
-            </form>
-            @if (!string.IsNullOrEmpty(HttpContext.Request.Query["searchTerm"]))
-            {
-                <div class="clear-search">
-                    <a href="@Url.Page("/Index")" style="background-color:gray; border-radius:6px"class="text-white fs-6 p-2 position-relative !importants">
-                        Clear search: @HttpContext.Request.Query["searchTerm"] <i class="bi bi-x-circle"></i>
-                    </a>
-                </div>
-            }
+            <div>
+                <h3>MADISON COUNTY</h3>
+                <h4 style="padding-bottom: 3vw;">V I R G I N I A</h4>
+            </div>
+            <div class="search-bar-container">
+                <form method="get" class="mb-4">
+                    <div class="input-group">
+                        <input type="text" name="searchTerm" class="form-control" placeholder="Search published files..." value="@HttpContext.Request.Query["searchTerm"]">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                </form>
+                @if (!string.IsNullOrEmpty(HttpContext.Request.Query["searchTerm"]))
+                {
+                    <div class="clear-search">
+                        <a href="@Url.Page("/Index")" style="background-color:gray; border-radius:6px"class="text-white fs-6 p-2 position-relative !importants">
+                            Clear search: @HttpContext.Request.Query["searchTerm"] <i class="bi bi-x-circle"></i>
+                        </a>
+                    </div>
+                }
+            </div>
         </div>
     </div>
     @*

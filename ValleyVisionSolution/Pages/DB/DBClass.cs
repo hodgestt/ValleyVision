@@ -582,7 +582,7 @@ namespace ValleyVisionSolution.Pages.DB
                 cmd.Connection = ValleyVisionConnection;
                 cmd.Connection.ConnectionString = MainConnString;
                 cmd.Parameters.AddWithValue("@UserID", userId);
-                cmd.CommandText = "SELECT T.taskID, T.taskName, T.taskDueDateTime, T.initID FROM Task T INNER JOIN TaskUser U on T.taskID = U.taskID WHERE U.userID = @UserID;";
+                cmd.CommandText = "SELECT T.taskID, T.taskName, T.taskDueDateTime, T.taskStatus, T.initID FROM Task T INNER JOIN TaskUser U on T.taskID = U.taskID WHERE U.userID = @UserID AND T.taskStatus != 'Completed';";
                 cmd.Connection.Open(); // Open connection here, close in Model!
 
                 SqlDataReader tempReader = cmd.ExecuteReader();

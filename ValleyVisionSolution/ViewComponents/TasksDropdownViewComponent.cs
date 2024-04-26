@@ -38,12 +38,13 @@ namespace ValleyVisionSolution.ViewComponents
                     TaskID = reader.GetInt32(reader.GetOrdinal("taskID")),
                     TaskName = reader.GetString(reader.GetOrdinal("taskName")),
                     TaskDueDateTime = reader.GetDateTime(reader.GetOrdinal("taskDueDateTime")),
+                    TaskStatus = reader.GetString(reader.GetOrdinal("taskStatus")),
                     InitID = reader.GetInt32(reader.GetOrdinal("initID"))
                 });
             }
             reader.Close(); // Don't forget to close the reader
             DBClass.ValleyVisionConnection.Close(); // Close connection if it's not managed elsewhere
-
+            
             return tasks;
         }
 
@@ -63,6 +64,7 @@ namespace ValleyVisionSolution.ViewComponents
                     TaskID = reader.GetInt32(reader.GetOrdinal("taskID")),
                     TaskName = reader.GetString(reader.GetOrdinal("taskName")),
                     TaskDueDateTime = reader.GetDateTime(reader.GetOrdinal("taskDueDateTime")),
+                    TaskStatus = reader.GetString(reader.GetOrdinal("taskStatus")),
                     InitID = reader.GetInt32(reader.GetOrdinal("initID"))
                 }
                 );
