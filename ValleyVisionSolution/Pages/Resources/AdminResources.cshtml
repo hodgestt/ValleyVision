@@ -82,7 +82,7 @@
                     <td>@fileMeta.InitiativeName</td>
                     <td>@fileMeta.UploadedDateTime.ToString("MM/dd/yy hh:mm tt")</td>
                     <td>@fileMeta.FirstName @fileMeta.LastName</td>
-                    <td>@(string.IsNullOrEmpty(fileMeta.published) ? "No" : "Yes")</td>
+                    <td>@(string.IsNullOrEmpty(fileMeta.published) || fileMeta.published.Equals("no", StringComparison.OrdinalIgnoreCase) ? "No" : (fileMeta.published.Equals("yes", StringComparison.OrdinalIgnoreCase) ? "Yes" : "No"))</td>
                     <td>
                             <a asp-page-handler="DownloadFile"
                                asp-route-filePath="@fileMeta.FilePath"
