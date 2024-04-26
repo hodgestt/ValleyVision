@@ -11,7 +11,7 @@
 
 <style>
     .parameterTitle {
-        font-size: 12.5px;
+        font-size: 12px;
     }
 
     .chart-grid {
@@ -104,12 +104,17 @@
     .parameterTitle:hover .custom-tooltip {
         visibility: visible;
     }
+
+    .form-control{
+        width:95%;
+
+    }
 </style>
 
 <form method="post" asp-page="/SpendingProjectionPage">
     <div class="row mb-3">
         <input asp-for="@Model.AutoInflation" type="hidden" class="form-control" id="autoInflation" value="true">
-        <div class="col-md-2">
+        <div class="col-md-2" style="padding-right: 5px;">
             <div class="parameterTitle">
                 <span><i class="bi bi-question-circle"></i></span> Anomaly Amount $:
                 <span class="custom-tooltip">
@@ -119,7 +124,7 @@
             </div>
             <input asp-for="@Model.ParameterAnomaly" type="text" class="form-control">
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2" style="padding-right: 5px;">
             <div class="parameterTitle">
                 <span><i class="bi bi-question-circle"></i></span> Number of Projection Years:
                 <span class="custom-tooltip">Select the number of years for the spending projection.</span>
@@ -132,13 +137,13 @@
                 <option value="5">5</option>
             </select>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2" style="padding-right: 5px;">
             <div class=" parameterTitle manualInflationContainer">
-                <input style="margin-right: 0.5vw" class="form-check-input parameterTitle manualInflationBox" type="checkbox" id="manualInflationRate">
                 <label class="form-check-label parameterTitle manualInflationTitle">
                     <span><i class="bi bi-question-circle"></i></span> Manually Set Inflation %:
                     <span class="custom-tooltip">Check box to manually input inflation rate. Do not include symbols.  (ie. 0.04 = 4; for a 4% inflation rate)</span>
                 </label>
+                <input style="margin-right: 0.5vw" class="form-check-input parameterTitle manualInflationBox" type="checkbox" id="manualInflationRate">
             </div>
             <!-- Input for inflation rate, initially hidden -->
             <input asp-for="@Model.ParameterInflationRate" type="text" class="form-control" id="inflationRateInput" style="display: none;">

@@ -56,7 +56,7 @@
         @if (!string.IsNullOrEmpty(HttpContext.Request.Query["searchTerm"]))
         {
             <div class="clear-search">
-                <a href="@Url.Page("./AdminResources")" class="badge bg-custom-blue text-white fs-6 p-2">
+                <a href="@Url.Page("./AdminResources")" style="background-color:gray; border-radius:6px" class="text-white fs-6 p-2 position-relative !importants">
                     Clear search: @HttpContext.Request.Query["searchTerm"] <i class="bi bi-x-circle"></i>
                 </a>
             </div>
@@ -82,7 +82,7 @@
                     <td>@fileMeta.InitiativeName</td>
                     <td>@fileMeta.UploadedDateTime.ToString("MM/dd/yy hh:mm tt")</td>
                     <td>@fileMeta.FirstName @fileMeta.LastName</td>
-                    <td>@(string.IsNullOrEmpty(fileMeta.published) ? "No" : "Yes")</td>
+                    <td>@(string.IsNullOrEmpty(fileMeta.published) || fileMeta.published.Equals("no", StringComparison.OrdinalIgnoreCase) ? "No" : (fileMeta.published.Equals("yes", StringComparison.OrdinalIgnoreCase) ? "Yes" : "No"))</td>
                     <td>
                             <a asp-page-handler="DownloadFile"
                                asp-route-filePath="@fileMeta.FilePath"
