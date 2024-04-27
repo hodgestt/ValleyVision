@@ -123,7 +123,12 @@
                             <td>@resource.FileType</td>
                             <td>@resource.UploadedDateTime.ToString("MM/dd/yyyy")</td>
                             <td class="col text-center">
-                                <a href="@Url.Content(resource.FilePath)" class="btn btn-primary" download><i class="bi bi-download"></i></a>
+                                <a asp-page-handler="DownloadFile"
+                                   asp-route-filePath="@resource.FilePath"
+                                   asp-route-fileName="@resource.FileName_"
+                                   class="btn btn-secondary btn-sm">
+                                    <i class="bi bi-download"></i>
+                                </a>
                             </td>
                         </tr>
                     }
